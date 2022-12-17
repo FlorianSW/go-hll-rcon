@@ -20,8 +20,8 @@ func NewConnectionPool(h string, p int, pw string) *ConnectionPool {
 		pw:           pw,
 		mu:           sync.Mutex{},
 		idles:        map[string]*Connection{},
-		maxOpenCount: 1,
-		maxIdleCount: 1,
+		maxOpenCount: 10,
+		maxIdleCount: 10,
 	}
 }
 
@@ -49,14 +49,12 @@ func (p *ConnectionPool) Return(c *Connection) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	if p.maxIdleCount > len(p.idles) {
-		if len(p.queued) != 0 {
-			r := p.queued[0]
-			p.queued = p.queued[1:]
-			r.connChan <- c
-		} else {
-			p.idles[c.id] = c
-		}
+	if len(p.queued) != 0 {
+		r := p.queued[0]
+		p.queued = p.queued[1:]
+		r.connChan <- c
+	} else if p.maxIdleCount > len(p.idles) {
+		p.idles[c.id] = c
 	} else {
 		c.socket.Close()
 		p.numOpen--
