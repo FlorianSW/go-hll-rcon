@@ -86,8 +86,8 @@ func (c *Connection) continueRead(pCtx context.Context) ([]byte, error) {
 	// timeout for subsequent reads to reduce the latency for ShowLog.
 	ctx, cancel := context.WithDeadline(pCtx, time.Now().Add(50*time.Millisecond))
 	defer cancel()
+	defer func() { _ = c.WithContext(pCtx) }()
 	_ = c.WithContext(ctx)
 	next, err := c.socket.read()
-	_ = c.WithContext(pCtx)
 	return next, err
 }
