@@ -77,8 +77,7 @@ func (p *ConnectionPool) Return(c *Connection) {
 func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error) {
 	p.mu.Lock()
 
-	numIdle := len(p.idles)
-	if numIdle > 0 {
+	if len(p.idles) > 0 {
 		for _, c := range p.idles {
 			delete(p.idles, c.id)
 			p.mu.Unlock()

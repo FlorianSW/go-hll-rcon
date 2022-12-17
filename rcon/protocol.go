@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"io"
 	"net"
 	"strconv"
 	"strings"
@@ -124,7 +123,7 @@ func (r *socket) read() ([]byte, error) {
 	for {
 		rb := make([]byte, MSGLEN)
 		_, err := r.con.Read(rb)
-		if err != nil && !errors.Is(err, io.EOF) {
+		if err != nil {
 			return nil, err
 		}
 		rb = bytes.Trim(rb, "\x00")

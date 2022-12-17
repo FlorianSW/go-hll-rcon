@@ -14,7 +14,7 @@ func main() {
 		panic(err)
 	}
 	p := rcon.NewConnectionPool(os.Getenv("HOST"), port, os.Getenv("PASSWORD"))
-	ctx, c := context.WithDeadline(context.Background(), time.Now().Add(1*time.Second))
+	ctx, c := context.WithDeadline(context.Background(), time.Now().Add(5*time.Second))
 	defer c()
 
 	r, err := p.GetWithContext(ctx)
