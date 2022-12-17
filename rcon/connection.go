@@ -2,7 +2,9 @@ package rcon
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 )
@@ -10,6 +12,7 @@ import (
 type Connection struct {
 	id     string
 	socket *socket
+	parent *context.Context
 }
 
 // WithContext inherits applicable values from the given context.Context and applies them to the underlying
@@ -22,10 +25,18 @@ type Connection struct {
 //
 // Returns an error if context.Context values could not be applied to the underlying Connection.
 func (c *Connection) WithContext(ctx context.Context) error {
+	c.parent = &ctx
 	if deadline, ok := ctx.Deadline(); ok {
 		return c.socket.con.SetDeadline(deadline)
 	}
 	return nil
+}
+
+func (c *Connection) Context() context.Context {
+	if c.parent != nil {
+		return *c.parent
+	}
+	return context.Background()
 }
 
 // ListCommand executes the raw command provided and returns the result as a list of strings. A list with regard to
@@ -50,14 +61,32 @@ func (c *Connection) ShowLog(d time.Duration) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	// there is no need to read more data, the server has no logs for the specified timeframe
+	if r == "EMPTY" {
+		return nil, nil
+	}
 	for {
-		if r[len(r)-1:] == "\n" {
+		// HLL RCon does not indicate the length of data returned for the command, instead we need to read as long as
+		// we do not get any data anymore. For that we loop through read() until there is no data to be received anymore.
+		// Unfortunately when the server does not have data anymore, it simply does not return anything (other than
+		// EOF e.g.).
+		next, err := c.continueRead(c.Context())
+
+		if errors.Is(err, os.ErrDeadlineExceeded) {
 			return strings.Split(r, "\n"), nil
-		}
-		next, err := c.socket.read()
-		if err != nil {
+		} else if err != nil {
 			return nil, err
 		}
 		r += string(next)
 	}
+}
+
+func (c *Connection) continueRead(pCtx context.Context) ([]byte, error) {
+	// Considering that multiple reads on the same data stream should not have much latency, we assume a pretty low
+	// timeout for subsequent reads to reduce the latency for ShowLog.
+	ctx, cancel := context.WithDeadline(pCtx, time.Now().Add(50*time.Millisecond))
+	defer cancel()
+	_ = c.WithContext(ctx)
+	next, err := c.socket.read()
+	return next, err
 }
