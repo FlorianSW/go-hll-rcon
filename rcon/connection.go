@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -90,4 +91,98 @@ func (c *Connection) continueRead(pCtx context.Context) ([]byte, error) {
 	_ = c.WithContext(ctx)
 	next, err := c.socket.read()
 	return next, err
+}
+
+// PlayerIds issues the `get playerids` command to the server and returns a list of parsed PlayerIds. The players returned
+// are the ones currently connected to the server.
+func (c *Connection) PlayerIds() ([]PlayerId, error) {
+	v, err := c.ListCommand("get playerids")
+	if err != nil {
+		return nil, err
+	}
+	var result []PlayerId
+	for _, s := range v {
+		parts := strings.Split(s, " : ")
+		result = append(result, PlayerId{
+			Name:      parts[0],
+			SteamId64: parts[1],
+		})
+	}
+	return result, nil
+}
+
+// PlayerInfo returns more information about a specific player by using its name. The player needs to be connected to
+// the server for this command to succeed.
+func (c *Connection) PlayerInfo(name string) (PlayerInfo, error) {
+	// Name: xxxx
+	// steamID64: 7656xxxx
+	// Team: Allies
+	// Role: Assault
+	// Unit: 5 - FOX
+	// Loadout: Veteran
+	// Kills: 0 - Deaths: 7
+	// Score: C 0, O 20, D 240, S 0
+	// Level: 81
+	res := PlayerInfo{}
+	v, err := c.Command(fmt.Sprintf("playerinfo %s", name))
+	if err != nil {
+		return res, err
+	}
+	lines := strings.Split(v, "\n")
+	for _, line := range lines {
+		if line == "" {
+			continue
+		}
+		parts := strings.SplitN(line, ": ", 2)
+		key := parts[0]
+		value := parts[1]
+		switch key {
+		case "Name":
+			res.Name = value
+		case "steamID64":
+			res.SteamId64 = value
+		case "Team":
+			res.Team = value
+		case "Role":
+			res.Role = value
+		case "Unit":
+			up := strings.Split(value, " - ")
+			uid, _ := strconv.Atoi(up[0])
+			res.Unit = Unit{
+				Id:   uid,
+				Name: up[1],
+			}
+		case "Loadout":
+			res.Loadout = value
+		case "Kills":
+			kd := strings.Split(value, " - Deaths: ")
+			k, _ := strconv.Atoi(kd[0])
+			d, _ := strconv.Atoi(kd[1])
+			res.Kills = k
+			res.Deaths = d
+		case "Score":
+			res.Score = Score{}
+			score := strings.Split(value, ", ")
+			for _, s := range score {
+				kv := strings.Split(s, " ")
+				sv, _ := strconv.Atoi(kv[1])
+				switch kv[0] {
+				case "C":
+					res.Score.CombatEffectiveness = sv
+				case "O":
+					res.Score.Offensive = sv
+				case "D":
+					res.Score.Defensive = sv
+				case "S":
+					res.Score.Support = sv
+				}
+			}
+		case "Level":
+			lvl, _ := strconv.Atoi(value)
+			res.Level = lvl
+		default:
+			continue
+		}
+	}
+	return res, nil
 }

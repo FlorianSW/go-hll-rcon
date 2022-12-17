@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"strings"
 	"sync"
 	"time"
 )
@@ -65,32 +64,31 @@ func main() {
 }
 
 func printPlayerInfos(ctx context.Context, p *rcon.ConnectionPool, r *rcon.Connection) {
-	v, err := r.ListCommand("get playerids")
+	v, err := r.PlayerIds()
 	if err != nil {
 		panic(err)
 	}
-	var infos []string
+	var infos []rcon.PlayerInfo
 	var wg sync.WaitGroup
 	for _, l := range v {
 		wg.Add(1)
-		parts := strings.Split(l, " : ")
 		go func(name string) {
 			defer wg.Done()
-			pi, err := requestPlayerInfo(ctx, p, parts[0])
+			pi, err := requestPlayerInfo(ctx, p, name)
 			if err != nil {
 				panic(err)
 			}
 			infos = append(infos, pi)
-		}(parts[0])
+		}(l.Name)
 	}
 	wg.Wait()
 }
 
-func requestPlayerInfo(ctx context.Context, p *rcon.ConnectionPool, name string) (string, error) {
+func requestPlayerInfo(ctx context.Context, p *rcon.ConnectionPool, name string) (rcon.PlayerInfo, error) {
 	r, err := p.GetWithContext(ctx)
 	if err != nil {
-		return "", err
+		return rcon.PlayerInfo{}, err
 	}
 	defer p.Return(r)
-	return r.Command("playerinfo " + name)
+	return r.PlayerInfo(name)
 }
