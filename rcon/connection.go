@@ -88,5 +88,6 @@ func (c *Connection) continueRead(pCtx context.Context) ([]byte, error) {
 	defer cancel()
 	_ = c.WithContext(ctx)
 	next, err := c.socket.read()
+	_ = c.WithContext(pCtx)
 	return next, err
 }
