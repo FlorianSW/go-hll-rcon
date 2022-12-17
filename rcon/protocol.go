@@ -122,11 +122,11 @@ func (r *socket) read() ([]byte, error) {
 	var answer []byte
 	for {
 		rb := make([]byte, MSGLEN)
-		_, err := r.con.Read(rb)
+		l, err := r.con.Read(rb)
 		if err != nil {
 			return nil, err
 		}
-		rb = bytes.Trim(rb, "\x00")
+		rb = rb[:l]
 
 		answer = append(answer, r.xor(rb)...)
 
