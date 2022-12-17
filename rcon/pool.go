@@ -1,6 +1,7 @@
 package rcon
 
 import (
+	"code.cloudfoundry.org/lager"
 	"context"
 	"errors"
 	"fmt"
@@ -13,8 +14,9 @@ var (
 	Timeout        = errors.New("connection request timed out before a connection was available")
 )
 
-func NewConnectionPool(h string, p int, pw string) *ConnectionPool {
+func NewConnectionPool(logger lager.Logger, h string, p int, pw string) *ConnectionPool {
 	return &ConnectionPool{
+		logger:       logger.Session("pool", lager.Data{"host": h, "port": p}),
 		host:         h,
 		port:         p,
 		pw:           pw,
@@ -26,6 +28,7 @@ func NewConnectionPool(h string, p int, pw string) *ConnectionPool {
 }
 
 type ConnectionPool struct {
+	logger       lager.Logger
 	host         string
 	port         int
 	pw           string
@@ -46,6 +49,7 @@ type request struct {
 // this size (and no idle connections are available) will be put into a queue and be served once a connection is returned
 // to the pool. This queue is on a best effort basis and might fail based on the provided deadline to GetWithContext.
 func (p *ConnectionPool) SetPoolSize(s int) {
+	p.logger.Debug("set-pool-size", lager.Data{"old": p.maxOpenCount, "new": s})
 	p.maxOpenCount = s
 }
 
@@ -54,9 +58,12 @@ func (p *ConnectionPool) SetPoolSize(s int) {
 // (GetWithContext) to reduce the overhead of opening and closing a connection on every request. Consider a high max
 // idle connection to benefit from re-using connections as much as possible.
 func (p *ConnectionPool) SetMaxIdle(mi int) {
+	l := p.logger.Session("set-max-idle", lager.Data{"old": p.maxIdleCount, "new": mi})
 	if mi > p.maxOpenCount {
+		l.Info("exceeds-max-open")
 		p.maxIdleCount = p.maxOpenCount
 	} else {
+		l.Debug("set")
 		p.maxIdleCount = mi
 	}
 }
@@ -65,16 +72,20 @@ func (p *ConnectionPool) SetMaxIdle(mi int) {
 // might either be closed, put into a pool of "hot", idle connections or directly returned to a queued GetWithContext
 // request.
 func (p *ConnectionPool) Return(c *Connection) {
+	l := p.logger.Session("return", lager.Data{"id": c.id})
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	if len(p.queued) != 0 {
 		r := p.queued[0]
+		l.Debug("re-using-for-queue")
 		p.queued = p.queued[1:]
 		r.connChan <- c
 	} else if p.maxIdleCount > len(p.idles) {
+		l.Debug("returning-idle")
 		p.idles[c.id] = c
 	} else {
+		l.Debug("closing")
 		c.socket.Close()
 		p.numOpen--
 	}
@@ -92,9 +103,12 @@ func (p *ConnectionPool) Return(c *Connection) {
 // ok with waiting for a connection before a Timeout error is returned. If no deadline is provided in the context.Context,
 // GetWithContext might wait indefinitely.
 func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error) {
+	deadline, ok := ctx.Deadline()
+	l := p.logger.Session("get-with-context", lager.Data{"deadline": deadline, "hasDeadline": ok})
 	p.mu.Lock()
 
 	if len(p.idles) > 0 {
+		l.Debug("from-idle-pool")
 		for _, c := range p.idles {
 			delete(p.idles, c.id)
 			p.mu.Unlock()
@@ -103,6 +117,7 @@ func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error
 	}
 
 	if p.numOpen >= p.maxOpenCount {
+		l.Debug("queue-request", lager.Data{"queued": len(p.queued), "open": p.numOpen})
 		req := request{
 			connChan: make(chan *Connection, 1),
 			errChan:  make(chan error, 1),
@@ -126,6 +141,7 @@ func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error
 		}
 	}
 
+	l.Debug("open-new", lager.Data{"queued": len(p.queued), "open": p.numOpen})
 	p.numOpen++
 	defer p.mu.Unlock()
 
