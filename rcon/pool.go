@@ -42,6 +42,25 @@ type request struct {
 	errChan  chan error
 }
 
+// SetPoolSize sets the maximum number of open connections at any time. A request for a connection when the pool reached
+// this size (and no idle connections are available) will be put into a queue and be served once a connection is returned
+// to the pool. This queue is on a best effort basis and might fail based on the provided deadline to GetWithContext.
+func (p *ConnectionPool) SetPoolSize(s int) {
+	p.maxOpenCount = s
+}
+
+// SetMaxIdle sets the maximum number of idle connections in the pool. Idle connections are established connections to
+// the server (warm) but are not ye/anymore used. Warm connections are preferably used to fulfill connection requests
+// (GetWithContext) to reduce the overhead of opening and closing a connection on every request. Consider a high max
+// idle connection to benefit from re-using connections as much as possible.
+func (p *ConnectionPool) SetMaxIdle(mi int) {
+	if mi > p.maxOpenCount {
+		p.maxIdleCount = p.maxOpenCount
+	} else {
+		p.maxIdleCount = mi
+	}
+}
+
 // Return returns a previously gathered Connection from GetWithContext back to the pool for later use. The Connection
 // might either be closed, put into a pool of "hot", idle connections or directly returned to a queued GetWithContext
 // request.
