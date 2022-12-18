@@ -154,6 +154,17 @@ func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error
 	return nc, nc.WithContext(ctx)
 }
 
+func (p *ConnectionPool) WithConnection(ctx context.Context, f func(c *Connection)) error {
+	c, err := p.GetWithContext(ctx)
+	if err != nil {
+		return err
+	}
+	defer p.Return(c)
+
+	f(c)
+	return nil
+}
+
 func (p *ConnectionPool) new() (*Connection, error) {
 	c, err := newSocket(p.host, p.port, p.pw)
 	if err != nil {

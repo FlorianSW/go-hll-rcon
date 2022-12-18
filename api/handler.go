@@ -15,34 +15,7 @@ import (
 var (
 	jr = response.Jr
 	b  = response.B
-
-	SquadTypeCommander = SquadType("Commander")
-	SquadTypeRecon     = SquadType("Recon")
-	SquadTypeArmor     = SquadType("Armor")
-	SquadTypeInfantry  = SquadType("Infantry")
 )
-
-type RConPool interface {
-	GetWithContext(ctx context.Context) (*rcon.Connection, error)
-	Return(c *rcon.Connection)
-}
-
-type TeamView map[string]*Team
-
-type Team struct {
-	Squads         map[string]*Squad
-	NoSquadPlayers []rcon.PlayerInfo
-	Commander      *Squad
-	Score          rcon.Score
-}
-
-type SquadType string
-
-type Squad struct {
-	Type    SquadType
-	Score   rcon.Score
-	Players []rcon.PlayerInfo
-}
 
 type handler struct {
 	pool RConPool
@@ -63,6 +36,8 @@ func (h *handler) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		h.handlePlayers(w, req)
 	case "teams":
 		h.handleTeams(w, req)
+	case "server":
+		h.handleServer(w, req)
 	default:
 		jr.NotFound(w)
 	}
@@ -122,6 +97,72 @@ func (h *handler) handlePlayer(w http.ResponseWriter, req *http.Request, name st
 	jr.Ok(w, asJson(renderPlayerInfo(pi)))
 }
 
+func (h *handler) handleServer(w http.ResponseWriter, req *http.Request) {
+	if req.Method != http.MethodGet {
+		jr.MethodNotAllowed(w)
+		return
+	}
+
+	res := &ServerInfo{}
+
+	wg := sync.WaitGroup{}
+	var cErr []error
+	wg.Add(3)
+	go func(r *ServerInfo) {
+		defer wg.Done()
+		f := func(c *rcon.Connection) {
+			var err error
+			r.Name, err = c.ServerName()
+			if err != nil {
+				cErr = append(cErr, err)
+			}
+		}
+
+		if err := h.pool.WithConnection(req.Context(), f); err != nil {
+			jr.InternalServerError(w, b(err.Error()))
+		}
+	}(res)
+	go func(r *ServerInfo) {
+		defer wg.Done()
+		f := func(c *rcon.Connection) {
+			p, mp, err := c.Slots()
+			if err != nil {
+				cErr = append(cErr, err)
+			}
+			res.PlayerCount = p
+			res.MaxPlayers = mp
+		}
+
+		if err := h.pool.WithConnection(req.Context(), f); err != nil {
+			jr.InternalServerError(w, b(err.Error()))
+		}
+	}(res)
+	go func(r *ServerInfo) {
+		defer wg.Done()
+		f := func(c *rcon.Connection) {
+			state, err := c.GameState()
+			if err != nil {
+				cErr = append(cErr, err)
+				return
+			}
+			r.RemainingTime = state.RemainingTime.String()
+			r.Map = state.Map
+			r.NextMap = state.NextMap
+			r.GameScore.Allies = state.Score.Allies
+			r.GameScore.Axis = state.Score.Axis
+			r.Players.Allies = state.Players.Allies
+			r.Players.Axis = state.Players.Axis
+		}
+
+		if err := h.pool.WithConnection(req.Context(), f); err != nil {
+			jr.InternalServerError(w, b(err.Error()))
+		}
+	}(res)
+
+	wg.Wait()
+	jr.Ok(w, asJson(res))
+}
+
 func (h *handler) handleTeams(w http.ResponseWriter, req *http.Request) {
 	if req.Method != http.MethodGet {
 		jr.MethodNotAllowed(w)
@@ -176,26 +217,23 @@ func (h *handler) getTeamView(ctx context.Context) (TeamView, error) {
 		if _, ok := res[info.Team]; !ok {
 			res[info.Team] = &Team{
 				Squads: map[string]*Squad{},
-				Score:  rcon.Score{},
+				Score:  Score{},
 			}
 		}
 		team := res[info.Team]
 		squadType := h.guessSquadType(info)
 
-		team.Score.Offensive += info.Score.Offensive
-		team.Score.Defensive += info.Score.Defensive
-		team.Score.Support += info.Score.Support
-		team.Score.CombatEffectiveness += info.Score.CombatEffectiveness
+		team.Score.Merge(fromRconScore(info.Score))
 
 		if info.Unit.Name == "" && squadType != SquadTypeCommander {
-			team.NoSquadPlayers = append(team.NoSquadPlayers, info)
+			team.NoSquadPlayers = append(team.NoSquadPlayers, fromPlayerInfo(info))
 			continue
 		}
 		if _, ok := team.Squads[info.Unit.Name]; !ok {
 			s := &Squad{
 				Type:    squadType,
-				Score:   rcon.Score{},
-				Players: []rcon.PlayerInfo{},
+				Score:   Score{},
+				Players: []Player{},
 			}
 			team.Squads[info.Unit.Name] = s
 			if s.Type == SquadTypeCommander {
@@ -203,12 +241,9 @@ func (h *handler) getTeamView(ctx context.Context) (TeamView, error) {
 			}
 		}
 		squad := team.Squads[info.Unit.Name]
-		squad.Players = append(squad.Players, info)
+		squad.Players = append(squad.Players, fromPlayerInfo(info))
 
-		squad.Score.Offensive += info.Score.Defensive
-		squad.Score.Defensive += info.Score.Defensive
-		squad.Score.Support += info.Score.Support
-		squad.Score.CombatEffectiveness += info.Score.CombatEffectiveness
+		squad.Score.Merge(fromRconScore(info.Score))
 	}
 	return res, nil
 }

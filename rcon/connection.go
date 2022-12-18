@@ -111,6 +111,68 @@ func (c *Connection) PlayerIds() ([]PlayerId, error) {
 	return result, nil
 }
 
+// ServerName returns the currently set server name
+func (c *Connection) ServerName() (string, error) {
+	return c.Command("get name")
+}
+
+// Slots returns the current number of players connected to the server as the first return value. The second return value
+// is the total number of players allowed to be connected to the server at the same time.
+func (c *Connection) Slots() (int, int, error) {
+	p, err := c.Command("get slots")
+	if err != nil {
+		return 0, 0, err
+	}
+	n := strings.Split(p, "/")
+	players, _ := strconv.Atoi(n[0])
+	maxPlayers, _ := strconv.Atoi(n[1])
+	return players, maxPlayers, nil
+}
+
+// GameState returns information about the currently played round on the server.
+func (c *Connection) GameState() (GameState, error) {
+	res := GameState{}
+	r, err := c.Command("get gamestate")
+	if err != nil {
+		return res, err
+	}
+	lines := strings.Split(r, "\n")
+	for _, line := range lines {
+		kv := strings.SplitN(line, ": ", 2)
+		switch kv[0] {
+		case "Map":
+			res.Map = kv[1]
+		case "Next Map":
+			res.NextMap = kv[1]
+		case "Remaining Time":
+			var h, m, s int
+			_, _ = fmt.Sscanf(kv[1], "%d:%d:%d", &h, &m, &s)
+			res.RemainingTime = time.Duration(h)*time.Hour + time.Duration(m)*time.Minute + time.Duration(s)*time.Second
+		case "Players":
+			sides := strings.Split(kv[1], " - ")
+			for _, side := range sides {
+				skv := strings.SplitN(side, ": ", 2)
+				if skv[0] == "Allied" {
+					res.Players.Allies, _ = strconv.Atoi(skv[1])
+				} else if skv[0] == "Axis" {
+					res.Players.Axis, _ = strconv.Atoi(skv[1])
+				}
+			}
+		case "Score":
+			sides := strings.Split(kv[1], " - ")
+			for _, side := range sides {
+				skv := strings.SplitN(side, ": ", 2)
+				if skv[0] == "Allied" {
+					res.Score.Allies, _ = strconv.Atoi(skv[1])
+				} else if skv[0] == "Axis" {
+					res.Score.Axis, _ = strconv.Atoi(skv[1])
+				}
+			}
+		}
+	}
+	return res, nil
+}
+
 // PlayerInfo returns more information about a specific player by using its name. The player needs to be connected to
 // the server for this command to succeed.
 func (c *Connection) PlayerInfo(name string) (PlayerInfo, error) {
