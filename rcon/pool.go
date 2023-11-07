@@ -176,3 +176,12 @@ func (p *ConnectionPool) new() (*Connection, error) {
 		socket: c,
 	}, nil
 }
+
+func (p *ConnectionPool) Shutdown() {
+	p.mu.Lock()
+	for _, c := range p.idles {
+		c.socket.Close()
+		p.numOpen--
+	}
+	p.mu.Unlock()
+}
