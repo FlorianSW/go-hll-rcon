@@ -39,8 +39,9 @@ func (c *Connection) WithContext(ctx context.Context) error {
 	c.parent = &ctx
 	if deadline, ok := ctx.Deadline(); ok {
 		return c.socket.con.SetDeadline(deadline)
+	} else {
+		return c.socket.con.SetDeadline(time.Time{})
 	}
-	return nil
 }
 
 func (c *Connection) Context() context.Context {
