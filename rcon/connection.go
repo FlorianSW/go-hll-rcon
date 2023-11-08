@@ -184,15 +184,20 @@ func (c *Connection) GameState() (GameState, error) {
 	return res, nil
 }
 
+// MapFilter A filter used in commands that return list of maps, e.g. Maps or MapRotation.
+// The filter should return true, when the map should be included in the result set and false
+// when the map should be skipped.
 type MapFilter func(idx int, name string, result []string) bool
 
+// Maps Returns the available maps on the server. These map names can be used in commands like SwitchMap
+// and AddToMapRotation
 func (c *Connection) Maps(filters ...MapFilter) ([]string, error) {
 	maps, err := c.ListCommand("get mapsforrotation")
 
-	if err != nil {
-		return nil, err
-	}
+	return filter(maps, filters...), err
+}
 
+func filter(maps []string, filters ...MapFilter) []string {
 	var result []string
 	for i, m := range maps {
 		add := true
@@ -205,8 +210,48 @@ func (c *Connection) Maps(filters ...MapFilter) ([]string, error) {
 			result = append(result, m)
 		}
 	}
+	return result
+}
 
-	return result, nil
+// SwitchMap Changes the map on the server. The map name must be one that is available on the server.
+// You can get the available maps with the Maps function.
+// If the map is not in the map rotation, yet, then it will be added to the Map Rotation.
+func (c *Connection) SwitchMap(mapName string) error {
+	_, err := c.Command(fmt.Sprintf("map %s", mapName))
+	if errors.Is(err, CommandFailed) {
+		err = c.addToMapRotation(mapName)
+		if err != nil {
+			return err
+		}
+		_, err = c.Command(fmt.Sprintf("map %s", mapName))
+	}
+
+	return err
+}
+
+func (c *Connection) addToMapRotation(mapName string) error {
+	maps, err := c.MapRotation()
+	if err != nil {
+		return err
+	}
+	return c.AddToMapRotation(mapName, maps[len(maps)-1])
+}
+
+// MapRotation Returns a list of map names, which are currently in the map rotation.
+// Maps can be duplicated in the list.
+func (c *Connection) MapRotation(filters ...MapFilter) ([]string, error) {
+	mapsString, err := c.Command("rotlist")
+	if err != nil {
+		return nil, err
+	}
+	maps := strings.Split(mapsString, "\n")
+	return filter(maps[:len(maps)-1], filters...), err
+}
+
+// AddToMapRotation Adds a map to the map rotation after the mentioned map.
+func (c *Connection) AddToMapRotation(mapName string, afterMap string) error {
+	_, err := c.Command(fmt.Sprintf("rotadd /Game/Maps/%s /Game/Maps/%s", mapName, afterMap))
+	return err
 }
 
 // PlayerInfo returns more information about a specific player by using its name. The player needs to be connected to
