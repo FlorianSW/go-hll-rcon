@@ -184,6 +184,31 @@ func (c *Connection) GameState() (GameState, error) {
 	return res, nil
 }
 
+type MapFilter func(idx int, name string, result []string) bool
+
+func (c *Connection) Maps(filters ...MapFilter) ([]string, error) {
+	maps, err := c.ListCommand("get mapsforrotation")
+
+	if err != nil {
+		return nil, err
+	}
+
+	var result []string
+	for i, m := range maps {
+		add := true
+		for _, filter := range filters {
+			if !filter(i, m, result) {
+				add = false
+			}
+		}
+		if add {
+			result = append(result, m)
+		}
+	}
+
+	return result, nil
+}
+
 // PlayerInfo returns more information about a specific player by using its name. The player needs to be connected to
 // the server for this command to succeed.
 func (c *Connection) PlayerInfo(name string) (PlayerInfo, error) {
