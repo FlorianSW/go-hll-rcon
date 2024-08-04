@@ -122,6 +122,45 @@ func (c *Connection) PlayerIds() ([]PlayerId, error) {
 	return result, nil
 }
 
+// AdminIds returns a list of admins on the server. An admin is identified by their Steam ID, and an optional name/comment.
+// The role is a potentially custom-defined role that can have a set of permissions. Use AdminGroups to get a list of
+// available roles for this server.
+func (c *Connection) AdminIds() ([]AdminId, error) {
+	v, err := c.ListCommand("get adminids")
+	if err != nil {
+		return nil, err
+	}
+	var result []AdminId
+	for _, s := range v {
+		parts := strings.SplitN(s, " ", 3)
+		result = append(result, AdminId{
+			Name:      strings.ReplaceAll(parts[2], "\"", ""),
+			SteamId64: parts[0],
+			Role:      parts[1],
+		})
+	}
+	return result, nil
+}
+
+// AdminGroups returns a list of potentially customized roles that are available for this server. A role can have a
+// specific set of permissions and can be used in AddAdmin command.
+func (c *Connection) AdminGroups() ([]string, error) {
+	return c.ListCommand("get admingroups")
+}
+
+// AddAdmin adds a player to the list of admins with the specified role. The role needs to be a role available on the
+// server. Use the AdminGroups command to get available roles.
+func (c *Connection) AddAdmin(id AdminId) error {
+	_, err := c.Command(fmt.Sprintf("adminadd %s %s %s", id.SteamId64, id.Role, id.Name))
+	return err
+}
+
+// DeleteAdmin removes a player from the list of admins. Correspond to AddAdmin and AdminIds for more details.
+func (c *Connection) DeleteAdmin(steamId string) error {
+	_, err := c.Command(fmt.Sprintf("admindel %s", steamId))
+	return err
+}
+
 // ServerName returns the currently set server name
 func (c *Connection) ServerName() (string, error) {
 	return c.Command("get name")

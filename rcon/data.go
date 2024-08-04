@@ -7,6 +7,12 @@ type PlayerId struct {
 	SteamId64 string
 }
 
+type AdminId struct {
+	Name      string
+	SteamId64 string
+	Role      string
+}
+
 type Unit struct {
 	Id   int
 	Name string
