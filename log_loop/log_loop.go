@@ -70,7 +70,7 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 				if err != nil {
 					return err
 				}
-				if l.lastSeen == nil || (l.lastSeen != nil && l.lastSeen.Timestamp.After(logLine.Timestamp)) {
+				if l.lastSeen == nil || (l.lastSeen != nil && l.lastSeen.Timestamp.Before(logLine.Timestamp)) {
 					pl = append(pl, logLine)
 				}
 			}
