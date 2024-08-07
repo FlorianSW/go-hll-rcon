@@ -31,14 +31,14 @@ func ParseLogLine(line string) (StructuredLogLine, error) {
 	t := time.Unix(tI, 0)
 	res.Timestamp = t
 
-	if strings.HasPrefix(r, "DISCONNECTED") || strings.HasPrefix(r, "CONNECTED") {
+	if strings.HasPrefix(r, ActionDisconnected) || strings.HasPrefix(r, ActionConnected) {
 		p = pC.FindStringSubmatch(r)
 		res.Action = p[1]
 		res.Actor.Name = p[2]
 		res.Actor.SteamId64 = p[3]
-	} else if strings.HasPrefix(r, "KILL: ") {
+	} else if strings.HasPrefix(r, fmt.Sprintf("%s: ", ActionKill)) {
 		p = kR.FindStringSubmatch(r)
-		res.Action = "KILL"
+		res.Action = ActionKill
 		res.Actor.Name = p[1]
 		res.Actor.Team = strings.ToLower(p[2])
 		res.Actor.SteamId64 = p[3]

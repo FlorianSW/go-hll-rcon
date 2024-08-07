@@ -5,6 +5,12 @@ import (
 	"time"
 )
 
+const (
+	ActionKill         = "KILL"
+	ActionConnected    = "CONNECTED"
+	ActionDisconnected = "DISCONNECTED"
+)
+
 type Player struct {
 	Name      string
 	SteamId64 string

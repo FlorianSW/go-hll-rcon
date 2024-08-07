@@ -4,7 +4,6 @@ import (
 	"code.cloudfoundry.org/lager"
 	"context"
 	"errors"
-	"fmt"
 	"github.com/floriansw/go-hll-rcon/rcon"
 	"time"
 )
@@ -18,6 +17,10 @@ type logLoop struct {
 	p      RConPool
 }
 
+// NewLogLoop instantiates a log loop, which periodically requests logs from the game server, parses them and exposes them
+// in batches to the caller.
+//
+// Not all events are currently parsed, however, each log line is added to the batches at least with the raw message.
 func NewLogLoop(l lager.Logger, p RConPool) *logLoop {
 	return &logLoop{
 		logger: l,
@@ -25,7 +28,7 @@ func NewLogLoop(l lager.Logger, p RConPool) *logLoop {
 	}
 }
 
-func (l *logLoop) Run(ctx context.Context) error {
+func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) error {
 	log := l.logger.Session("log-loop-run")
 	lines := make(chan []string)
 	errs := make(chan error)
@@ -34,7 +37,7 @@ func (l *logLoop) Run(ctx context.Context) error {
 		err := l.p.WithConnection(ctx, func(c *rcon.Connection) {
 			log.Info("start")
 			for {
-				r, err := c.ShowLog(5 * time.Minute)
+				r, err := c.ShowLog(60 * time.Minute)
 				if err != nil {
 					log.Error("read", err)
 					errs <- err
@@ -55,15 +58,19 @@ func (l *logLoop) Run(ctx context.Context) error {
 	for {
 		select {
 		case line := <-lines:
+			pl := make([]StructuredLogLine, len(lines))
 			for _, s := range line {
 				if s == "" {
 					continue
 				}
 				logLine, err := ParseLogLine(s)
 				if err != nil {
-					fmt.Println(err)
+					return err
 				}
-				println(logLine.String())
+				pl = append(pl, logLine)
+			}
+			if stop := f(pl); stop {
+				return nil
 			}
 		case err := <-errs:
 			return err
