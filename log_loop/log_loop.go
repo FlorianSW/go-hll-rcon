@@ -15,6 +15,8 @@ type RConPool interface {
 type logLoop struct {
 	logger lager.Logger
 	p      RConPool
+
+	lastSeen *StructuredLogLine
 }
 
 // NewLogLoop instantiates a log loop, which periodically requests logs from the game server, parses them and exposes them
@@ -32,6 +34,7 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 	log := l.logger.Session("log-loop-run")
 	lines := make(chan []string)
 	errs := make(chan error)
+	l.lastSeen = nil
 	log.Info("initializing")
 	go func() {
 		err := l.p.WithConnection(ctx, func(c *rcon.Connection) {
@@ -67,7 +70,12 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 				if err != nil {
 					return err
 				}
-				pl = append(pl, logLine)
+				if l.lastSeen == nil || (l.lastSeen != nil && l.lastSeen.Timestamp.After(logLine.Timestamp)) {
+					pl = append(pl, logLine)
+				}
+			}
+			if len(pl) != 0 {
+				l.lastSeen = &pl[len(pl)-1]
 			}
 			if stop := f(pl); stop {
 				return nil
