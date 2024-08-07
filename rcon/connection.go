@@ -368,3 +368,10 @@ func (c *Connection) PlayerInfo(name string) (PlayerInfo, error) {
 	}
 	return res, nil
 }
+
+// MessagePlayer sends a message to the player with the steam ID, if the player is on the server. The message
+// can contain newline characters.
+func (c *Connection) MessagePlayer(steamId string, message string) error {
+	_, err := c.Command(fmt.Sprintf("message %s %s", steamId, message))
+	return err
+}
