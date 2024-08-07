@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -77,20 +78,59 @@ func (c *Connection) ShowLog(d time.Duration) ([]string, error) {
 	if r == "EMPTY" {
 		return nil, nil
 	}
+	re := regexp.MustCompile("(?m)^(\\[.+? \\(\\d+\\)])")
 	for {
 		// HLL RCon does not indicate the length of data returned for the command, instead we need to read as long as
 		// we do not get any data anymore. For that we loop through read() until there is no data to be received anymore.
 		// Unfortunately when the server does not have data anymore, it simply does not return anything (other than
 		// EOF e.g.).
 		next, err := c.continueRead(c.Context())
-
 		if errors.Is(err, os.ErrDeadlineExceeded) {
-			return strings.Split(r, "\n"), nil
+			lines := split(re, r, -1)
+			var result []string
+			for _, line := range lines {
+				if line == "" {
+					continue
+				}
+				result = append(result, strings.ReplaceAll(line, "\n", " "))
+			}
+			return result, nil
 		} else if err != nil {
 			return nil, err
 		}
 		r += string(next)
 	}
+}
+
+func split(re *regexp.Regexp, s string, n int) []string {
+	if n == 0 {
+		return nil
+	}
+
+	matches := re.FindAllStringIndex(s, n)
+	str := make([]string, 0, len(matches))
+
+	beg := 0
+	end := 0
+	p := ""
+	for _, match := range matches {
+		if n > 0 && len(str) >= n-1 {
+			break
+		}
+
+		end = match[0]
+		if match[1] != 0 {
+			str = append(str, p+s[beg:end])
+		}
+		beg = match[1]
+		p = s[match[0]:match[1]]
+	}
+
+	if end != len(s) {
+		str = append(str, p+s[beg:])
+	}
+
+	return str
 }
 
 func (c *Connection) continueRead(pCtx context.Context) ([]byte, error) {
