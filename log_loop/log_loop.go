@@ -3,7 +3,6 @@ package log_loop
 import (
 	"code.cloudfoundry.org/lager"
 	"context"
-	"errors"
 	"github.com/floriansw/go-hll-rcon/rcon"
 	"time"
 )
@@ -37,24 +36,23 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 	l.lastSeen = nil
 	log.Info("initializing")
 	go func() {
-		err := l.p.WithConnection(ctx, func(c *rcon.Connection) {
-			log.Info("start")
-			for {
+		log.Info("start")
+		for {
+			err := l.p.WithConnection(ctx, func(c *rcon.Connection) {
 				r, err := c.ShowLog(60 * time.Minute)
 				if err != nil {
 					log.Error("read", err)
 					errs <- err
-					break
 				} else {
 					log.Debug("read", lager.Data{"no": len(r)})
 					lines <- r
 				}
-				time.Sleep(5 * time.Second)
+			})
+			if err != nil {
+				log.Error("init", err)
+				errs <- err
 			}
-		})
-		if err != nil {
-			log.Error("init", err)
-			errs <- errors.New("test")
+			time.Sleep(5 * time.Second)
 		}
 	}()
 
