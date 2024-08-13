@@ -104,7 +104,7 @@ func (p *ConnectionPool) Return(c *Connection) {
 // GetWithContext might wait indefinitely.
 func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error) {
 	deadline, ok := ctx.Deadline()
-	l := p.logger.Session("get-with-context", lager.Data{"deadline": deadline, "hasDeadline": ok})
+	l := p.logger.Session("get-with-context", lager.Data{"deadline": deadline, "hasDeadline": ok, "queued": len(p.queued), "open": p.numOpen, "idles": len(p.idles)})
 	p.mu.Lock()
 
 	if len(p.idles) > 0 {
