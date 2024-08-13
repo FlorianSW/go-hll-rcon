@@ -4,8 +4,11 @@ import (
 	"code.cloudfoundry.org/lager"
 	"context"
 	"github.com/floriansw/go-hll-rcon/rcon"
+	"os"
 	"time"
 )
+
+const maxReconnectTries = 10
 
 type RConPool interface {
 	WithConnection(ctx context.Context, f func(c *rcon.Connection)) error
@@ -15,7 +18,8 @@ type logLoop struct {
 	logger lager.Logger
 	p      RConPool
 
-	lastSeen *StructuredLogLine
+	lastSeen       *StructuredLogLine
+	reconnectTries int
 }
 
 // NewLogLoop instantiates a log loop, which periodically requests logs from the game server, parses them and exposes them
@@ -24,8 +28,9 @@ type logLoop struct {
 // Not all events are currently parsed, however, each log line is added to the batches at least with the raw message.
 func NewLogLoop(l lager.Logger, p RConPool) *logLoop {
 	return &logLoop{
-		logger: l,
-		p:      p,
+		logger:         l,
+		p:              p,
+		reconnectTries: 0,
 	}
 }
 
@@ -39,6 +44,7 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 		log.Info("start")
 		for {
 			err := l.p.WithConnection(ctx, func(c *rcon.Connection) {
+				l.reconnectTries = 0
 				r, err := c.ShowLog(60 * time.Minute)
 				if err != nil {
 					log.Error("read", err)
@@ -79,6 +85,11 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 				return nil
 			}
 		case err := <-errs:
+			if os.IsTimeout(err) && l.reconnectTries < maxReconnectTries {
+				log.Error("connection-timeout", err)
+				l.reconnectTries += 1
+				continue
+			}
 			return err
 		}
 	}

@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 )
 
 const (
@@ -29,7 +30,7 @@ type socket struct {
 }
 
 func makeConnection(h string, p int) (net.Conn, []byte, error) {
-	con, err := net.Dial("tcp4", fmt.Sprintf("%s:%d", h, p))
+	con, err := net.DialTimeout("tcp4", fmt.Sprintf("%s:%d", h, p), 5*time.Second)
 	if err != nil {
 		return nil, nil, err
 	}
