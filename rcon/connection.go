@@ -41,7 +41,7 @@ func (c *Connection) WithContext(ctx context.Context) error {
 	if deadline, ok := ctx.Deadline(); ok {
 		return c.socket.con.SetDeadline(deadline)
 	} else {
-		return c.socket.con.SetDeadline(time.Time{})
+		return c.socket.con.SetDeadline(time.Now().Add(20 * time.Second))
 	}
 }
 
