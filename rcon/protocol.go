@@ -126,13 +126,16 @@ func (r *socket) command(cmd string) (string, error) {
 }
 
 func (r *socket) write(cmd string) error {
-	_, err := r.con.Write(r.xor([]byte(cmd)))
+	s, err := r.con.Write(r.xor([]byte(cmd)))
 	if errors.Is(err, syscall.EPIPE) {
 		err = r.reconnect(err)
 		if err != nil {
 			return err
 		}
 		return r.write(cmd)
+	}
+	if s != len(cmd) {
+		return fmt.Errorf("write wrote less or more bytes than command is long. Cmd: %s (%d), sent: %d", cmd, len(cmd), s)
 	}
 	if err != nil {
 		r.resetReconnectCount()
@@ -160,7 +163,7 @@ func (r *socket) reconnect(orig error) error {
 
 func (r *socket) read() ([]byte, error) {
 	var answer []byte
-	for {
+	for i := 0; i <= 30; i++ {
 		rb := make([]byte, MSGLEN)
 		l, err := r.con.Read(rb)
 		if errors.Is(err, syscall.ECONNRESET) {
