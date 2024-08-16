@@ -59,19 +59,18 @@ func (h *handler) listPlayers(w http.ResponseWriter, req *http.Request) {
 		jr.MethodNotAllowed(w)
 		return
 	}
-	c, err := h.pool.GetWithContext(req.Context())
+	err := h.pool.WithConnection(req.Context(), func(c *rcon.Connection) error {
+		r, err := c.PlayerIds()
+		if err != nil {
+			jr.InternalServerError(w, b(err.Error()))
+		} else {
+			jr.Ok(w, asJson(renderPlayerIds(r)))
+		}
+		return err
+	})
 	if err != nil {
 		jr.InternalServerError(w, b(err.Error()))
-		return
 	}
-	defer h.pool.Return(c)
-
-	r, err := c.PlayerIds()
-	if err != nil {
-		jr.InternalServerError(w, b(err.Error()))
-		return
-	}
-	jr.Ok(w, asJson(renderPlayerIds(r)))
 }
 
 func (h *handler) handlePlayer(w http.ResponseWriter, req *http.Request, name string) {
@@ -79,22 +78,21 @@ func (h *handler) handlePlayer(w http.ResponseWriter, req *http.Request, name st
 		jr.MethodNotAllowed(w)
 		return
 	}
-	c, err := h.pool.GetWithContext(req.Context())
+	err := h.pool.WithConnection(req.Context(), func(c *rcon.Connection) error {
+		pi, err := c.PlayerInfo(name)
+		if errors.Is(err, rcon.CommandFailed) {
+			jr.NotFound(w)
+		} else if err != nil {
+			jr.InternalServerError(w, b(err.Error()))
+		} else {
+			jr.Ok(w, asJson(renderPlayerInfo(pi)))
+		}
+		return err
+	})
 	if err != nil {
 		jr.InternalServerError(w, b(err.Error()))
 		return
 	}
-	defer h.pool.Return(c)
-
-	pi, err := c.PlayerInfo(name)
-	if errors.Is(err, rcon.CommandFailed) {
-		jr.NotFound(w)
-		return
-	} else if err != nil {
-		jr.InternalServerError(w, b(err.Error()))
-		return
-	}
-	jr.Ok(w, asJson(renderPlayerInfo(pi)))
 }
 
 func (h *handler) handleServer(w http.ResponseWriter, req *http.Request) {
@@ -110,12 +108,13 @@ func (h *handler) handleServer(w http.ResponseWriter, req *http.Request) {
 	wg.Add(3)
 	go func(r *ServerInfo) {
 		defer wg.Done()
-		f := func(c *rcon.Connection) {
+		f := func(c *rcon.Connection) error {
 			var err error
 			r.Name, err = c.ServerName()
 			if err != nil {
 				cErr = append(cErr, err)
 			}
+			return err
 		}
 
 		if err := h.pool.WithConnection(req.Context(), f); err != nil {
@@ -124,13 +123,15 @@ func (h *handler) handleServer(w http.ResponseWriter, req *http.Request) {
 	}(res)
 	go func(r *ServerInfo) {
 		defer wg.Done()
-		f := func(c *rcon.Connection) {
+		f := func(c *rcon.Connection) error {
 			p, mp, err := c.Slots()
 			if err != nil {
 				cErr = append(cErr, err)
+			} else {
+				res.PlayerCount = p
+				res.MaxPlayers = mp
 			}
-			res.PlayerCount = p
-			res.MaxPlayers = mp
+			return err
 		}
 
 		if err := h.pool.WithConnection(req.Context(), f); err != nil {
@@ -139,19 +140,20 @@ func (h *handler) handleServer(w http.ResponseWriter, req *http.Request) {
 	}(res)
 	go func(r *ServerInfo) {
 		defer wg.Done()
-		f := func(c *rcon.Connection) {
+		f := func(c *rcon.Connection) error {
 			state, err := c.GameState()
 			if err != nil {
 				cErr = append(cErr, err)
-				return
+			} else {
+				r.RemainingTime = state.RemainingTime.String()
+				r.Map = state.Map
+				r.NextMap = state.NextMap
+				r.GameScore.Allies = state.Score.Allies
+				r.GameScore.Axis = state.Score.Axis
+				r.Players.Allies = state.Players.Allies
+				r.Players.Axis = state.Players.Axis
 			}
-			r.RemainingTime = state.RemainingTime.String()
-			r.Map = state.Map
-			r.NextMap = state.NextMap
-			r.GameScore.Allies = state.Score.Allies
-			r.GameScore.Axis = state.Score.Axis
-			r.Players.Allies = state.Players.Allies
-			r.Players.Axis = state.Players.Axis
+			return err
 		}
 
 		if err := h.pool.WithConnection(req.Context(), f); err != nil {
@@ -182,10 +184,12 @@ func (h *handler) getTeamView(ctx context.Context) (TeamView, error) {
 	if err != nil {
 		return res, err
 	}
-	defer h.pool.Return(c)
+	var cerr error
+	defer h.pool.Return(c, cerr)
 
 	v, err := c.PlayerIds()
 	if err != nil {
+		cerr = err
 		return res, err
 	}
 
@@ -263,10 +267,13 @@ func (h *handler) guessSquadType(info rcon.PlayerInfo) SquadType {
 }
 
 func (h *handler) requestPlayerInfo(ctx context.Context, name string) (rcon.PlayerInfo, error) {
-	r, err := h.pool.GetWithContext(ctx)
-	if err != nil {
-		return rcon.PlayerInfo{}, err
-	}
-	defer h.pool.Return(r)
-	return r.PlayerInfo(name)
+	var (
+		result rcon.PlayerInfo
+		err    error
+	)
+	err = h.pool.WithConnection(ctx, func(c *rcon.Connection) error {
+		result, err = c.PlayerInfo(name)
+		return err
+	})
+	return result, err
 }

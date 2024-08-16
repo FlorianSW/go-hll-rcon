@@ -5,7 +5,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 	"sync"
+	"syscall"
 	"time"
 )
 
@@ -71,12 +73,20 @@ func (p *ConnectionPool) SetMaxIdle(mi int) {
 // Return returns a previously gathered Connection from GetWithContext back to the pool for later use. The Connection
 // might either be closed, put into a pool of "hot", idle connections or directly returned to a queued GetWithContext
 // request.
-func (p *ConnectionPool) Return(c *Connection) {
+func (p *ConnectionPool) Return(c *Connection, err error) {
 	l := p.logger.Session("return", lager.Data{"id": c.id})
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	if len(p.queued) != 0 {
+	if err != nil &&
+		(os.IsTimeout(err) ||
+			errors.Is(err, syscall.ECONNRESET) ||
+			errors.Is(err, syscall.ECONNREFUSED) ||
+			errors.Is(err, syscall.ECONNABORTED)) {
+		l.Debug("retire-broken", lager.Data{"error": err})
+		c.socket.Close()
+		p.numOpen--
+	} else if len(p.queued) != 0 {
 		r := p.queued[0]
 		l.Debug("re-using-for-queue")
 		p.queued = p.queued[1:]
@@ -154,14 +164,15 @@ func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error
 	return nc, nc.WithContext(ctx)
 }
 
-func (p *ConnectionPool) WithConnection(ctx context.Context, f func(c *Connection)) error {
+func (p *ConnectionPool) WithConnection(ctx context.Context, f func(c *Connection) error) error {
 	c, err := p.GetWithContext(ctx)
 	if err != nil {
 		return err
 	}
-	defer p.Return(c)
+	var cerr error
+	defer p.Return(c, cerr)
 
-	f(c)
+	cerr = f(c)
 	return nil
 }
 

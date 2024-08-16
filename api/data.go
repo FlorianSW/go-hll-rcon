@@ -14,8 +14,8 @@ var (
 
 type RConPool interface {
 	GetWithContext(ctx context.Context) (*rcon.Connection, error)
-	WithConnection(ctx context.Context, f func(c *rcon.Connection)) error
-	Return(c *rcon.Connection)
+	WithConnection(ctx context.Context, f func(c *rcon.Connection) error) error
+	Return(c *rcon.Connection, err error)
 }
 
 type TeamView map[string]*Team

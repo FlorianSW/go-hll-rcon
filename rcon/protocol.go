@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net"
+	"os"
 	"strconv"
 	"strings"
 	"syscall"
@@ -166,7 +167,7 @@ func (r *socket) read() ([]byte, error) {
 	for i := 0; i <= 30; i++ {
 		rb := make([]byte, MSGLEN)
 		l, err := r.con.Read(rb)
-		if errors.Is(err, syscall.ECONNRESET) {
+		if errors.Is(err, syscall.ECONNRESET) || os.IsTimeout(err) {
 			err = r.reconnect(err)
 			if err != nil {
 				return nil, err

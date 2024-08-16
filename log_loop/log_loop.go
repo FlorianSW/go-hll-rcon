@@ -4,14 +4,11 @@ import (
 	"code.cloudfoundry.org/lager"
 	"context"
 	"github.com/floriansw/go-hll-rcon/rcon"
-	"os"
 	"time"
 )
 
-const maxReconnectTries = 10
-
 type RConPool interface {
-	WithConnection(ctx context.Context, f func(c *rcon.Connection)) error
+	WithConnection(ctx context.Context, f func(c *rcon.Connection) error) error
 }
 
 type logLoop struct {
@@ -43,7 +40,7 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 	go func() {
 		log.Info("start")
 		for {
-			err := l.p.WithConnection(ctx, func(c *rcon.Connection) {
+			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
 				l.reconnectTries = 0
 				r, err := c.ShowLog(60 * time.Minute)
 				if err != nil {
@@ -53,6 +50,7 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 					log.Debug("read", lager.Data{"no": len(r)})
 					lines <- r
 				}
+				return err
 			})
 			if err != nil {
 				log.Error("init", err)
@@ -85,11 +83,6 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 				return nil
 			}
 		case err := <-errs:
-			if os.IsTimeout(err) && l.reconnectTries < maxReconnectTries {
-				log.Error("connection-timeout", err)
-				l.reconnectTries += 1
-				continue
-			}
 			return err
 		}
 	}
