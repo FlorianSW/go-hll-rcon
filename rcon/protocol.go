@@ -66,7 +66,7 @@ func (r *socket) login() error {
 		return err
 	}
 
-	res, err := r.read()
+	res, err := r.read(false)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (r *socket) listCommand(cmd string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	a, err := r.read()
+	a, err := r.read(false)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func (r *socket) listCommand(cmd string) ([]string, error) {
 			break
 		}
 		var ir []byte
-		ir, err = r.read()
+		ir, err = r.read(false)
 		if err != nil {
 			panic(err)
 		}
@@ -116,7 +116,7 @@ func (r *socket) command(cmd string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	a, err := r.read()
+	a, err := r.read(false)
 	if err != nil {
 		return "", err
 	}
@@ -162,12 +162,16 @@ func (r *socket) reconnect(orig error) error {
 	return nil
 }
 
-func (r *socket) read() ([]byte, error) {
+// read reads data from the connection, until data is returned or the connection times out.
+// canTimeout indicates if a timeout is expected. This is actually only expected for the showlog command.
+// otherwise, if a timeout occurs, the socket will automatically try to reconnect, assuming the connection is broken.
+// If the reconnect fails multiple times, the underlying error is returned.
+func (r *socket) read(canTimeout bool) ([]byte, error) {
 	var answer []byte
 	for i := 0; i <= 30; i++ {
 		rb := make([]byte, MSGLEN)
 		l, err := r.con.Read(rb)
-		if errors.Is(err, syscall.ECONNRESET) || os.IsTimeout(err) {
+		if errors.Is(err, syscall.ECONNRESET) || (!canTimeout && os.IsTimeout(err)) {
 			err = r.reconnect(err)
 			if err != nil {
 				return nil, err

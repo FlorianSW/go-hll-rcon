@@ -140,7 +140,7 @@ func (c *Connection) continueRead(pCtx context.Context) ([]byte, error) {
 	defer cancel()
 	defer func() { _ = c.WithContext(pCtx) }()
 	_ = c.WithContext(ctx)
-	next, err := c.socket.read()
+	next, err := c.socket.read(true)
 	return next, err
 }
 
