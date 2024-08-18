@@ -17,6 +17,10 @@ const (
 )
 
 var (
+	ErrWriteSentUnequal = errors.New("write wrote less or more bytes than command is long")
+)
+
+var (
 	CommandFailed          = errors.New("FAIL")
 	ReconnectTriesExceeded = errors.New("there are no reconnects left")
 )
@@ -136,7 +140,7 @@ func (r *socket) write(cmd string) error {
 		return r.write(cmd)
 	}
 	if s != len(cmd) {
-		return fmt.Errorf("write wrote less or more bytes than command is long. Cmd: %s (%d), sent: %d", cmd, len(cmd), s)
+		return fmt.Errorf("%w Cmd: %s (%d), sent: %d", ErrWriteSentUnequal, cmd, len(cmd), s)
 	}
 	if err != nil {
 		r.resetReconnectCount()

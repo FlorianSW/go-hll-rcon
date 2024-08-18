@@ -80,6 +80,7 @@ func (p *ConnectionPool) Return(c *Connection, err error) {
 
 	if err != nil &&
 		(os.IsTimeout(err) ||
+			errors.Is(err, ErrWriteSentUnequal) ||
 			errors.Is(err, syscall.ECONNRESET) ||
 			errors.Is(err, syscall.ECONNREFUSED) ||
 			errors.Is(err, syscall.ECONNABORTED)) {
