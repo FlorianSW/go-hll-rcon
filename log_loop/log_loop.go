@@ -83,7 +83,9 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 				return nil
 			}
 		case err := <-errs:
-			return err
+			if !rcon.IsBrokenHllConnection(err) {
+				return err
+			}
 		}
 	}
 }
