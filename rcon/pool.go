@@ -70,6 +70,15 @@ func (p *ConnectionPool) SetMaxIdle(mi int) {
 	}
 }
 
+func IsBrokenHllConnection(err error) bool {
+	return err != nil &&
+		(os.IsTimeout(err) ||
+			errors.Is(err, ErrWriteSentUnequal) ||
+			errors.Is(err, syscall.ECONNRESET) ||
+			errors.Is(err, syscall.ECONNREFUSED) ||
+			errors.Is(err, syscall.ECONNABORTED))
+}
+
 // Return returns a previously gathered Connection from GetWithContext back to the pool for later use. The Connection
 // might either be closed, put into a pool of "hot", idle connections or directly returned to a queued GetWithContext
 // request.
@@ -78,12 +87,7 @@ func (p *ConnectionPool) Return(c *Connection, err error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	if err != nil &&
-		(os.IsTimeout(err) ||
-			errors.Is(err, ErrWriteSentUnequal) ||
-			errors.Is(err, syscall.ECONNRESET) ||
-			errors.Is(err, syscall.ECONNREFUSED) ||
-			errors.Is(err, syscall.ECONNABORTED)) {
+	if IsBrokenHllConnection(err) {
 		l.Debug("retire-broken", lager.Data{"error": err})
 		c.socket.Close()
 		p.numOpen--
