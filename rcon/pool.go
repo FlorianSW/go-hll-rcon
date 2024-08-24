@@ -76,7 +76,8 @@ func IsBrokenHllConnection(err error) bool {
 			errors.Is(err, ErrWriteSentUnequal) ||
 			errors.Is(err, syscall.ECONNRESET) ||
 			errors.Is(err, syscall.ECONNREFUSED) ||
-			errors.Is(err, syscall.ECONNABORTED))
+			errors.Is(err, syscall.ECONNREFUSED) ||
+			errors.Is(err, syscall.EPIPE))
 }
 
 // Return returns a previously gathered Connection from GetWithContext back to the pool for later use. The Connection
