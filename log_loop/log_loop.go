@@ -25,9 +25,8 @@ type logLoop struct {
 // Not all events are currently parsed, however, each log line is added to the batches at least with the raw message.
 func NewLogLoop(l lager.Logger, p RConPool) *logLoop {
 	return &logLoop{
-		logger:         l,
-		p:              p,
-		reconnectTries: 0,
+		logger: l,
+		p:      p,
 	}
 }
 
@@ -41,7 +40,6 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 		log.Info("start")
 		for {
 			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
-				l.reconnectTries = 0
 				r, err := c.ShowLog(60 * time.Minute)
 				if err != nil {
 					log.Error("read", err)

@@ -101,7 +101,7 @@ func (r *socket) listCommand(cmd string) ([]string, error) {
 		var ir []byte
 		ir, err = r.read(false)
 		if err != nil {
-			panic(err)
+			return lines, err
 		}
 		a = append(a, ir...)
 	}

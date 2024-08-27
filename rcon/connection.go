@@ -79,27 +79,33 @@ func (c *Connection) ShowLog(d time.Duration) ([]string, error) {
 		return nil, nil
 	}
 	re := regexp.MustCompile("(?m)^(\\[.+? \\(\\d+\\)])")
-	for {
+	buildResult := func(s string) []string {
+		lines := split(re, r, -1)
+		var result []string
+		for _, line := range lines {
+			if line == "" {
+				continue
+			}
+			result = append(result, strings.ReplaceAll(line, "\n", " "))
+		}
+		return result
+	}
+	for i := 0; i <= 30; i++ {
 		// HLL RCon does not indicate the length of data returned for the command, instead we need to read as long as
 		// we do not get any data anymore. For that we loop through read() until there is no data to be received anymore.
 		// Unfortunately when the server does not have data anymore, it simply does not return anything (other than
 		// EOF e.g.).
 		next, err := c.continueRead(c.Context())
 		if errors.Is(err, os.ErrDeadlineExceeded) {
-			lines := split(re, r, -1)
-			var result []string
-			for _, line := range lines {
-				if line == "" {
-					continue
-				}
-				result = append(result, strings.ReplaceAll(line, "\n", " "))
-			}
-			return result, nil
+			return buildResult(r), nil
 		} else if err != nil {
 			return nil, err
 		}
 		r += string(next)
 	}
+	// TODO Remove println later
+	println("reached end of showlog continueRead loop, while it should've timed out. Result: " + r)
+	return buildResult(r), nil
 }
 
 func split(re *regexp.Regexp, s string, n int) []string {
