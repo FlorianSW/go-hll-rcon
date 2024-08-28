@@ -92,7 +92,7 @@ func (r *socket) listCommand(cmd string) ([]string, error) {
 	lines := strings.Split(string(a), "\t")
 	l, err := strconv.Atoi(lines[0])
 	if err != nil {
-		return nil, err
+		return []string{string(a)}, err
 	}
 	for {
 		if strings.Count(string(a), "\t")-1 >= l {

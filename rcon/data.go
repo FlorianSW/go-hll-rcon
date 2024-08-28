@@ -1,6 +1,13 @@
 package rcon
 
-import "time"
+import (
+	"errors"
+	"time"
+)
+
+var (
+	ErrUnsupportedGameMode = errors.New("the command is not available for the current gamemode")
+)
 
 type PlayerId struct {
 	Name      string
@@ -55,3 +62,22 @@ type GameState struct {
 	Map           string
 	NextMap       string
 }
+
+type CapPoint string
+
+func (c CapPoint) String() string {
+	return string(c)
+}
+
+type CapPoints []CapPoint
+
+func (c CapPoints) Exists(p string) bool {
+	for _, point := range c {
+		if p == point.String() {
+			return true
+		}
+	}
+	return false
+}
+
+type MapCapPoints []CapPoints

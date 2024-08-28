@@ -339,6 +339,52 @@ func (c *Connection) AddToMapRotation(mapName string, afterMap string) error {
 	return err
 }
 
+// ObjectivePoints returns a list of available cap points for the current map. This is a two-dimensional list of row/column index
+// and the available cap names for that row. The index will be 0-5 from left-to-right for horizontal maps and top-to-bottom
+// for vertical map layouts.
+// Skirmish maps do not have any cap points available, as the cap layout is fixed (mid-cap only). Using this command for
+// a skirmish map will return a ErrUnsupportedGameMode error.
+func (c *Connection) ObjectivePoints() (MapCapPoints, error) {
+	points := make(MapCapPoints, 5)
+	for i := 0; i < 5; i++ {
+		obj, err := c.ListCommand("get objectiverow_" + strconv.Itoa(i))
+		if err != nil && len(obj) == 1 && obj[0] == "Cannot execute command for this gamemode." {
+			return nil, ErrUnsupportedGameMode
+		} else if err != nil {
+			return nil, err
+		}
+		points[i] = CapPoints{}
+		for _, s := range obj {
+			points[i] = append(points[i], CapPoint(s))
+		}
+	}
+	return points, nil
+}
+
+// GameLayout changes the cap layout of the current map to the provided one. The points parameter is required to be a
+// slice of 5 elements, identifying the name of the cap point for each row/column index of the new cap layout.
+// The ordering is always left-to-right for horizontal maps and top-to-bottom for vertical map layouts.
+//
+// If at least one cap point is invalid for the current map, this method returns an error.
+// If the current game mode does not support changing the cap layout, a ErrUnsupportedGameMode error is returned (e.g.
+// in Skirmish game mode).
+func (c *Connection) GameLayout(points []string) error {
+	if len(points) != 5 {
+		return errors.New("exactly 5 cap points need to be provided")
+	}
+	avail, err := c.ObjectivePoints()
+	if err != nil {
+		return err
+	}
+	for i, point := range points {
+		if !avail[i].Exists(point) {
+			return fmt.Errorf("%s cap point is invalid for %d", point, i)
+		}
+	}
+	_, err = c.Command(fmt.Sprintf("gamelayout \"%s\"", strings.Join(points, "\" \"")))
+	return err
+}
+
 // PlayerInfo returns more information about a specific player by using its name. The player needs to be connected to
 // the server for this command to succeed.
 func (c *Connection) PlayerInfo(name string) (PlayerInfo, error) {
