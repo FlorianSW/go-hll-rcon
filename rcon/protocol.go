@@ -153,11 +153,11 @@ func (r *socket) reconnect(orig error) error {
 		return ReconnectTriesExceeded
 	}
 	con, xorKey, err := makeConnection(r.host, r.port)
-	r.con = con
-	r.key = xorKey
 	if err != nil {
 		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)
 	}
+	r.con = con
+	r.key = xorKey
 	r.reconnectCount++
 	err = r.login()
 	if err != nil {
