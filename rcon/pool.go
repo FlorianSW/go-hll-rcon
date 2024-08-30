@@ -85,6 +85,7 @@ func IsBrokenHllConnection(err error) bool {
 // request.
 func (p *ConnectionPool) Return(c *Connection, err error) {
 	l := p.logger.Session("return", lager.Data{"id": c.id})
+	l.Debug("wait-for-lock")
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -121,13 +122,14 @@ func (p *ConnectionPool) Return(c *Connection, err error) {
 func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error) {
 	deadline, ok := ctx.Deadline()
 	l := p.logger.Session("get-with-context", lager.Data{"deadline": deadline, "hasDeadline": ok, "queued": len(p.queued), "open": p.numOpen, "idles": len(p.idles)})
+	l.Debug("wait-for-lock")
 	p.mu.Lock()
 
 	if len(p.idles) > 0 {
+		defer p.mu.Unlock()
 		l.Debug("from-idle-pool")
 		for _, c := range p.idles {
 			delete(p.idles, c.id)
-			p.mu.Unlock()
 			return c, c.WithContext(ctx)
 		}
 	}

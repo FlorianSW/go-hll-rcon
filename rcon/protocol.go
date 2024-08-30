@@ -2,6 +2,7 @@ package rcon
 
 import (
 	"bytes"
+	"context"
 	"errors"
 	"fmt"
 	"net"
@@ -32,10 +33,34 @@ type socket struct {
 	host           string
 	port           int
 	reconnectCount int
+
+	lastContext *context.Context
+}
+
+func (r *socket) SetContext(ctx context.Context) error {
+	r.lastContext = &ctx
+	if deadline, ok := ctx.Deadline(); ok {
+		return r.con.SetDeadline(deadline)
+	} else {
+		return r.con.SetDeadline(time.Now().Add(20 * time.Second))
+	}
+}
+
+func (r *socket) Context() context.Context {
+	if r.lastContext != nil {
+		return *r.lastContext
+	}
+	return context.Background()
 }
 
 func makeConnection(h string, p int) (net.Conn, []byte, error) {
 	con, err := net.DialTimeout("tcp4", fmt.Sprintf("%s:%d", h, p), 5*time.Second)
+	if err != nil {
+		return nil, nil, err
+	}
+	// use an intermediate timeout, it's unlikely that a new connection times out, however, if it does for whatever reason
+	// it might get stuck here
+	err = con.SetDeadline(time.Now().Add(20 * time.Second))
 	if err != nil {
 		return nil, nil, err
 	}
@@ -152,13 +177,17 @@ func (r *socket) reconnect(orig error) error {
 	if r.reconnectCount > 3 {
 		return ReconnectTriesExceeded
 	}
+	r.reconnectCount++
 	con, xorKey, err := makeConnection(r.host, r.port)
+	r.con = con
+	err = r.SetContext(r.Context())
+	if err != nil {
+		return err
+	}
+	r.key = xorKey
 	if err != nil {
 		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)
 	}
-	r.con = con
-	r.key = xorKey
-	r.reconnectCount++
 	err = r.login()
 	if err != nil {
 		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)

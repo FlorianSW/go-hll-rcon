@@ -24,7 +24,6 @@ import (
 type Connection struct {
 	id     string
 	socket *socket
-	parent *context.Context
 }
 
 // WithContext inherits applicable values from the given context.Context and applies them to the underlying
@@ -37,19 +36,7 @@ type Connection struct {
 //
 // Returns an error if context.Context values could not be applied to the underlying Connection.
 func (c *Connection) WithContext(ctx context.Context) error {
-	c.parent = &ctx
-	if deadline, ok := ctx.Deadline(); ok {
-		return c.socket.con.SetDeadline(deadline)
-	} else {
-		return c.socket.con.SetDeadline(time.Now().Add(20 * time.Second))
-	}
-}
-
-func (c *Connection) Context() context.Context {
-	if c.parent != nil {
-		return *c.parent
-	}
-	return context.Background()
+	return c.socket.SetContext(ctx)
 }
 
 // ListCommand executes the raw command provided and returns the result as a list of strings. A list with regard to
@@ -95,7 +82,7 @@ func (c *Connection) ShowLog(d time.Duration) ([]string, error) {
 		// we do not get any data anymore. For that we loop through read() until there is no data to be received anymore.
 		// Unfortunately when the server does not have data anymore, it simply does not return anything (other than
 		// EOF e.g.).
-		next, err := c.continueRead(c.Context())
+		next, err := c.continueRead(c.socket.Context())
 		if errors.Is(err, os.ErrDeadlineExceeded) {
 			return buildResult(r), nil
 		} else if err != nil {
