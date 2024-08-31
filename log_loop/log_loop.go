@@ -1,9 +1,10 @@
 package log_loop
 
 import (
-	"code.cloudfoundry.org/lager"
 	"context"
 	"github.com/floriansw/go-hll-rcon/rcon"
+	"io"
+	"log/slog"
 	"time"
 )
 
@@ -11,27 +12,42 @@ type RConPool interface {
 	WithConnection(ctx context.Context, f func(c *rcon.Connection) error) error
 }
 
-type logLoop struct {
-	logger lager.Logger
+type LogLoop struct {
+	logger *slog.Logger
 	p      RConPool
 
 	lastSeen       *StructuredLogLine
 	reconnectTries int
 }
 
+type LogLoopOptions struct {
+	Logger *slog.Logger
+	Pool   RConPool
+}
+
 // NewLogLoop instantiates a log loop, which periodically requests logs from the game server, parses them and exposes them
 // in batches to the caller.
 //
 // Not all events are currently parsed, however, each log line is added to the batches at least with the raw message.
-func NewLogLoop(l lager.Logger, p RConPool) *logLoop {
-	return &logLoop{
-		logger: l,
-		p:      p,
+func NewLogLoop(opts LogLoopOptions) *LogLoop {
+	if opts.Logger == nil {
+		opts.Logger = slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError}))
+	}
+	return &LogLoop{
+		logger: opts.Logger,
+		p:      opts.Pool,
 	}
 }
 
-func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) error {
-	log := l.logger.Session("log-loop-run")
+// Run starts polling logs from the server. Each time at least one new log line is discovered, the passed function f
+// is called with an undefined number of log lines as it's only argument. Whenever f is called, at least one log line
+// will be in the log line slice.
+//
+// The return value of f is a boolean indicating if polling for new log lines should continue. Returning true will stop
+// this run with no error. Polling can be restarted by calling Run again.
+// Returning false will result in Run to continue polling for new log lines.
+func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) error {
+	log := l.logger.With("action", "log-loop-run")
 	lines := make(chan []string)
 	errs := make(chan error)
 	l.lastSeen = nil
@@ -45,7 +61,7 @@ func (l *logLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 					log.Error("read", err)
 					errs <- err
 				} else {
-					log.Debug("read", lager.Data{"no": len(r)})
+					log.Debug("read", "no", len(r))
 					lines <- r
 				}
 				return err

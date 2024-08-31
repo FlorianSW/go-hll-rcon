@@ -1,10 +1,11 @@
 package rcon
 
 import (
-	"code.cloudfoundry.org/lager"
 	"context"
 	"errors"
 	"fmt"
+	"io"
+	"log/slog"
 	"os"
 	"sync"
 	"syscall"
@@ -13,24 +14,70 @@ import (
 
 var (
 	defaultTimeout = 5 * time.Second
-	Timeout        = errors.New("connection request timed out before a connection was available")
 )
 
-func NewConnectionPool(logger lager.Logger, h string, p int, pw string) *ConnectionPool {
+type ConnectionPoolOptions struct {
+	// Logger is an optional logging instance. If passed in, the pool will issue debug information to this logger instance
+	// for, well, debugging purposes. In a production environment, this instance is not required and can be nil.
+	// The passed in logger instance is not modified, meaning if it logs on a logging level higher than slog.LevelDebug,
+	// no messages will be seen from the pool.
+	Logger *slog.Logger
+	// Hostname is the hostname/IP address of the Hell Let Loose server where it can be reached.
+	// Only IPv4 addresses are supported.
+	Hostname string
+	// Port is the Hell Let Loose RCon port of the server. The RCon port can usually be found in the Game Service Provider's
+	// server management console.
+	Port int
+	// Password is the RCon password of the Hell Let Loose server used to authenticate.
+	Password string
+
+	// MaxOpenConnections is the maximum number of open connections the pool can not exceed. A request for a connection
+	// when the pool reached this size (and no idle connections are available) will be put into a queue and be served
+	// once a connection is returned to the pool. This queue is on the best effort basis and might fail based on the
+	// provided deadline to GetWithContext.
+	// The number of requests that can be put into a queue is not limited.
+	MaxOpenConnections *int
+	// MaxIdleConnections is the maximum number of idle connections in the pool. Idle connections are established connections to
+	// the server (warm) but are not currently in use. Warm connections are preferably used to fulfill connection requests
+	// (GetWithContext) to reduce the overhead of opening and closing a connection on every request. Consider a high max
+	// idle connection to benefit from re-using connections as much as possible.
+	// MaxIdleConnections cannot be greater than MaxOpenConnections
+	MaxIdleConnections *int
+}
+
+func NewConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool, error) {
+	if opts.Logger == nil {
+		opts.Logger = slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError}))
+	}
+	if opts.Hostname == "" {
+		return nil, errors.New("hostname cannot be an empty string")
+	}
+	if opts.Port <= 0 || opts.Port > 65_536 {
+		return nil, errors.New("port must be a positive integer greater than 0 and lower than 65,536")
+	}
+	if toInt(opts.MaxOpenConnections) == 0 {
+		opts.MaxIdleConnections = fromInt(10)
+	}
+	if toInt(opts.MaxIdleConnections) == 0 {
+		opts.MaxIdleConnections = fromInt(10)
+	}
+	if toInt(opts.MaxIdleConnections) > toInt(opts.MaxOpenConnections) {
+		return nil, errors.New("the MaxIdleConnections cannot exceed MaxOpenConnections")
+	}
 	return &ConnectionPool{
-		logger:       logger.Session("pool", lager.Data{"host": h, "port": p}),
-		host:         h,
-		port:         p,
-		pw:           pw,
+		logger:       opts.Logger,
+		host:         opts.Hostname,
+		port:         opts.Port,
+		pw:           opts.Password,
 		mu:           sync.Mutex{},
 		idles:        map[string]*Connection{},
-		maxOpenCount: 10,
-		maxIdleCount: 10,
-	}
+		maxOpenCount: toInt(opts.MaxOpenConnections),
+		maxIdleCount: toInt(opts.MaxIdleConnections),
+	}, nil
 }
 
 type ConnectionPool struct {
-	logger       lager.Logger
+	logger       *slog.Logger
 	host         string
 	port         int
 	pw           string
@@ -47,29 +94,6 @@ type request struct {
 	errChan  chan error
 }
 
-// SetPoolSize sets the maximum number of open connections at any time. A request for a connection when the pool reached
-// this size (and no idle connections are available) will be put into a queue and be served once a connection is returned
-// to the pool. This queue is on a best effort basis and might fail based on the provided deadline to GetWithContext.
-func (p *ConnectionPool) SetPoolSize(s int) {
-	p.logger.Debug("set-pool-size", lager.Data{"old": p.maxOpenCount, "new": s})
-	p.maxOpenCount = s
-}
-
-// SetMaxIdle sets the maximum number of idle connections in the pool. Idle connections are established connections to
-// the server (warm) but are not ye/anymore used. Warm connections are preferably used to fulfill connection requests
-// (GetWithContext) to reduce the overhead of opening and closing a connection on every request. Consider a high max
-// idle connection to benefit from re-using connections as much as possible.
-func (p *ConnectionPool) SetMaxIdle(mi int) {
-	l := p.logger.Session("set-max-idle", lager.Data{"old": p.maxIdleCount, "new": mi})
-	if mi > p.maxOpenCount {
-		l.Info("exceeds-max-open")
-		p.maxIdleCount = p.maxOpenCount
-	} else {
-		l.Debug("set")
-		p.maxIdleCount = mi
-	}
-}
-
 func IsBrokenHllConnection(err error) bool {
 	return err != nil &&
 		(os.IsTimeout(err) ||
@@ -84,13 +108,13 @@ func IsBrokenHllConnection(err error) bool {
 // might either be closed, put into a pool of "hot", idle connections or directly returned to a queued GetWithContext
 // request.
 func (p *ConnectionPool) Return(c *Connection, err error) {
-	l := p.logger.Session("return", lager.Data{"id": c.id})
+	l := p.logger.With("action", "return", "id", c.id)
 	l.Debug("wait-for-lock")
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	if IsBrokenHllConnection(err) {
-		l.Debug("retire-broken", lager.Data{"error": err})
+		l.Debug("retire-broken", "error", err)
 		c.socket.Close()
 		p.numOpen--
 	} else if len(p.queued) != 0 {
@@ -121,7 +145,7 @@ func (p *ConnectionPool) Return(c *Connection, err error) {
 // GetWithContext might wait indefinitely.
 func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error) {
 	deadline, ok := ctx.Deadline()
-	l := p.logger.Session("get-with-context", lager.Data{"deadline": deadline, "hasDeadline": ok, "queued": len(p.queued), "open": p.numOpen, "idles": len(p.idles)})
+	l := p.logger.With("action", "get-with-context", "deadline", deadline, "hasDeadline", ok, "queued", len(p.queued), "open", p.numOpen, "idles", len(p.idles))
 	l.Debug("wait-for-lock")
 	p.mu.Lock()
 
@@ -135,7 +159,7 @@ func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error
 	}
 
 	if p.numOpen >= p.maxOpenCount {
-		l.Debug("queue-request", lager.Data{"queued": len(p.queued), "open": p.numOpen})
+		l.Debug("queue-request", "queued", len(p.queued), "open", p.numOpen)
 		req := request{
 			connChan: make(chan *Connection, 1),
 			errChan:  make(chan error, 1),
@@ -155,11 +179,11 @@ func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error
 		case err := <-req.errChan:
 			return nil, err
 		case <-time.After(timeout):
-			return nil, Timeout
+			return nil, newConnectionRequestTimeout(p.numOpen)
 		}
 	}
 
-	l.Debug("open-new", lager.Data{"queued": len(p.queued), "open": p.numOpen})
+	l.Debug("open-new", "queued", len(p.queued), "open", p.numOpen)
 	p.numOpen++
 	defer p.mu.Unlock()
 
@@ -172,6 +196,12 @@ func (p *ConnectionPool) GetWithContext(ctx context.Context) (*Connection, error
 	return nc, nc.WithContext(ctx)
 }
 
+// WithConnection gathers a connection from the pool, if available, and executes the passed in function f.
+// Once the function returns, the connection is correctly returned to the pool with the error returned from f to ensure
+// the connection is not kept.
+//
+// This is a helper to reduce the possibility a connection is obtained from the pool, but then not returned to it. It
+// is basically the same as using GetWithContext and Return in your own code.
 func (p *ConnectionPool) WithConnection(ctx context.Context, f func(c *Connection) error) error {
 	c, err := p.GetWithContext(ctx)
 	if err != nil {

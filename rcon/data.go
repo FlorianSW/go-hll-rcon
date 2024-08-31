@@ -2,6 +2,7 @@ package rcon
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -81,3 +82,21 @@ func (c CapPoints) Exists(p string) bool {
 }
 
 type MapCapPoints []CapPoints
+
+func newConnectionRequestTimeout(currentPoolSize int) connectionRequestTimeout {
+	return connectionRequestTimeout{
+		openConnections: currentPoolSize,
+	}
+}
+
+type connectionRequestTimeout struct {
+	openConnections int
+}
+
+func (c connectionRequestTimeout) Error() string {
+	return fmt.Sprintf("connection request timed out before a connection was available. Open connections: %d", c.openConnections)
+}
+
+func (c connectionRequestTimeout) Timeout() bool {
+	return true
+}

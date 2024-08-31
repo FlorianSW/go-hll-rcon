@@ -90,8 +90,6 @@ func (c *Connection) ShowLog(d time.Duration) ([]string, error) {
 		}
 		r += string(next)
 	}
-	// TODO Remove println later
-	println("reached end of showlog continueRead loop, while it should've timed out. Result: " + r)
 	return buildResult(r), nil
 }
 

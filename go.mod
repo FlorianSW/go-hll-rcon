@@ -3,7 +3,6 @@ module github.com/floriansw/go-hll-rcon
 go 1.19
 
 require (
-	code.cloudfoundry.org/lager v2.0.0+incompatible
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.24.2
 )

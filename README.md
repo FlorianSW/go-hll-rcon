@@ -11,21 +11,28 @@ Import the module as usual with go modules, then use it according to the example
 package main
 
 import (
-	"code.cloudfoundry.org/lager"
 	"context"
 	"github.com/floriansw/go-hll-rcon/rcon"
+	"log/slog"
 	"os"
 	"strconv"
 )
 
 func main() {
-	logger := lager.NewLogger("example")
-	logger.RegisterSink(lager.NewWriterSink(os.Stdout, lager.INFO))
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
 		panic(err)
 	}
-	p := rcon.NewConnectionPool(logger, os.Getenv("HOST"), port, os.Getenv("PASSWORD"))
+	p, err := rcon.NewConnectionPool(rcon.ConnectionPoolOptions{
+		Logger:   logger,
+		Hostname: os.Getenv("HOST"),
+		Port:     port,
+		Password: os.Getenv("PASSWORD"),
+	})
+	if err != nil {
+		panic(err)
+	}
 
 	err = p.WithConnection(context.Background(), func(c *rcon.Connection) error {
 		m, err := c.Maps()
