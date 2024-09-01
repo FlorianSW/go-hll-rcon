@@ -452,3 +452,250 @@ func (c *Connection) MessagePlayer(steamId string, message string) error {
 	_, err := c.Command(fmt.Sprintf("message %s %s", steamId, message))
 	return err
 }
+
+func (c *Connection) Profanities() ([]string, error) {
+	return c.ListCommand("get profanity")
+}
+
+func (c *Connection) AddProfanities(p []string) error {
+	_, err := c.Command(fmt.Sprintf("BanProfanity %s", strings.Join(p, ",")))
+	return err
+}
+
+func (c *Connection) RemoveProfanities(p []string) error {
+	_, err := c.Command(fmt.Sprintf("UnbanProfanity %s", strings.Join(p, ",")))
+	return err
+}
+
+func (c *Connection) Map() (string, error) {
+	return c.Command("get map")
+}
+
+func (c *Connection) Players() ([]string, error) {
+	return c.ListCommand("get players")
+}
+
+func (c *Connection) TempBans() ([]string, error) {
+	return c.ListCommand("get tempbans")
+}
+
+func (c *Connection) PermaBans() ([]string, error) {
+	return c.ListCommand("get permabans")
+}
+
+func (c *Connection) CurrentMapSequence() ([]string, error) {
+	v, err := c.Command("listcurrentmapsequence")
+	res := strings.Split(v, "\n")
+	return res[:len(res)-1], err
+}
+
+func (c *Connection) MapShuffleEnabled() (bool, error) {
+	v, err := c.Command("querymapshuffle")
+	return strings.HasSuffix(v, "TRUE"), err
+}
+
+func (c *Connection) SetMapShuffle(e bool) error {
+	current, err := c.MapShuffleEnabled()
+	if err != nil {
+		return err
+	}
+	if e == current {
+		return nil
+	}
+	_, err = c.Command("togglemapshuffle")
+	return err
+}
+
+func (c *Connection) TeamSwitchCooldown() (int, error) {
+	return asInt(c.Command("get teamswitchcooldown"))
+}
+
+func (c *Connection) SetTeamSwitchCooldown(m int) error {
+	_, err := c.Command(fmt.Sprintf("setteamswitchcooldown %d", m))
+	return err
+}
+
+func (c *Connection) AutobalanceThreashold() (int, error) {
+	return asInt(c.Command("get autobalancethreshold"))
+}
+
+func (c *Connection) SetAutobalanceThreshold(ms int) error {
+	_, err := c.Command(fmt.Sprintf("setautobalancethreshold %d", ms))
+	return err
+}
+
+func (c *Connection) IdleTimeout() (int, error) {
+	return asInt(c.Command("get idletime"))
+}
+
+func (c *Connection) SetIdleTimeout(m int) error {
+	_, err := c.Command(fmt.Sprintf("setkickidletime %d", m))
+	return err
+}
+
+func (c *Connection) MaxPingAutokick() (int, error) {
+	return asInt(c.Command("get highping"))
+}
+
+func (c *Connection) SetMaxPingAutokick(ms int) error {
+	_, err := c.Command(fmt.Sprintf("sethighping %d", ms))
+	return err
+}
+
+func (c *Connection) QueueLength() (int, error) {
+	return asInt(c.Command("get maxqueuedplayers"))
+}
+
+func (c *Connection) SetQueueLength(ql int) error {
+	_, err := c.Command(fmt.Sprintf("setmaxqueuedplayers %d", ql))
+	return err
+}
+
+func (c *Connection) VipSlots() (int, error) {
+	return asInt(c.Command("get numvipslots"))
+}
+
+func (c *Connection) SetVipSlots(vs int) error {
+	_, err := c.Command(fmt.Sprintf("setnumvipslots %d", vs))
+	return err
+}
+
+func (c *Connection) SetAutobalanceEnabled(e bool) error {
+	v := "off"
+	if e {
+		v = "on"
+	}
+	_, err := c.Command(fmt.Sprintf("setautobalanceenabled %s", v))
+	return err
+}
+
+func (c *Connection) AutobalanceEnabled() (bool, error) {
+	v, err := c.Command("get autobalanceenabled")
+	if err != nil {
+		return false, err
+	}
+	return v == "on", nil
+}
+
+func (c *Connection) VotekickThreshold() (int, error) {
+	return asInt(c.Command("get votekickthreshold"))
+}
+
+func (c *Connection) SetWelcomeMessage(msg string) error {
+	_, err := c.Command(fmt.Sprintf("say %s", msg))
+	return err
+}
+
+func (c *Connection) SetBroadcast(msg string) error {
+	_, err := c.Command(fmt.Sprintf("broadcast %s", msg))
+	return err
+}
+
+func (c *Connection) VipIds() ([]VipId, error) {
+	v, err := c.ListCommand("get vipids")
+	if err != nil {
+		return nil, err
+	}
+	var result []VipId
+	for _, s := range v {
+		parts := strings.SplitN(s, " ", 2)
+		result = append(result, VipId{
+			Name:      strings.ReplaceAll(parts[1], "\"", ""),
+			SteamId64: parts[0],
+		})
+	}
+	return result, nil
+}
+
+func (c *Connection) VotekickEnabled() (bool, error) {
+	v, err := c.Command("get votekickenabled")
+	if err != nil {
+		return false, err
+	}
+	return v == "on", nil
+}
+
+func (c *Connection) SetVotekickEnabled(e bool) error {
+	v := "off"
+	if e {
+		v = "on"
+	}
+	_, err := c.Command(fmt.Sprintf("setvotekickenabled %s", v))
+	return err
+}
+
+func (c *Connection) ResetVotekickThreshold() error {
+	_, err := c.Command("resetvotekickthreshold")
+	return err
+}
+
+// SwitchTeamOnDeath switches the player to the opposing team  after the next death.
+func (c *Connection) SwitchTeamOnDeath(name string) error {
+	_, err := c.Command(fmt.Sprintf("switchteamondeath %s", name))
+	return err
+}
+
+// SwitchTeam switches the player from their current team to the opposing team instantly.
+func (c *Connection) SwitchTeam(name string) error {
+	_, err := c.Command(fmt.Sprintf("switchteamnow %s", name))
+	return err
+}
+
+// Punish kills the player for the given reason. The player can spawn again afterward.
+func (c *Connection) Punish(name, reason string) error {
+	_, err := c.Command(fmt.Sprintf("punish \"%s\" \"%s\"", name, reason))
+	return err
+}
+
+// Kick kicks the player with the given name from the server. The reason will be displayed to the user in the kick screen.
+func (c *Connection) Kick(name, reason string) error {
+	_, err := c.Command(fmt.Sprintf("kick \"%s\" \"%s\"", name, reason))
+	return err
+}
+
+// TempBan bans the player for the provided duration with the provided reason.
+// This player will not be able to join the server anymore until the duration elapsed.
+// The duration d will be rounded to full hours.
+// The adminName parameter is optional and can be an empty string.
+func (c *Connection) TempBan(playerId string, d time.Duration, reason, adminName string) error {
+	_, err := c.Command(fmt.Sprintf("tempban \"%s\" %d \"%s\" \"%s\"", playerId, int(d.Hours()), reason, adminName))
+	return err
+}
+
+// PermaBan bans the player permanently with the provided reason. This player will not be able to join the server anymore.
+// The adminName parameter is optional and can be an empty string.
+func (c *Connection) PermaBan(playerId, reason, adminName string) error {
+	_, err := c.Command(fmt.Sprintf("tempban \"%s\" \"%s\" \"%s\"", playerId, reason, adminName))
+	return err
+}
+
+// RemoveTempBan removes a temp ban for this player.
+func (c *Connection) RemoveTempBan(playerId string) error {
+	_, err := c.Command(fmt.Sprintf("pardontempban %s", playerId))
+	return err
+}
+
+// RemovePermaBan removes a permanent ban for this player.
+func (c *Connection) RemovePermaBan(playerId string) error {
+	_, err := c.Command(fmt.Sprintf("pardonpermaban %s", playerId))
+	return err
+}
+
+// AddVip adds a player to the list of players who can utilize the vip slots (set by SetVipSlots).
+func (c *Connection) AddVip(id VipId) error {
+	_, err := c.Command(fmt.Sprintf("vipadd %s %s", id.SteamId64, id.Name))
+	return err
+}
+
+// RemoveVip removes the player from the VIP list, if they are on the list.
+func (c *Connection) RemoveVip(id VipId) error {
+	_, err := c.Command(fmt.Sprintf("vipdel %s", id.SteamId64))
+	return err
+}
+
+func asInt(v string, err error) (int, error) {
+	if err != nil {
+		return 0, err
+	}
+	return strconv.Atoi(v)
+}

@@ -21,6 +21,11 @@ type AdminId struct {
 	Role      string
 }
 
+type VipId struct {
+	Name      string
+	SteamId64 string
+}
+
 type Unit struct {
 	Id   int
 	Name string
