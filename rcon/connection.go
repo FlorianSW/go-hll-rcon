@@ -182,7 +182,7 @@ func (c *Connection) AdminGroups() ([]string, error) {
 // AddAdmin adds a player to the list of admins with the specified role. The role needs to be a role available on the
 // server. Use the AdminGroups command to get available roles.
 func (c *Connection) AddAdmin(id AdminId) error {
-	_, err := c.Command(fmt.Sprintf("adminadd %s %s %s", id.SteamId64, id.Role, id.Name))
+	_, err := c.Command(fmt.Sprintf("adminadd %s %s %s", id.SteamId64, listSafeMessage(id.Role), listSafeMessage(id.Name)))
 	return err
 }
 
@@ -458,11 +458,19 @@ func (c *Connection) Profanities() ([]string, error) {
 }
 
 func (c *Connection) AddProfanities(p []string) error {
-	_, err := c.Command(fmt.Sprintf("BanProfanity %s", strings.Join(p, ",")))
+	r := make([]string, len(p))
+	for i, s := range p {
+		r[i] = listSafeMessage(s)
+	}
+	_, err := c.Command(fmt.Sprintf("BanProfanity %s", strings.Join(r, ",")))
 	return err
 }
 
 func (c *Connection) RemoveProfanities(p []string) error {
+	r := make([]string, len(p))
+	for i, s := range p {
+		r[i] = listSafeMessage(s)
+	}
 	_, err := c.Command(fmt.Sprintf("UnbanProfanity %s", strings.Join(p, ",")))
 	return err
 }
@@ -658,14 +666,18 @@ func (c *Connection) Kick(name, reason string) error {
 // The duration d will be rounded to full hours.
 // The adminName parameter is optional and can be an empty string.
 func (c *Connection) TempBan(playerId string, d time.Duration, reason, adminName string) error {
-	_, err := c.Command(fmt.Sprintf("tempban \"%s\" %d \"%s\" \"%s\"", playerId, int(d.Hours()), reason, adminName))
+	_, err := c.Command(fmt.Sprintf("tempban \"%s\" %d \"%s\" \"%s\"", playerId, int(d.Hours()), listSafeMessage(reason), adminName))
 	return err
+}
+
+func listSafeMessage(m string) string {
+	return strings.ReplaceAll("\t", " ", m)
 }
 
 // PermaBan bans the player permanently with the provided reason. This player will not be able to join the server anymore.
 // The adminName parameter is optional and can be an empty string.
 func (c *Connection) PermaBan(playerId, reason, adminName string) error {
-	_, err := c.Command(fmt.Sprintf("tempban \"%s\" \"%s\" \"%s\"", playerId, reason, adminName))
+	_, err := c.Command(fmt.Sprintf("tempban \"%s\" \"%s\" \"%s\"", playerId, listSafeMessage(reason), adminName))
 	return err
 }
 
@@ -683,7 +695,7 @@ func (c *Connection) RemovePermaBan(playerId string) error {
 
 // AddVip adds a player to the list of players who can utilize the vip slots (set by SetVipSlots).
 func (c *Connection) AddVip(id VipId) error {
-	_, err := c.Command(fmt.Sprintf("vipadd %s %s", id.SteamId64, id.Name))
+	_, err := c.Command(fmt.Sprintf("vipadd %s %s", id.SteamId64, listSafeMessage(id.Name)))
 	return err
 }
 
