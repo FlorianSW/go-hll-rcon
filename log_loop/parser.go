@@ -49,7 +49,6 @@ func ParseLogLine(line string) (StructuredLogLine, error) {
 		res.Weapon = p[7]
 	} else if strings.HasPrefix(r, fmt.Sprintf("%s[", ActionChat)) {
 		p = cR.FindStringSubmatch(r)
-		println(p)
 		res.Action = ActionChat
 		res.Actor.Name = p[2]
 		res.Actor.Team = strings.ToLower(p[3])
