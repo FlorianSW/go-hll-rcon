@@ -12,6 +12,7 @@ var (
 	tR = regexp.MustCompile("\\((\\d+)\\)")
 	pC = regexp.MustCompile("(CONNECTED|DISCONNECTED) (.+) \\((\\d+)\\)")
 	kR = regexp.MustCompile("KILL: (.+)\\((Axis|Allies)/(\\d+)\\) -> (.+)\\((Axis|Allies)/(\\d+)\\) with (.+)")
+	cR = regexp.MustCompile("CHAT\\[(Team|Unit)]\\[(.*)\\((Allies|Axis)/(.*)\\)]: (.*)")
 )
 
 func ParseLogLine(line string) (StructuredLogLine, error) {
@@ -46,6 +47,15 @@ func ParseLogLine(line string) (StructuredLogLine, error) {
 		res.Subject.Team = strings.ToLower(p[5])
 		res.Subject.SteamId64 = p[6]
 		res.Weapon = p[7]
+	} else if strings.HasPrefix(r, fmt.Sprintf("%s[", ActionChat)) {
+		p = cR.FindStringSubmatch(r)
+		println(p)
+		res.Action = ActionChat
+		res.Actor.Name = p[2]
+		res.Actor.Team = strings.ToLower(p[3])
+		res.Actor.SteamId64 = p[4]
+		res.Message = p[5]
+		res.Rest = p[1]
 	}
 
 	return res, nil

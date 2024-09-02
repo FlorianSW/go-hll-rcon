@@ -11,7 +11,7 @@ const (
 	connected    = "[355 ms (1671484269)] CONNECTED [1.Fjg]ToastyMcToast (76561198025480905)"
 	disconnected = "[9.33 sec (1671484260)] DISCONNECTED One (76561198032765590)"
 	kill         = "[1:49 min (1671484160)] KILL: [1.Fjg]ToastyMcToast(Axis/76561198025480905) -> Spinning B(Allies/76561198024946722) with M3 GREASE GUN"
-	chat         = "[52.6 sec (1671484602)] CHAT[Unit][chiefjustice10(Allies/76561198076714203)]: gg hat semi viel Spaß gemacht :D"
+	chat         = "[52.6 sec (1671484602)] CHAT[Unit][chiefjustice10(Axis/76561198076714203)]: gg hat semi viel Spaß gemacht :D"
 )
 
 var _ = Describe("", func() {
@@ -22,7 +22,7 @@ var _ = Describe("", func() {
 		Expect(l).To(Equal(log_loop.StructuredLogLine{
 			Raw:       connected,
 			Timestamp: time.Unix(1671484269, 0),
-			Action:    "CONNECTED",
+			Action:    log_loop.ActionConnected,
 			Actor: log_loop.Player{
 				Name:      "[1.Fjg]ToastyMcToast",
 				SteamId64: "76561198025480905",
@@ -41,7 +41,7 @@ var _ = Describe("", func() {
 		Expect(l).To(Equal(log_loop.StructuredLogLine{
 			Raw:       disconnected,
 			Timestamp: time.Unix(1671484260, 0),
-			Action:    "DISCONNECTED",
+			Action:    log_loop.ActionDisconnected,
 			Actor: log_loop.Player{
 				Name:      "One",
 				SteamId64: "76561198032765590",
@@ -60,7 +60,7 @@ var _ = Describe("", func() {
 		Expect(l).To(Equal(log_loop.StructuredLogLine{
 			Raw:       kill,
 			Timestamp: time.Unix(1671484160, 0),
-			Action:    "KILL",
+			Action:    log_loop.ActionKill,
 			Actor: log_loop.Player{
 				Name:      "[1.Fjg]ToastyMcToast",
 				SteamId64: "76561198025480905",
@@ -74,6 +74,24 @@ var _ = Describe("", func() {
 			Weapon:  "M3 GREASE GUN",
 			Message: "",
 			Rest:    "",
+		}))
+	})
+
+	It("parses CHAT message", func() {
+		l, err := log_loop.ParseLogLine(chat)
+		Expect(err).ToNot(HaveOccurred())
+
+		Expect(l).To(Equal(log_loop.StructuredLogLine{
+			Raw:       chat,
+			Timestamp: time.Unix(1671484602, 0),
+			Action:    log_loop.ActionChat,
+			Actor: log_loop.Player{
+				Name:      "chiefjustice10",
+				SteamId64: "76561198076714203",
+				Team:      "axis",
+			},
+			Message: "gg hat semi viel Spaß gemacht :D",
+			Rest:    "Unit",
 		}))
 	})
 })

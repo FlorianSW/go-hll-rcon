@@ -9,6 +9,7 @@ const (
 	ActionKill         = "KILL"
 	ActionConnected    = "CONNECTED"
 	ActionDisconnected = "DISCONNECTED"
+	ActionChat         = "CHAT"
 )
 
 type Player struct {
