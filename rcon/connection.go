@@ -671,7 +671,7 @@ func (c *Connection) TempBan(playerId string, d time.Duration, reason, adminName
 }
 
 func listSafeMessage(m string) string {
-	return strings.ReplaceAll("\t", " ", m)
+	return strings.ReplaceAll(m, "\t", " ")
 }
 
 // PermaBan bans the player permanently with the provided reason. This player will not be able to join the server anymore.
