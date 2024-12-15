@@ -18,7 +18,7 @@ func Contains(s string) rcon.MapFilter {
 }
 
 func Limit(limit int) rcon.MapFilter {
-	return func(idx int, name string, _ []string) bool {
-		return idx < limit
+	return func(idx int, name string, res []string) bool {
+		return len(res) < limit
 	}
 }
