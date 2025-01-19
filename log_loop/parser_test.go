@@ -12,6 +12,8 @@ const (
 	disconnected = "[9.33 sec (1671484260)] DISCONNECTED One (76561198032765590)"
 	kill         = "[1:49 min (1671484160)] KILL: [1.Fjg]ToastyMcToast(Axis/76561198025480905) -> Spinning B(Allies/76561198024946722) with M3 GREASE GUN"
 	chat         = "[52.6 sec (1671484602)] CHAT[Unit][chiefjustice10(Axis/76561198076714203)]: gg hat semi viel Spaß gemacht :D"
+	matchStart   = "[4.01 sec (1737300987)] MATCH START CARENTAN Skirmish "
+	matchEnd     = "[4.01 sec (1737300987)] MATCH ENDED `ST MARIE DU MONT Warfare` ALLIED (2 - 3) AXIS "
 )
 
 var _ = Describe("", func() {
@@ -92,6 +94,38 @@ var _ = Describe("", func() {
 			},
 			Message: "gg hat semi viel Spaß gemacht :D",
 			Rest:    "Unit",
+		}))
+	})
+
+	It("parses MATCH START message", func() {
+		l, err := log_loop.ParseLogLine(matchStart)
+		Expect(err).ToNot(HaveOccurred())
+
+		Expect(l).To(Equal(log_loop.StructuredLogLine{
+			Raw:       matchStart,
+			Timestamp: time.Unix(1737300987, 0),
+			Action:    log_loop.ActionMatchStart,
+			Actor:     log_loop.Player{},
+			Message:   "CARENTAN Skirmish",
+			Rest:      "",
+		}))
+	})
+
+	It("parses MATCH END message", func() {
+		l, err := log_loop.ParseLogLine(matchEnd)
+		Expect(err).ToNot(HaveOccurred())
+
+		Expect(l).To(Equal(log_loop.StructuredLogLine{
+			Raw:       matchEnd,
+			Timestamp: time.Unix(1737300987, 0),
+			Action:    log_loop.ActionMatchEnded,
+			Actor:     log_loop.Player{},
+			Message:   "ST MARIE DU MONT Warfare",
+			Result: &log_loop.MatchResult{
+				Axis:   3,
+				Allied: 2,
+			},
+			Rest: "",
 		}))
 	})
 })

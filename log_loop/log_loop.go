@@ -13,16 +13,18 @@ type RConPool interface {
 }
 
 type LogLoop struct {
-	logger *slog.Logger
-	p      RConPool
+	logger             *slog.Logger
+	p                  RConPool
+	initialLogDuration time.Duration
 
 	lastSeen       *StructuredLogLine
 	reconnectTries int
 }
 
 type LogLoopOptions struct {
-	Logger *slog.Logger
-	Pool   RConPool
+	Logger            *slog.Logger
+	Pool              RConPool
+	InitialLogMinutes *int
 }
 
 // NewLogLoop instantiates a log loop, which periodically requests logs from the game server, parses them and exposes them
@@ -33,9 +35,14 @@ func NewLogLoop(opts LogLoopOptions) *LogLoop {
 	if opts.Logger == nil {
 		opts.Logger = slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError}))
 	}
+	initialLogDuration := 60 * time.Minute
+	if opts.InitialLogMinutes != nil {
+		initialLogDuration = time.Duration(*opts.InitialLogMinutes) * time.Minute
+	}
 	return &LogLoop{
-		logger: opts.Logger,
-		p:      opts.Pool,
+		logger:             opts.Logger,
+		p:                  opts.Pool,
+		initialLogDuration: initialLogDuration,
 	}
 }
 
@@ -51,12 +58,13 @@ func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 	lines := make(chan []string)
 	errs := make(chan error)
 	l.lastSeen = nil
+	d := l.initialLogDuration
 	log.Info("initializing")
 	go func() {
 		log.Info("start")
 		for {
 			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
-				r, err := c.ShowLog(60 * time.Minute)
+				r, err := c.ShowLog(d)
 				if err != nil {
 					log.Error("read", err)
 					errs <- err
@@ -64,6 +72,7 @@ func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 					log.Debug("read", "no", len(r))
 					lines <- r
 				}
+				d = time.Minute
 				return err
 			})
 			if err != nil {

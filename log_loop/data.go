@@ -10,6 +10,8 @@ const (
 	ActionConnected    = "CONNECTED"
 	ActionDisconnected = "DISCONNECTED"
 	ActionChat         = "CHAT"
+	ActionMatchStart   = "MATCH START"
+	ActionMatchEnded   = "MATCH ENDED"
 )
 
 type Player struct {
@@ -26,7 +28,13 @@ type StructuredLogLine struct {
 	Subject   Player
 	Weapon    string
 	Message   string
+	Result    *MatchResult
 	Rest      string
+}
+
+type MatchResult struct {
+	Axis   int
+	Allied int
 }
 
 func (l *StructuredLogLine) String() string {

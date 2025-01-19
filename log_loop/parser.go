@@ -13,6 +13,7 @@ var (
 	pC = regexp.MustCompile("(CONNECTED|DISCONNECTED) (.+) \\((\\d+)\\)")
 	kR = regexp.MustCompile("KILL: (.+)\\((Axis|Allies)/(\\d+)\\) -> (.+)\\((Axis|Allies)/(\\d+)\\) with (.+)")
 	cR = regexp.MustCompile("CHAT\\[(Team|Unit)]\\[(.*)\\((Allies|Axis)/(.*)\\)]: (.*)")
+	mE = regexp.MustCompile("MATCH ENDED `(.+)` ALLIED \\((\\d) - (\\d)\\) AXIS")
 )
 
 func ParseLogLine(line string) (StructuredLogLine, error) {
@@ -55,6 +56,26 @@ func ParseLogLine(line string) (StructuredLogLine, error) {
 		res.Actor.SteamId64 = p[4]
 		res.Message = p[5]
 		res.Rest = p[1]
+	} else if strings.HasPrefix(r, ActionMatchStart) {
+		parts := strings.Split(r, ActionMatchStart)
+		res.Action = ActionMatchStart
+		res.Message = strings.TrimSpace(parts[1])
+	} else if strings.HasPrefix(r, ActionMatchEnded) {
+		p = mE.FindStringSubmatch(r)
+		res.Action = ActionMatchEnded
+		res.Message = strings.TrimSpace(p[1])
+		allied, err := strconv.Atoi(p[2])
+		if err != nil {
+			return res, err
+		}
+		axis, err := strconv.Atoi(p[3])
+		if err != nil {
+			return res, err
+		}
+		res.Result = &MatchResult{
+			Axis:   axis,
+			Allied: allied,
+		}
 	}
 
 	return res, nil
