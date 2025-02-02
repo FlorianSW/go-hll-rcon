@@ -10,8 +10,8 @@ import (
 
 var (
 	tR = regexp.MustCompile("\\((\\d+)\\)")
-	pC = regexp.MustCompile("(CONNECTED|DISCONNECTED) (.+) \\((\\d+)\\)")
-	kR = regexp.MustCompile("KILL: (.+)\\((Axis|Allies)/(\\d+)\\) -> (.+)\\((Axis|Allies)/(\\d+)\\) with (.+)")
+	pC = regexp.MustCompile("(CONNECTED|DISCONNECTED) (.+) \\((\\w+)\\)")
+	kR = regexp.MustCompile("KILL: (.+)\\((Axis|Allies)/(\\w+)\\) -> (.+)\\((Axis|Allies)/(\\w+)\\) with (.+)")
 	cR = regexp.MustCompile("CHAT\\[(Team|Unit)]\\[(.*)\\((Allies|Axis)/(.*)\\)]: (.*)")
 	mE = regexp.MustCompile("MATCH ENDED `(.+)` ALLIED \\((\\d) - (\\d)\\) AXIS")
 )
