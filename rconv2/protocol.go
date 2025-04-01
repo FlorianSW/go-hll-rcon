@@ -1,0 +1,258 @@
+package rconv2
+
+import (
+	"context"
+	"encoding/base64"
+	"encoding/binary"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"github.com/floriansw/go-hll-rcon/rcon"
+	"net"
+	"syscall"
+	"time"
+)
+
+const (
+	responseHeaderLength = 8
+)
+
+type socket struct {
+	con            net.Conn
+	pw             string
+	host           string
+	port           int
+	reconnectCount int
+
+	xorKey    []byte
+	authToken string
+
+	lastContext *context.Context
+}
+
+type Request[T, U any] struct {
+	Command string
+	Body    T
+}
+
+func (r *Request[T, U]) do(s *socket) (result Response[U], err error) {
+	err = s.write(marshal(r.asRawRequest(s.authToken)))
+	if err != nil {
+		return result, err
+	}
+	res, err := s.read()
+	if err != nil {
+		return result, err
+	}
+	err = json.Unmarshal(res, &result)
+	return result, err
+}
+
+func (r *Request[T, U]) asRawRequest(authToken string) rawRequest[T] {
+	return rawRequest[T]{
+		Command:   r.Command,
+		Body:      r.Body,
+		AuthToken: authToken,
+		Version:   2,
+	}
+}
+
+type Response[T any] struct {
+	StatusCode    int    `json:"statusCode"`
+	StatusMessage string `json:"statusMessage"`
+	Version       int    `json:"version"`
+	Command       string `json:"name"`
+	Content       T      `json:"contentBody"`
+}
+
+type rawRequest[T any] struct {
+	Command   string `json:"Name"`
+	AuthToken string `json:"AuthToken"`
+	Body      T      `json:"ContentBody"`
+	Version   int    `json:"Version"`
+}
+
+func (r *socket) SetContext(ctx context.Context) error {
+	r.lastContext = &ctx
+	if deadline, ok := ctx.Deadline(); ok {
+		return r.con.SetDeadline(deadline)
+	} else {
+		return r.con.SetDeadline(time.Now().Add(20 * time.Second))
+	}
+}
+
+func (r *socket) Context() context.Context {
+	if r.lastContext != nil {
+		return *r.lastContext
+	}
+	return context.Background()
+}
+
+func makeConnectionV2(h string, p int) (net.Conn, error) {
+	con, err := net.DialTimeout("tcp4", fmt.Sprintf("%s:%d", h, p), 5*time.Second)
+	if err != nil {
+		return nil, err
+	}
+	// use an intermediate timeout, it's unlikely that a new connection times out, however, if it does for whatever reason
+	// it might get stuck here
+	err = con.SetDeadline(time.Now().Add(20 * time.Second))
+	if err != nil {
+		return nil, err
+	}
+	// This is an XOR key used in RCONv1, however, the "real" key to use will be red in the ServerConnect command
+	_, err = con.Read(make([]byte, 4))
+	if err != nil {
+		return nil, err
+	}
+
+	return con, err
+}
+
+func newSocket(h string, p int, pw string) (*socket, error) {
+	r := &socket{
+		pw:             pw,
+		host:           h,
+		port:           p,
+		reconnectCount: 0,
+	}
+	return r, r.reconnect(nil)
+}
+
+func (r *socket) Close() error {
+	return r.con.Close()
+}
+
+func (r *socket) login() error {
+	req := rawRequest[*string]{
+		Command:   "Login",
+		AuthToken: "",
+		Body:      fromString(r.pw),
+	}
+	err := r.write(marshal(req))
+	if err != nil {
+		return err
+	}
+	res, err := r.read()
+	if err != nil {
+		return err
+	}
+	var data Response[string]
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return err
+	}
+	r.authToken = data.Content
+	return nil
+}
+
+func (r *socket) connect() error {
+	req := rawRequest[*interface{}]{
+		Command:   "ServerConnect",
+		AuthToken: "",
+		Body:      nil,
+	}
+	err := r.write(marshal(req))
+	if err != nil {
+		return err
+	}
+	res, err := r.read()
+	if err != nil {
+		return err
+	}
+	var data Response[string]
+	err = json.Unmarshal(res, &data)
+	if err != nil {
+		return err
+	}
+	_, err = base64.StdEncoding.Decode(r.xorKey, []byte(data.Content))
+	return err
+}
+
+func marshal[T any](v rawRequest[T]) []byte {
+	req, _ := json.Marshal(v)
+	return req
+}
+
+func (r *socket) write(cmd []byte) error {
+	s, err := r.con.Write(r.xor(cmd))
+	if errors.Is(err, syscall.EPIPE) {
+		err = r.reconnect(err)
+		if err != nil {
+			return err
+		}
+		return r.write(cmd)
+	}
+	if s != len(cmd) {
+		return fmt.Errorf("%w Cmd: %s (%d), sent: %d", rcon.ErrWriteSentUnequal, cmd, len(cmd), s)
+	}
+	if err != nil {
+		r.resetReconnectCount()
+	}
+	return err
+}
+
+func (r *socket) reconnect(orig error) error {
+	if r.reconnectCount > 3 {
+		return rcon.ReconnectTriesExceeded
+	}
+	r.reconnectCount++
+	con, err := makeConnectionV2(r.host, r.port)
+	r.con = con
+	err = r.SetContext(r.Context())
+	if err != nil {
+		return err
+	}
+	err = r.connect()
+	if err != nil {
+		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)
+	}
+	err = r.login()
+	if err != nil {
+		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)
+	}
+	return nil
+}
+
+func (r *socket) read() ([]byte, error) {
+	header := make([]byte, responseHeaderLength)
+	_, err := r.con.Read(header)
+	if err != nil {
+		return nil, err
+	}
+
+	// byte format as used in python is: <II
+	// in go's binary encoding this should be reading two unsigned int in a little-endian byte order
+	var responseId, contentLength int
+	err = binary.Read(r.con, binary.LittleEndian, &responseId)
+	if err != nil {
+		return nil, fmt.Errorf("read responseId failed: %w", err)
+	}
+	err = binary.Read(r.con, binary.LittleEndian, &contentLength)
+	if err != nil {
+		return nil, fmt.Errorf("read content length failed: %w", err)
+	}
+
+	answer := make([]byte, contentLength)
+	_, err = r.con.Read(answer)
+
+	return r.xor(answer), err
+}
+
+func (r *socket) xor(b []byte) []byte {
+	if r.xorKey == nil {
+		return b
+	}
+
+	var msg []byte
+	for i := range b {
+		mb := b[i] ^ r.xorKey[i%len(r.xorKey)]
+		msg = append(msg, mb)
+	}
+	return msg
+}
+
+func (r *socket) resetReconnectCount() {
+	if r.reconnectCount != 0 {
+		r.reconnectCount = 0
+	}
+}
