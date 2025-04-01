@@ -1,0 +1,10 @@
+package api
+
+type ServerInformation struct {
+	Name  string `json:"Name"`
+	Value string `json:"Value"`
+}
+
+func (s ServerInformation) CommandName() string {
+	return "ServerInformation"
+}

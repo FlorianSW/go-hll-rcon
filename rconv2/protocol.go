@@ -30,9 +30,8 @@ type socket struct {
 	lastContext *context.Context
 }
 
-type Request[T, U any] struct {
-	Command string
-	Body    T
+type Request[T Command, U any] struct {
+	Body T
 }
 
 func (r *Request[T, U]) do(s *socket) (result Response[U], err error) {
@@ -48,10 +47,11 @@ func (r *Request[T, U]) do(s *socket) (result Response[U], err error) {
 	return result, err
 }
 
-func (r *Request[T, U]) asRawRequest(authToken string) rawRequest[T] {
-	return rawRequest[T]{
-		Command:   r.Command,
-		Body:      r.Body,
+func (r *Request[T, U]) asRawRequest(authToken string) rawRequest {
+	d, _ := json.Marshal(r.Body)
+	return rawRequest{
+		Command:   r.Body.CommandName(),
+		Body:      d,
 		AuthToken: authToken,
 		Version:   2,
 	}
@@ -65,10 +65,10 @@ type Response[T any] struct {
 	Content       T      `json:"contentBody"`
 }
 
-type rawRequest[T any] struct {
+type rawRequest struct {
 	Command   string `json:"Name"`
 	AuthToken string `json:"AuthToken"`
-	Body      T      `json:"ContentBody"`
+	Body      []byte `json:"ContentBody"`
 	Version   int    `json:"Version"`
 }
 
@@ -123,10 +123,10 @@ func (r *socket) Close() error {
 }
 
 func (r *socket) login() error {
-	req := rawRequest[*string]{
+	req := rawRequest{
 		Command:   "Login",
 		AuthToken: "",
-		Body:      fromString(r.pw),
+		Body:      []byte(r.pw),
 	}
 	err := r.write(marshal(req))
 	if err != nil {
@@ -141,12 +141,17 @@ func (r *socket) login() error {
 	if err != nil {
 		return err
 	}
+	if data.StatusCode == 401 {
+		return ErrInvalidCredentials
+	} else if data.StatusCode != 200 {
+		return NewUnexpectedStatus(data.StatusCode, data.StatusMessage)
+	}
 	r.authToken = data.Content
 	return nil
 }
 
 func (r *socket) connect() error {
-	req := rawRequest[*interface{}]{
+	req := rawRequest{
 		Command:   "ServerConnect",
 		AuthToken: "",
 		Body:      nil,
@@ -164,11 +169,14 @@ func (r *socket) connect() error {
 	if err != nil {
 		return err
 	}
+	if data.StatusCode != 200 {
+		return NewUnexpectedStatus(data.StatusCode, data.StatusMessage)
+	}
 	_, err = base64.StdEncoding.Decode(r.xorKey, []byte(data.Content))
 	return err
 }
 
-func marshal[T any](v rawRequest[T]) []byte {
+func marshal(v rawRequest) []byte {
 	req, _ := json.Marshal(v)
 	return req
 }

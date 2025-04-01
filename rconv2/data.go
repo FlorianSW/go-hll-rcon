@@ -1,10 +1,37 @@
 package rconv2
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
 const (
 	PlayerPlatformSteam = PlayerPlatform("steam")
 )
+
+var (
+	ErrInvalidCredentials = errors.New("wrong password")
+)
+
+type UnexpectedStatus struct {
+	code    int
+	message string
+}
+
+func NewUnexpectedStatus(code int, message string) *UnexpectedStatus {
+	return &UnexpectedStatus{
+		code:    code,
+		message: message,
+	}
+}
+
+func (u UnexpectedStatus) Error() string {
+	return fmt.Sprintf("invalid status code received, got %d with message %s", u.code, u.message)
+}
+
+type Command interface {
+	CommandName() string
+}
 
 type GetPlayersResponse struct {
 	Players []Player `json:"players"`

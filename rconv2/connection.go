@@ -2,6 +2,7 @@ package rconv2
 
 import (
 	"context"
+	"github.com/floriansw/go-hll-rcon/rconv2/api"
 )
 
 // Connection represents a persistent connection to a HLL server using RCon. It can be used to issue commands against
@@ -20,20 +21,35 @@ type Connection struct {
 }
 
 func (c *Connection) Players(ctx context.Context) (*GetPlayersResponse, error) {
-	err := c.socket.SetContext(ctx)
+	return execCommand[api.ServerInformation, GetPlayersResponse](ctx, c.socket, api.ServerInformation{
+		Name:  "players",
+		Value: "",
+	})
+}
+
+func (c *Connection) AddAdmin(ctx context.Context, playerId, adminGroup, comment string) error {
+	_, err := execCommand[api.AddAdmin, any](ctx, c.socket, api.AddAdmin{
+		PlayerId:   playerId,
+		AdminGroup: adminGroup,
+		Comment:    comment,
+	})
+	return err
+}
+
+func execCommand[T Command, U any](ctx context.Context, so *socket, req T) (result *U, err error) {
+	err = so.SetContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	req := Request[serverInformationCommand, GetPlayersResponse]{
-		Body: serverInformationCommand{
-			Name:  "players",
-			Value: "",
-		},
-		Command: "ServerInformation",
+	r := Request[T, U]{
+		Body: req,
 	}
-	res, err := req.do(c.socket)
+	res, err := r.do(so)
 	if err != nil {
 		return nil, err
+	}
+	if res.StatusCode != 200 {
+		return nil, NewUnexpectedStatus(res.StatusCode, res.StatusMessage)
 	}
 	return &res.Content, nil
 }
