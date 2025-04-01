@@ -5,10 +5,6 @@ import (
 	"fmt"
 )
 
-const (
-	PlayerPlatformSteam = PlayerPlatform("steam")
-)
-
 var (
 	ErrInvalidCredentials = errors.New("wrong password")
 )
@@ -33,40 +29,8 @@ type Command interface {
 	CommandName() string
 }
 
-type GetPlayersResponse struct {
-	Players []Player `json:"players"`
-}
-
-type PlayerPlatform string
-
-type Player struct {
-	Id                   string         `json:"id"`
-	Platform             PlayerPlatform `json:"platform"`
-	Name                 string         `json:"name"`
-	ClanTag              string         `json:"clanTag"`
-	EpicOnlineServicesId string         `json:"eOSId"`
-	Level                int            `json:"level"`
-	Team                 string         `json:"team"`
-	Role                 string         `json:"role"`
-	Squad                string         `json:"platoon"`
-	Loadout              string         `json:"loadout"`
-	Kills                int            `json:"kills"`
-	Deaths               int            `json:"deaths"`
-	Score                ScoreData      `json:"scoreData"`
-	Position             WorldPosition  `json:"worldPosition"`
-}
-
-type ScoreData struct {
-	Combat    int `json:"cOMBAT"`
-	Offensive int `json:"offense"`
-	Defensive int `json:"defense"`
-	Support   int `json:"support"`
-}
-
-type WorldPosition struct {
-	X int `json:"x"`
-	Y int `json:"y"`
-	Z int `json:"z"`
+type ValidatableCommand interface {
+	Validate() error
 }
 
 func newConnectionRequestTimeout(currentPoolSize int) connectionRequestTimeout {

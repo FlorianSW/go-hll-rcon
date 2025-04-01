@@ -20,10 +20,17 @@ type Connection struct {
 	socket *socket
 }
 
-func (c *Connection) Players(ctx context.Context) (*GetPlayersResponse, error) {
-	return execCommand[api.ServerInformation, GetPlayersResponse](ctx, c.socket, api.ServerInformation{
+func (c *Connection) Players(ctx context.Context) (*api.GetPlayersResponse, error) {
+	return execCommand[api.ServerInformation, api.GetPlayersResponse](ctx, c.socket, api.ServerInformation{
 		Name:  "players",
 		Value: "",
+	})
+}
+
+func (c *Connection) Player(ctx context.Context, playerId string) (*api.GetPlayerResponse, error) {
+	return execCommand[api.ServerInformation, api.GetPlayerResponse](ctx, c.socket, api.ServerInformation{
+		Name:  "player",
+		Value: playerId,
 	})
 }
 

@@ -62,7 +62,12 @@ type Response[T any] struct {
 	StatusMessage string `json:"statusMessage"`
 	Version       int    `json:"version"`
 	Command       string `json:"name"`
-	Content       T      `json:"contentBody"`
+	Content       string `json:"contentBody"`
+}
+
+func (r *Response[T]) Body() (res T) {
+	_ = json.Unmarshal([]byte(r.Content), res)
+	return
 }
 
 type rawRequest struct {
