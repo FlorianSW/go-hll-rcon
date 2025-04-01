@@ -7,6 +7,8 @@ import (
 
 type ServerInformationName string
 
+type SupportedPlatform string
+
 const (
 	ServerInformationNamePlayers      = "players"
 	ServerInformationNamePlayer       = "player"
@@ -16,6 +18,10 @@ const (
 	ServerInformationNameServerConfig = "serverconfig"
 
 	PlayerPlatformSteam = PlayerPlatform("steam")
+
+	SupportedPlatformSteam   = "Steam"
+	SupportedPlatformWindows = "WinGDK"
+	SupportedPlatformEos     = "eos"
 )
 
 const (
@@ -100,16 +106,16 @@ type ScoreData struct {
 }
 
 type WorldPosition struct {
-	X int `json:"x"`
-	Y int `json:"y"`
-	Z int `json:"z"`
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
+	Z float64 `json:"z"`
 }
 
 type GetServerConfigResponse struct {
-	ServerName         string   `json:"serverName"`
-	Build              string   `json:"buildNumber"`
-	BuildRevision      string   `json:"buildRevision"`
-	SupportedPlatforms []string `json:"supportedPlatforms"`
+	ServerName         string              `json:"serverName"`
+	Build              string              `json:"buildNumber"`
+	BuildRevision      string              `json:"buildRevision"`
+	SupportedPlatforms []SupportedPlatform `json:"supportedPlatforms"`
 }
 
 type GetSessionResponse struct {
