@@ -66,6 +66,9 @@ type Response[T any] struct {
 }
 
 func (r *Response[T]) Body() (res T) {
+	if _, ok := any(res).(string); ok {
+		return any(r.Content).(T)
+	}
 	_ = json.Unmarshal([]byte(r.Content), &res)
 	return
 }
@@ -155,7 +158,7 @@ func (r *socket) login() error {
 	return nil
 }
 
-func (r *socket) connect() error {
+func (r *socket) greatServer() error {
 	req := rawRequest{
 		Command:   "ServerConnect",
 		AuthToken: "",
@@ -169,7 +172,7 @@ func (r *socket) connect() error {
 	if err != nil {
 		return err
 	}
-	var data Response[string]
+	var data Response[[]byte]
 	err = json.Unmarshal(res, &data)
 	if err != nil {
 		return err
@@ -177,7 +180,7 @@ func (r *socket) connect() error {
 	if data.StatusCode != 200 {
 		return NewUnexpectedStatus(data.StatusCode, data.StatusMessage)
 	}
-	_, err = base64.StdEncoding.Decode(r.xorKey, []byte(data.Content))
+	_, err = base64.StdEncoding.Decode(r.xorKey, data.Body())
 	return err
 }
 
@@ -215,7 +218,7 @@ func (r *socket) reconnect(orig error) error {
 	if err != nil {
 		return err
 	}
-	err = r.connect()
+	err = r.greatServer()
 	if err != nil {
 		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)
 	}
