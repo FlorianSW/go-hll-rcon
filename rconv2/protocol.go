@@ -66,7 +66,7 @@ type Response[T any] struct {
 }
 
 func (r *Response[T]) Body() (res T) {
-	_ = json.Unmarshal([]byte(r.Content), res)
+	_ = json.Unmarshal([]byte(r.Content), &res)
 	return
 }
 
