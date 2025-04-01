@@ -67,7 +67,7 @@ func (s ServerInformation) Validate() error {
 }
 
 type GetPlayersResponse struct {
-	Players []GetPlayerResponse `json:"Players"`
+	Players []GetPlayerResponse `json:"players"`
 }
 
 type PlayerPlatform string
@@ -76,31 +76,66 @@ type PlayerTeam int
 type PlayerRole int
 
 type GetPlayerResponse struct {
-	Id                   string         `json:"ID"`
-	Platform             PlayerPlatform `json:"Platform"`
-	Name                 string         `json:"Name"`
-	ClanTag              string         `json:"ClanTag"`
-	EpicOnlineServicesId string         `json:"EOSID"`
-	Level                int            `json:"Level"`
-	Team                 PlayerTeam     `json:"Team"`
-	Role                 PlayerRole     `json:"Role"`
-	Squad                string         `json:"Platoon"`
-	Loadout              string         `json:"Loadout"`
-	Kills                int            `json:"Kills"`
-	Deaths               int            `json:"Deaths"`
-	Score                ScoreData      `json:"ScoreData"`
-	Position             WorldPosition  `json:"WorldPosition"`
+	Id                   string         `json:"iD"`
+	Platform             PlayerPlatform `json:"platform"`
+	Name                 string         `json:"name"`
+	ClanTag              string         `json:"clanTag"`
+	EpicOnlineServicesId string         `json:"eOSID"`
+	Level                int            `json:"level"`
+	Team                 PlayerTeam     `json:"team"`
+	Role                 PlayerRole     `json:"role"`
+	Squad                string         `json:"platoon"`
+	Loadout              string         `json:"loadout"`
+	Kills                int            `json:"kills"`
+	Deaths               int            `json:"deaths"`
+	Score                ScoreData      `json:"scoreData"`
+	Position             WorldPosition  `json:"worldPosition"`
 }
 
 type ScoreData struct {
-	Combat    int `json:"COMBAT"`
-	Offensive int `json:"Offense"`
-	Defensive int `json:"Defense"`
-	Support   int `json:"Support"`
+	Combat    int `json:"cOMBAT"`
+	Offensive int `json:"offense"`
+	Defensive int `json:"defense"`
+	Support   int `json:"support"`
 }
 
 type WorldPosition struct {
-	X int `json:"X"`
-	Y int `json:"Y"`
-	Z int `json:"Z"`
+	X int `json:"x"`
+	Y int `json:"y"`
+	Z int `json:"z"`
+}
+
+type GetServerConfigResponse struct {
+	ServerName         string   `json:"serverName"`
+	Build              string   `json:"buildNumber"`
+	BuildRevision      string   `json:"buildRevision"`
+	SupportedPlatforms []string `json:"supportedPlatforms"`
+}
+
+type GetSessionResponse struct {
+	ServerName       string `json:"serverName"`
+	MapName          string `json:"mapName"`
+	GameMode         string `json:"gameMode"`
+	MaxPlayerCount   int    `json:"maxPlayerCount"`
+	PlayerCount      int    `json:"playerCount"`
+	MaxQueueCount    int    `json:"maxQueueCount"`
+	QueueCount       int    `json:"queueCount"`
+	MaxVIPQueueCount int    `json:"maxVIPQueueCount"`
+	VIPQueueCount    int    `json:"vIPQueueCount"`
+}
+
+type GetMapRotationResponse struct {
+	Maps []Map `json:"mAPS"`
+}
+
+type GetMapSequenceResponse struct {
+	Maps []Map `json:"mAPS"`
+}
+
+type Map struct {
+	Name      string `json:"name"`
+	GameMode  string `json:"gameMode"`
+	TimeOfDay string `json:"timeOfDay"`
+	Id        string `json:"iD"`
+	Position  int    `json:"position"`
 }

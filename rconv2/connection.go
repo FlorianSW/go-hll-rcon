@@ -22,15 +22,38 @@ type Connection struct {
 
 func (c *Connection) Players(ctx context.Context) (*api.GetPlayersResponse, error) {
 	return execCommand[api.ServerInformation, api.GetPlayersResponse](ctx, c.socket, api.ServerInformation{
-		Name:  "players",
-		Value: "",
+		Name: api.ServerInformationNamePlayers,
 	})
 }
 
 func (c *Connection) Player(ctx context.Context, playerId string) (*api.GetPlayerResponse, error) {
 	return execCommand[api.ServerInformation, api.GetPlayerResponse](ctx, c.socket, api.ServerInformation{
-		Name:  "player",
+		Name:  api.ServerInformationNamePlayer,
 		Value: playerId,
+	})
+}
+
+func (c *Connection) ServerConfig(ctx context.Context) (*api.GetServerConfigResponse, error) {
+	return execCommand[api.ServerInformation, api.GetServerConfigResponse](ctx, c.socket, api.ServerInformation{
+		Name: api.ServerInformationNameServerConfig,
+	})
+}
+
+func (c *Connection) SessionInfo(ctx context.Context) (*api.GetSessionResponse, error) {
+	return execCommand[api.ServerInformation, api.GetSessionResponse](ctx, c.socket, api.ServerInformation{
+		Name: api.ServerInformationNameSession,
+	})
+}
+
+func (c *Connection) MapRotation(ctx context.Context) (*api.GetMapRotationResponse, error) {
+	return execCommand[api.ServerInformation, api.GetMapRotationResponse](ctx, c.socket, api.ServerInformation{
+		Name: api.ServerInformationNameMapRotation,
+	})
+}
+
+func (c *Connection) MapSequence(ctx context.Context) (*api.GetMapSequenceResponse, error) {
+	return execCommand[api.ServerInformation, api.GetMapSequenceResponse](ctx, c.socket, api.ServerInformation{
+		Name: api.ServerInformationNameMapSequence,
 	})
 }
 
