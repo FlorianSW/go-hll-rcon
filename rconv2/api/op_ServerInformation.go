@@ -61,10 +61,6 @@ type ServerInformation struct {
 	Value string                `json:"Value"`
 }
 
-func (s ServerInformation) CommandName() string {
-	return "ServerInformation"
-}
-
 func (s ServerInformation) Validate() error {
 	if slices.Contains(requiresValue, s.Name) && s.Value == "" {
 		return fmt.Errorf("%s command requires a Value", s.Name)

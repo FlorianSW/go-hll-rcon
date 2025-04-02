@@ -10,6 +10,7 @@ import (
 	"github.com/floriansw/go-hll-rcon/rcon"
 	"io"
 	"net"
+	"reflect"
 	"syscall"
 	"time"
 )
@@ -31,12 +32,13 @@ type socket struct {
 	lastContext *context.Context
 }
 
-type Request[T Command, U any] struct {
+type Request[T, U any] struct {
 	Body T
 }
 
 func (r *Request[T, U]) do(s *socket) (result Response[U], err error) {
-	err = s.write(marshal(r.asRawRequest(s.authToken)))
+	b := marshal(r.asRawRequest(s.authToken))
+	err = s.write(b)
 	if err != nil {
 		return result, err
 	}
@@ -49,9 +51,22 @@ func (r *Request[T, U]) do(s *socket) (result Response[U], err error) {
 }
 
 func (r *Request[T, U]) asRawRequest(authToken string) rawRequest {
-	d, _ := json.Marshal(r.Body)
+	body := r.Body
+	var d []byte
+	t := reflect.ValueOf(r.Body)
+	if t.Kind() == reflect.String {
+		d = []byte(t.String())
+	} else {
+		d, _ = json.Marshal(body)
+	}
+	var cmd string
+	if c, ok := any(body).(Command); ok {
+		cmd = c.CommandName()
+	} else {
+		cmd = reflect.TypeOf(body).Name()
+	}
 	return rawRequest{
-		Command:   r.Body.CommandName(),
+		Command:   cmd,
 		Body:      string(d),
 		AuthToken: authToken,
 		Version:   2,
