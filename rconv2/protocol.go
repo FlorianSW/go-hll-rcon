@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/floriansw/go-hll-rcon/rcon"
+	"io"
 	"net"
 	"syscall"
 	"time"
@@ -245,20 +246,19 @@ func (r *socket) read() ([]byte, error) {
 	}
 
 	answer := make([]byte, contentLength)
-	_, err = r.con.Read(answer)
+	_, err = io.ReadFull(r.con, answer)
 
 	return r.xor(answer), err
 }
 
-func (r *socket) xor(b []byte) []byte {
+func (r *socket) xor(src []byte) []byte {
 	if r.xorKey == nil {
-		return b
+		return src
 	}
 
-	var msg []byte
-	for i := range b {
-		mb := b[i] ^ r.xorKey[i%len(r.xorKey)]
-		msg = append(msg, mb)
+	msg := make([]byte, len(src))
+	for i, b := range src {
+		msg[i] = b ^ r.xorKey[i%len(r.xorKey)]
 	}
 	return msg
 }
