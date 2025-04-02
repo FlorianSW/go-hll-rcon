@@ -132,11 +132,12 @@ func (r *socket) Close() error {
 
 func (r *socket) login() error {
 	req := rawRequest{
-		Command:   "Login",
-		AuthToken: "",
-		Body:      []byte(r.pw),
+		Command: "Login",
+		Version: 2,
+		Body:    []byte(r.pw),
 	}
-	err := r.write(marshal(req))
+	b := marshal(req)
+	err := r.write(b)
 	if err != nil {
 		return err
 	}
@@ -160,9 +161,9 @@ func (r *socket) login() error {
 
 func (r *socket) greatServer() error {
 	req := rawRequest{
-		Command:   "ServerConnect",
-		AuthToken: "",
-		Body:      nil,
+		Command: "ServerConnect",
+		Version: 2,
+		Body:    nil,
 	}
 	err := r.write(marshal(req))
 	if err != nil {
@@ -220,26 +221,22 @@ func (r *socket) reconnect(orig error) error {
 	}
 	err = r.greatServer()
 	if err != nil {
-		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)
+		return fmt.Errorf("great failed: %s, original error: %w", err.Error(), orig)
 	}
 	err = r.login()
 	if err != nil {
-		return fmt.Errorf("reconnect failed: %s, original error: %w", err.Error(), orig)
+		return fmt.Errorf("login failed: %s, original error: %w", err.Error(), orig)
 	}
 	return nil
 }
 
 func (r *socket) read() ([]byte, error) {
-	header := make([]byte, responseHeaderLength)
-	_, err := r.con.Read(header)
-	if err != nil {
-		return nil, err
-	}
-
+	// each response has a fixed 8-byte header, the first 4 bytes is the response Id assigned by the server
+	// and the next 4 bytes is the content length of the response body
 	// byte format as used in python is: <II
 	// in go's binary encoding this should be reading two unsigned int in a little-endian byte order
-	var responseId, contentLength int
-	err = binary.Read(r.con, binary.LittleEndian, &responseId)
+	var responseId, contentLength int32
+	err := binary.Read(r.con, binary.LittleEndian, &responseId)
 	if err != nil {
 		return nil, fmt.Errorf("read responseId failed: %w", err)
 	}
