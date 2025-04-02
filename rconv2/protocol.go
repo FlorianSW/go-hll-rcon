@@ -51,7 +51,7 @@ func (r *Request[T, U]) asRawRequest(authToken string) rawRequest {
 	d, _ := json.Marshal(r.Body)
 	return rawRequest{
 		Command:   r.Body.CommandName(),
-		Body:      d,
+		Body:      string(d),
 		AuthToken: authToken,
 		Version:   2,
 	}
@@ -74,10 +74,10 @@ func (r *Response[T]) Body() (res T) {
 }
 
 type rawRequest struct {
-	Command   string `json:"Name"`
-	AuthToken string `json:"AuthToken"`
-	Body      []byte `json:"ContentBody"`
-	Version   int    `json:"Version"`
+	Command   string      `json:"Name"`
+	AuthToken string      `json:"AuthToken"`
+	Body      interface{} `json:"ContentBody"`
+	Version   int         `json:"Version"`
 }
 
 func (r *socket) SetContext(ctx context.Context) error {
@@ -134,10 +134,9 @@ func (r *socket) login() error {
 	req := rawRequest{
 		Command: "Login",
 		Version: 2,
-		Body:    []byte(r.pw),
+		Body:    r.pw,
 	}
-	b := marshal(req)
-	err := r.write(b)
+	err := r.write(marshal(req))
 	if err != nil {
 		return err
 	}
@@ -181,7 +180,7 @@ func (r *socket) greatServer() error {
 	if data.StatusCode != 200 {
 		return NewUnexpectedStatus(data.StatusCode, data.StatusMessage)
 	}
-	_, err = base64.StdEncoding.Decode(r.xorKey, data.Body())
+	r.xorKey, err = base64.StdEncoding.AppendDecode(r.xorKey, []byte(data.Content))
 	return err
 }
 
