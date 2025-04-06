@@ -285,8 +285,7 @@ func (c *Connection) VoteKickThreshold(ctx context.Context, threshold string) er
 }
 
 func (c *Connection) ClientReferenceData(ctx context.Context, command string) (*string, error) {
-	r, err := execCommand[api.ClientReferenceData, string](ctx, c.socket, api.ClientReferenceData(command))
-	return r, err
+	return execCommand[api.ClientReferenceData, string](ctx, c.socket, api.ClientReferenceData(command))
 }
 
 func execCommand[T, U any](ctx context.Context, so *socket, req T) (result *U, err error) {
