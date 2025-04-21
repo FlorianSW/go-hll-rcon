@@ -140,16 +140,17 @@ var (
 
 func (w WorldPosition) Grid(m DrawableMap) Grid {
 	d := m.mapData()
-	if d == nil || d.MapCenterOffset.X != 0 || d.MapCenterOffset.Y != 0 {
+	if d == nil {
 		return Grid{}
 	}
-	xGrid, yGrid := math.Floor(w.X/d.SectorSize), math.Floor(w.Y/d.SectorSize)
+	x := w.X - d.MapCenterOffset.X
+	y := w.Y - d.MapCenterOffset.Y
+	xGrid, yGrid := math.Floor(x/d.SectorSize), math.Floor(y/d.SectorSize)
 
-	xInGrid := w.X - xGrid*d.SectorSize
-	yInGrid := w.Y - yGrid*d.SectorSize
+	xInGrid := x - xGrid*d.SectorSize
+	yInGrid := y - yGrid*d.SectorSize
 	num := d.SectorSize / 3
 	return Grid{
-		// TODO breaks if the map center is different from the default 0,0 (see mapData)
 		X:      xs[int(xGrid)+5],
 		Y:      int(yGrid) + 6,
 		Numpad: numpad[int(math.Abs(math.Floor(yInGrid/num)))][int(math.Abs(math.Floor(xInGrid/num)))],
