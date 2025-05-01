@@ -109,7 +109,7 @@ type WorldPosition struct {
 }
 
 func (w WorldPosition) Equal(o WorldPosition) bool {
-	return w.X == o.X && w.Y == o.Y && w.Z == o.Y
+	return w.X == o.X && w.Y == o.Y && w.Z == o.Z
 }
 
 // IsSpawned indicates that the player is currently not on the map, e.g. in the spawn or team selection screen.
