@@ -1,3 +1,3 @@
 package api
 
-type ClientReferenceData string
+type GetClientReferenceData string

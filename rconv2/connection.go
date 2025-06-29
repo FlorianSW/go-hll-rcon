@@ -21,62 +21,62 @@ type Connection struct {
 }
 
 func (c *Connection) Players(ctx context.Context) (*api.GetPlayersResponse, error) {
-	return execCommand[api.ServerInformation, api.GetPlayersResponse](ctx, c.socket, api.ServerInformation{
+	return execCommand[api.GetServerInformation, api.GetPlayersResponse](ctx, c.socket, api.GetServerInformation{
 		Name: api.ServerInformationNamePlayers,
 	})
 }
 
 func (c *Connection) Player(ctx context.Context, playerId string) (*api.GetPlayerResponse, error) {
-	return execCommand[api.ServerInformation, api.GetPlayerResponse](ctx, c.socket, api.ServerInformation{
+	return execCommand[api.GetServerInformation, api.GetPlayerResponse](ctx, c.socket, api.GetServerInformation{
 		Name:  api.ServerInformationNamePlayer,
 		Value: playerId,
 	})
 }
 
 func (c *Connection) ServerConfig(ctx context.Context) (*api.GetServerConfigResponse, error) {
-	return execCommand[api.ServerInformation, api.GetServerConfigResponse](ctx, c.socket, api.ServerInformation{
+	return execCommand[api.GetServerInformation, api.GetServerConfigResponse](ctx, c.socket, api.GetServerInformation{
 		Name: api.ServerInformationNameServerConfig,
 	})
 }
 
 func (c *Connection) SessionInfo(ctx context.Context) (*api.GetSessionResponse, error) {
-	return execCommand[api.ServerInformation, api.GetSessionResponse](ctx, c.socket, api.ServerInformation{
+	return execCommand[api.GetServerInformation, api.GetSessionResponse](ctx, c.socket, api.GetServerInformation{
 		Name: api.ServerInformationNameSession,
 	})
 }
 
 func (c *Connection) MapRotation(ctx context.Context) (*api.GetMapRotationResponse, error) {
-	return execCommand[api.ServerInformation, api.GetMapRotationResponse](ctx, c.socket, api.ServerInformation{
+	return execCommand[api.GetServerInformation, api.GetMapRotationResponse](ctx, c.socket, api.GetServerInformation{
 		Name: api.ServerInformationNameMapRotation,
 	})
 }
 
 func (c *Connection) MapSequence(ctx context.Context) (*api.GetMapSequenceResponse, error) {
-	return execCommand[api.ServerInformation, api.GetMapSequenceResponse](ctx, c.socket, api.ServerInformation{
+	return execCommand[api.GetServerInformation, api.GetMapSequenceResponse](ctx, c.socket, api.GetServerInformation{
 		Name: api.ServerInformationNameMapSequence,
 	})
 }
 
 func (c *Connection) DisplayableCommands(ctx context.Context) (*api.GetDisplayableCommandsResponse, error) {
-	return execCommand[api.DisplayableCommands, api.GetDisplayableCommandsResponse](ctx, c.socket, api.DisplayableCommands{})
+	return execCommand[api.GetDisplayableCommands, api.GetDisplayableCommandsResponse](ctx, c.socket, api.GetDisplayableCommands{})
 }
 
 func (c *Connection) AdminLog(ctx context.Context, timeSeconds int32, filter string) (*api.GetAdminLogResponse, error) {
-	return execCommand[api.AdminLog, api.GetAdminLogResponse](ctx, c.socket, api.AdminLog{
+	return execCommand[api.GetAdminLog, api.GetAdminLogResponse](ctx, c.socket, api.GetAdminLog{
 		LogBackTrackTime: timeSeconds,
 		Filters:          filter,
 	})
 }
 
-func (c *Connection) MapChange(ctx context.Context, mapName string) error {
-	_, err := execCommand[api.MapChange, any](ctx, c.socket, api.MapChange{
+func (c *Connection) ChangeMap(ctx context.Context, mapName string) error {
+	_, err := execCommand[api.ChangeMap, any](ctx, c.socket, api.ChangeMap{
 		MapName: mapName,
 	})
 	return err
 }
 
-func (c *Connection) ChangeSectorLayout(ctx context.Context, sectors []string) error {
-	r := api.ChangeSectorLayout{}
+func (c *Connection) SetSectorLayout(ctx context.Context, sectors []string) error {
+	r := api.SetSectorLayout{}
 	for i, sector := range sectors {
 		if i == 0 {
 			r.SectorOne = sector
@@ -94,7 +94,7 @@ func (c *Connection) ChangeSectorLayout(ctx context.Context, sectors []string) e
 			r.SectorFive = sector
 		}
 	}
-	_, err := execCommand[api.ChangeSectorLayout, any](ctx, c.socket, r)
+	_, err := execCommand[api.SetSectorLayout, any](ctx, c.socket, r)
 	return err
 }
 
@@ -137,8 +137,8 @@ func (c *Connection) RemoveMapToSequence(ctx context.Context, index int32) error
 	return err
 }
 
-func (c *Connection) ShuffleMapSequence(ctx context.Context, enable bool) error {
-	_, err := execCommand[api.ShuffleMapSequence, any](ctx, c.socket, api.ShuffleMapSequence{
+func (c *Connection) SetShuffleMapSequence(ctx context.Context, enable bool) error {
+	_, err := execCommand[api.SetShuffleMapSequence, any](ctx, c.socket, api.SetShuffleMapSequence{
 		Enable: enable,
 	})
 	return err
@@ -210,16 +210,16 @@ func (c *Connection) PunishPlayer(ctx context.Context, playerId, reason string) 
 	return err
 }
 
-func (c *Connection) Kick(ctx context.Context, playerId, reason string) error {
-	_, err := execCommand[api.Kick, any](ctx, c.socket, api.Kick{
+func (c *Connection) KickPlayer(ctx context.Context, playerId, reason string) error {
+	_, err := execCommand[api.KickPlayer, any](ctx, c.socket, api.KickPlayer{
 		Reason:   reason,
 		PlayerId: playerId,
 	})
 	return err
 }
 
-func (c *Connection) TempBan(ctx context.Context, playerId string, duration int32, reason, adminName string) error {
-	_, err := execCommand[api.TempBan, any](ctx, c.socket, api.TempBan{
+func (c *Connection) TemporaryBanPlayer(ctx context.Context, playerId string, duration int32, reason, adminName string) error {
+	_, err := execCommand[api.TemporaryBanPlayer, any](ctx, c.socket, api.TemporaryBanPlayer{
 		Reason:    reason,
 		PlayerId:  playerId,
 		Duration:  duration,
@@ -228,15 +228,15 @@ func (c *Connection) TempBan(ctx context.Context, playerId string, duration int3
 	return err
 }
 
-func (c *Connection) RemoveTempBan(ctx context.Context, playerId string) error {
-	_, err := execCommand[api.RemoveTempBan, any](ctx, c.socket, api.RemoveTempBan{
+func (c *Connection) RemoveTemporaryBan(ctx context.Context, playerId string) error {
+	_, err := execCommand[api.RemoveTemporaryBan, any](ctx, c.socket, api.RemoveTemporaryBan{
 		PlayerId: playerId,
 	})
 	return err
 }
 
-func (c *Connection) PermanentBan(ctx context.Context, playerId, reason, adminName string) error {
-	_, err := execCommand[api.PermanentBan, any](ctx, c.socket, api.PermanentBan{
+func (c *Connection) PermanentBanPlayer(ctx context.Context, playerId, reason, adminName string) error {
+	_, err := execCommand[api.PermanentBanPlayer, any](ctx, c.socket, api.PermanentBanPlayer{
 		Reason:    reason,
 		PlayerId:  playerId,
 		AdminName: adminName,
@@ -251,22 +251,22 @@ func (c *Connection) RemovePermanentBan(ctx context.Context, playerId string) er
 	return err
 }
 
-func (c *Connection) AutoBalance(ctx context.Context, enable bool) error {
-	_, err := execCommand[api.AutoBalance, any](ctx, c.socket, api.AutoBalance{
+func (c *Connection) SetAutoBalance(ctx context.Context, enable bool) error {
+	_, err := execCommand[api.SetAutoBalance, any](ctx, c.socket, api.SetAutoBalance{
 		EnableAutoBalance: enable,
 	})
 	return err
 }
 
-func (c *Connection) AutoBalanceThreshold(ctx context.Context, threshold int32) error {
-	_, err := execCommand[api.AutoBalanceThreshold, any](ctx, c.socket, api.AutoBalanceThreshold{
+func (c *Connection) SetAutoBalanceThreshold(ctx context.Context, threshold int32) error {
+	_, err := execCommand[api.SetAutoBalanceThreshold, any](ctx, c.socket, api.SetAutoBalanceThreshold{
 		AutoBalanceThreshold: threshold,
 	})
 	return err
 }
 
-func (c *Connection) VoteKickEnabled(ctx context.Context, enabled bool) error {
-	_, err := execCommand[api.VoteKickEnabled, any](ctx, c.socket, api.VoteKickEnabled{
+func (c *Connection) SetVoteKick(ctx context.Context, enabled bool) error {
+	_, err := execCommand[api.SetVoteKick, any](ctx, c.socket, api.SetVoteKick{
 		Enabled: enabled,
 	})
 	return err
@@ -277,15 +277,15 @@ func (c *Connection) ResetKickThreshold(ctx context.Context) error {
 	return err
 }
 
-func (c *Connection) VoteKickThreshold(ctx context.Context, threshold string) error {
-	_, err := execCommand[api.VoteKickThreshold, any](ctx, c.socket, api.VoteKickThreshold{
+func (c *Connection) SetVoteKickThreshold(ctx context.Context, threshold string) error {
+	_, err := execCommand[api.SetVoteKickThreshold, any](ctx, c.socket, api.SetVoteKickThreshold{
 		ThresholdValue: threshold,
 	})
 	return err
 }
 
-func (c *Connection) ClientReferenceData(ctx context.Context, command string) (*string, error) {
-	return execCommand[api.ClientReferenceData, string](ctx, c.socket, api.ClientReferenceData(command))
+func (c *Connection) GetClientReferenceData(ctx context.Context, command string) (*string, error) {
+	return execCommand[api.GetClientReferenceData, string](ctx, c.socket, api.GetClientReferenceData(command))
 }
 
 func execCommand[T, U any](ctx context.Context, so *socket, req T) (result *U, err error) {
