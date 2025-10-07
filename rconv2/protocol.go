@@ -30,6 +30,9 @@ type socket struct {
 	authToken string
 
 	lastContext *context.Context
+	// TODO Completely the wrong place for that, probably. But, the library does not support sending multiple
+	// commands over the same socket yet, anyway. Hence it doesn't matter, it just needs to go somewhere for now.
+	lastRequestId int
 }
 
 type Request[T, U any] struct {
@@ -98,6 +101,9 @@ type rawRequest struct {
 
 func (r *socket) SetContext(ctx context.Context) error {
 	r.lastContext = &ctx
+	if r.con == nil {
+		return nil
+	}
 	if deadline, ok := ctx.Deadline(); ok {
 		return r.con.SetDeadline(deadline)
 	} else {
@@ -116,13 +122,14 @@ func makeConnectionV2(h string, p int) (net.Conn, error) {
 	return net.DialTimeout("tcp4", fmt.Sprintf("%s:%d", h, p), 5*time.Second)
 }
 
-func newSocket(h string, p int, pw string) (*socket, error) {
+func newSocket(ctx context.Context, h string, p int, pw string) (*socket, error) {
 	r := &socket{
 		pw:             pw,
 		host:           h,
 		port:           p,
 		reconnectCount: 0,
 	}
+	_ = r.SetContext(ctx)
 	return r, r.reconnect(nil)
 }
 
@@ -189,21 +196,34 @@ func marshal(v rawRequest) []byte {
 	return req
 }
 
+func (r *socket) retryableWrite(err error, cmd []byte) error {
+	err = r.reconnect(err)
+	if err != nil {
+		return err
+	}
+	return r.write(cmd)
+}
+
 func (r *socket) write(cmd []byte) error {
-	s, err := r.con.Write(r.xor(cmd))
+	data := r.xor(cmd)
+	err := binary.Write(r.con, binary.LittleEndian, []int32{int32(r.lastRequestId), int32(len(data))})
 	if errors.Is(err, syscall.EPIPE) {
-		err = r.reconnect(err)
-		if err != nil {
-			return err
-		}
-		return r.write(cmd)
+		return r.retryableWrite(err, cmd)
+	} else if err != nil {
+		return err
+	}
+	r.lastRequestId++
+	s, err := r.con.Write(data)
+	if errors.Is(err, syscall.EPIPE) {
+		return r.retryableWrite(err, cmd)
+	} else if err != nil {
+		return err
 	}
 	if s != len(cmd) {
 		return fmt.Errorf("%w Cmd: %s (%d), sent: %d", ErrWriteSentUnequal, cmd, len(cmd), s)
 	}
-	if err != nil {
-		r.resetReconnectCount()
-	}
+
+	r.resetReconnectCount()
 	return err
 }
 
@@ -267,4 +287,5 @@ func (r *socket) xor(src []byte) []byte {
 
 func (r *socket) resetReconnectCount() {
 	r.reconnectCount = 0
+	r.lastRequestId = 0
 }

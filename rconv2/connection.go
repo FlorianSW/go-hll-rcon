@@ -2,6 +2,7 @@ package rconv2
 
 import (
 	"context"
+	"strings"
 
 	"github.com/floriansw/go-hll-rcon/rconv2/api"
 )
@@ -103,6 +104,10 @@ func (c *Connection) AdminGroups(ctx context.Context) (*api.GetAdminGroupsRespon
 	return execCommand[api.GetAdminGroups, api.GetAdminGroupsResponse](ctx, c.socket, api.GetAdminGroups{})
 }
 
+func (c *Connection) AdminUsers(ctx context.Context) (*api.GetAdminUsersResponse, error) {
+	return execCommand[api.GetAdminUsers, api.GetAdminUsersResponse](ctx, c.socket, api.GetAdminUsers{})
+}
+
 func (c *Connection) AddAdmin(ctx context.Context, playerId, adminGroup, comment string) error {
 	_, err := execCommand[api.AddAdmin, any](ctx, c.socket, api.AddAdmin{
 		PlayerId:   playerId,
@@ -160,6 +165,44 @@ func (c *Connection) MoveMapInSequence(ctx context.Context, currentIndex, newInd
 func (c *Connection) SetTeamSwitchCooldown(ctx context.Context, timer int32) error {
 	_, err := execCommand[api.SetTeamSwitchCooldown, any](ctx, c.socket, api.SetTeamSwitchCooldown{
 		TeamSwitchTimer: timer,
+	})
+	return err
+}
+
+func (c *Connection) SetMatchTimer(ctx context.Context, gameMode string, timer int32) error {
+	_, err := execCommand[api.SetMatchTimer, any](ctx, c.socket, api.SetMatchTimer{
+		GameMode:    gameMode,
+		MatchLength: timer,
+	})
+	return err
+}
+
+func (c *Connection) RemoveMatchTimer(ctx context.Context, gameMode string) error {
+	_, err := execCommand[api.RemoveMatchTimer, any](ctx, c.socket, api.RemoveMatchTimer{
+		GameMode: gameMode,
+	})
+	return err
+}
+
+func (c *Connection) SetWarmupTimer(ctx context.Context, gameMode string, timer int32) error {
+	_, err := execCommand[api.SetWarmupTimer, any](ctx, c.socket, api.SetWarmupTimer{
+		GameMode:     gameMode,
+		WarmupLength: timer,
+	})
+	return err
+}
+
+func (c *Connection) RemoveWarmupTimer(ctx context.Context, gameMode string) error {
+	_, err := execCommand[api.RemoveWarmupTimer, any](ctx, c.socket, api.RemoveWarmupTimer{
+		GameMode: gameMode,
+	})
+	return err
+}
+
+func (c *Connection) SetDynamicWeatherEnabled(ctx context.Context, mapId string, enabled bool) error {
+	_, err := execCommand[api.SetDynamicWeatherEnabled, any](ctx, c.socket, api.SetDynamicWeatherEnabled{
+		MapId:  mapId,
+		Enable: enabled,
 	})
 	return err
 }
@@ -233,6 +276,10 @@ func (c *Connection) TemporaryBanPlayer(ctx context.Context, playerId string, du
 	return err
 }
 
+func (c *Connection) TemporaryBans(ctx context.Context) (*api.GetTemporaryBansResponse, error) {
+	return execCommand[api.GetTemporaryBans, api.GetTemporaryBansResponse](ctx, c.socket, api.GetTemporaryBans{})
+}
+
 func (c *Connection) RemoveTemporaryBan(ctx context.Context, playerId string) error {
 	_, err := execCommand[api.RemoveTemporaryBan, any](ctx, c.socket, api.RemoveTemporaryBan{
 		PlayerId: playerId,
@@ -247,6 +294,10 @@ func (c *Connection) PermanentBanPlayer(ctx context.Context, playerId, reason, a
 		AdminName: adminName,
 	})
 	return err
+}
+
+func (c *Connection) PermanentBans(ctx context.Context) (*api.GetPermanentBansResponse, error) {
+	return execCommand[api.GetPermanentBans, api.GetPermanentBansResponse](ctx, c.socket, api.GetPermanentBans{})
 }
 
 func (c *Connection) RemovePermanentBan(ctx context.Context, playerId string) error {
@@ -277,14 +328,82 @@ func (c *Connection) SetVoteKick(ctx context.Context, enabled bool) error {
 	return err
 }
 
-func (c *Connection) ResetKickThreshold(ctx context.Context) error {
-	_, err := execCommand[api.ResetKickThreshold, any](ctx, c.socket, api.ResetKickThreshold{})
+func (c *Connection) ResetVoteKickThreshold(ctx context.Context) error {
+	_, err := execCommand[api.ResetVoteKickThreshold, any](ctx, c.socket, api.ResetVoteKickThreshold{})
 	return err
 }
 
 func (c *Connection) SetVoteKickThreshold(ctx context.Context, threshold string) error {
 	_, err := execCommand[api.SetVoteKickThreshold, any](ctx, c.socket, api.SetVoteKickThreshold{
 		ThresholdValue: threshold,
+	})
+	return err
+}
+
+func (c *Connection) SetWelcomeMessage(ctx context.Context, message string) error {
+	_, err := execCommand[api.SetWelcomeMessage, any](ctx, c.socket, api.SetWelcomeMessage{
+		Message: message,
+	})
+	return err
+}
+
+func (c *Connection) SetVipSlotCount(ctx context.Context, count int32) error {
+	_, err := execCommand[api.SetVipSlotCount, any](ctx, c.socket, api.SetVipSlotCount{
+		VipSlotCount: count,
+	})
+	return err
+}
+
+func (c *Connection) ForceTeamSwitch(ctx context.Context, playerId string, mode api.ForceMode) error {
+	_, err := execCommand[api.ForceTeamSwitch, any](ctx, c.socket, api.ForceTeamSwitch{
+		PlayerId:  playerId,
+		ForceMode: mode,
+	})
+	return err
+}
+
+func (c *Connection) AddBannedWords(ctx context.Context, words []string) error {
+	_, err := execCommand[api.AddBannedWords, any](ctx, c.socket, api.AddBannedWords{
+		BannedWords: strings.Join(words, ","),
+	})
+	return err
+}
+
+func (c *Connection) RemoveBannedWords(ctx context.Context, words []string) error {
+	_, err := execCommand[api.RemoveBannedWords, any](ctx, c.socket, api.RemoveBannedWords{
+		BannedWords: strings.Join(words, ","),
+	})
+	return err
+}
+
+func (c *Connection) AddVip(ctx context.Context, playerId, comment string) error {
+	_, err := execCommand[api.AddVip, any](ctx, c.socket, api.AddVip{
+		PlayerId: playerId,
+		Comment:  comment,
+	})
+	return err
+}
+
+func (c *Connection) RemoveVip(ctx context.Context, playerId string) error {
+	_, err := execCommand[api.RemoveVip, any](ctx, c.socket, api.RemoveVip{
+		PlayerId: playerId,
+	})
+	return err
+}
+
+func (c *Connection) RemovePlayerFromPlatoon(ctx context.Context, playerId, reason string) error {
+	_, err := execCommand[api.RemovePlayerFromPlatoon, any](ctx, c.socket, api.RemovePlayerFromPlatoon{
+		PlayerId: playerId,
+		Reason:   reason,
+	})
+	return err
+}
+
+func (c *Connection) DisbandPlatoon(ctx context.Context, team, squad int32, reason string) error {
+	_, err := execCommand[api.DisbandPlatoon, any](ctx, c.socket, api.DisbandPlatoon{
+		TeamIndex:  team,
+		SquadIndex: squad,
+		Reason:     reason,
 	})
 	return err
 }
