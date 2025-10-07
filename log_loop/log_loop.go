@@ -2,10 +2,11 @@ package log_loop
 
 import (
 	"context"
-	"github.com/floriansw/go-hll-rcon/rcon"
 	"io"
 	"log/slog"
 	"time"
+
+	rcon "github.com/floriansw/go-hll-rcon/rconv2"
 )
 
 type RConPool interface {

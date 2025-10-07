@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/floriansw/go-hll-rcon/rcon"
 	"io"
 	"net"
 	"reflect"
@@ -15,8 +14,9 @@ import (
 	"time"
 )
 
-const (
-	responseHeaderLength = 8
+var (
+	ErrWriteSentUnequal    = errors.New("write wrote less or more bytes than command is long")
+	ReconnectTriesExceeded = errors.New("there are no reconnects left")
 )
 
 type socket struct {
@@ -113,23 +113,7 @@ func (r *socket) Context() context.Context {
 }
 
 func makeConnectionV2(h string, p int) (net.Conn, error) {
-	con, err := net.DialTimeout("tcp4", fmt.Sprintf("%s:%d", h, p), 5*time.Second)
-	if err != nil {
-		return nil, err
-	}
-	// use an intermediate timeout, it's unlikely that a new connection times out, however, if it does for whatever reason
-	// it might get stuck here
-	err = con.SetDeadline(time.Now().Add(20 * time.Second))
-	if err != nil {
-		return nil, err
-	}
-	// This is an XOR key used in RCONv1, however, the "real" key to use will be red in the ServerConnect command
-	_, err = con.Read(make([]byte, 4))
-	if err != nil {
-		return nil, err
-	}
-
-	return con, err
+	return net.DialTimeout("tcp4", fmt.Sprintf("%s:%d", h, p), 5*time.Second)
 }
 
 func newSocket(h string, p int, pw string) (*socket, error) {
@@ -215,7 +199,7 @@ func (r *socket) write(cmd []byte) error {
 		return r.write(cmd)
 	}
 	if s != len(cmd) {
-		return fmt.Errorf("%w Cmd: %s (%d), sent: %d", rcon.ErrWriteSentUnequal, cmd, len(cmd), s)
+		return fmt.Errorf("%w Cmd: %s (%d), sent: %d", ErrWriteSentUnequal, cmd, len(cmd), s)
 	}
 	if err != nil {
 		r.resetReconnectCount()
@@ -225,10 +209,13 @@ func (r *socket) write(cmd []byte) error {
 
 func (r *socket) reconnect(orig error) error {
 	if r.reconnectCount > 3 {
-		return rcon.ReconnectTriesExceeded
+		return ReconnectTriesExceeded
 	}
 	r.reconnectCount++
 	con, err := makeConnectionV2(r.host, r.port)
+	if err != nil {
+		return err
+	}
 	r.con = con
 	err = r.SetContext(r.Context())
 	if err != nil {
@@ -279,7 +266,5 @@ func (r *socket) xor(src []byte) []byte {
 }
 
 func (r *socket) resetReconnectCount() {
-	if r.reconnectCount != 0 {
-		r.reconnectCount = 0
-	}
+	r.reconnectCount = 0
 }

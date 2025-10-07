@@ -2,6 +2,7 @@ package rconv2
 
 import (
 	"context"
+
 	"github.com/floriansw/go-hll-rcon/rconv2/api"
 )
 
@@ -98,6 +99,10 @@ func (c *Connection) SetSectorLayout(ctx context.Context, sectors []string) erro
 	return err
 }
 
+func (c *Connection) AdminGroups(ctx context.Context) (*api.GetAdminGroupsResponse, error) {
+	return execCommand[api.GetAdminGroups, api.GetAdminGroupsResponse](ctx, c.socket, api.GetAdminGroups{})
+}
+
 func (c *Connection) AddAdmin(ctx context.Context, playerId, adminGroup, comment string) error {
 	_, err := execCommand[api.AddAdmin, any](ctx, c.socket, api.AddAdmin{
 		PlayerId:   playerId,
@@ -137,8 +142,8 @@ func (c *Connection) RemoveMapToSequence(ctx context.Context, index int32) error
 	return err
 }
 
-func (c *Connection) SetShuffleMapSequence(ctx context.Context, enable bool) error {
-	_, err := execCommand[api.SetShuffleMapSequence, any](ctx, c.socket, api.SetShuffleMapSequence{
+func (c *Connection) SetMapShuffleEnabled(ctx context.Context, enable bool) error {
+	_, err := execCommand[api.SetMapShuffleEnabled, any](ctx, c.socket, api.SetMapShuffleEnabled{
 		Enable: enable,
 	})
 	return err

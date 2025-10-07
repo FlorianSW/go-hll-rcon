@@ -12,7 +12,7 @@ package main
 
 import (
 	"context"
-	"github.com/floriansw/go-hll-rcon/rcon"
+	rcon "github.com/floriansw/go-hll-rcon/rconv2"
 	"log/slog"
 	"os"
 	"strconv"

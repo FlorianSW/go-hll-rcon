@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"github.com/floriansw/go-hll-rcon/log_loop"
-	"github.com/floriansw/go-hll-rcon/rcon"
 	"log/slog"
 	"os"
 	"strconv"
+
+	"github.com/floriansw/go-hll-rcon/log_loop"
+	rcon "github.com/floriansw/go-hll-rcon/rconv2"
 )
 
 type Runnable interface {
