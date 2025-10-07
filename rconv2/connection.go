@@ -118,6 +118,13 @@ func (c *Connection) AddAdmin(ctx context.Context, playerId, adminGroup, comment
 	return err
 }
 
+func (c *Connection) RemoveAdmin(ctx context.Context, playerId string) error {
+	_, err := execCommand[api.RemoveAdmin, any](ctx, c.socket, api.RemoveAdmin{
+		PlayerId: playerId,
+	})
+	return err
+}
+
 func (c *Connection) AddMapToRotation(ctx context.Context, mapName string, index int32) error {
 	_, err := execCommand[api.AddMapToRotation, any](ctx, c.socket, api.AddMapToRotation{
 		MapName: mapName,
