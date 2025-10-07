@@ -409,7 +409,12 @@ func (c *Connection) DisbandPlatoon(ctx context.Context, team, squad int32, reas
 	return err
 }
 
-func (c *Connection) AvailableMaps(ctx context.Context) ([]string, error) {
+// MapFilter A filter used in commands that return list of maps, e.g. Maps or MapRotation.
+// The filter should return true, when the map should be included in the result set and false
+// when the map should be skipped.
+type MapFilter func(idx int, name string, result []string) bool
+
+func (c *Connection) AvailableMaps(ctx context.Context, filters ...MapFilter) ([]string, error) {
 	res, err := c.GetClientReferenceData(ctx, "AddMapToRotation")
 	if err != nil {
 		return nil, err
@@ -424,7 +429,24 @@ func (c *Connection) AvailableMaps(ctx context.Context) ([]string, error) {
 	if param.Id != "MapName" {
 		return nil, errors.New("could not find map name parameter")
 	}
-	return strings.Split(param.ValueMember, ","), nil
+	maps := strings.Split(param.ValueMember, ",")
+	return filter(maps, filters...), nil
+}
+
+func filter(maps []string, filters ...MapFilter) []string {
+	var result []string
+	for i, m := range maps {
+		add := true
+		for _, filter := range filters {
+			if !filter(i, m, result) {
+				add = false
+			}
+		}
+		if add {
+			result = append(result, m)
+		}
+	}
+	return result
 }
 
 func (c *Connection) GetClientReferenceData(ctx context.Context, command string) (*api.GetClientReferenceDataResponse, error) {
