@@ -2,6 +2,7 @@ package rconv2
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/floriansw/go-hll-rcon/rconv2/api"
@@ -408,8 +409,26 @@ func (c *Connection) DisbandPlatoon(ctx context.Context, team, squad int32, reas
 	return err
 }
 
-func (c *Connection) GetClientReferenceData(ctx context.Context, command string) (*string, error) {
-	return execCommand[api.GetClientReferenceData, string](ctx, c.socket, api.GetClientReferenceData(command))
+func (c *Connection) AvailableMaps(ctx context.Context) ([]string, error) {
+	res, err := c.GetClientReferenceData(ctx, "AddMapToRotation")
+	if err != nil {
+		return nil, err
+	}
+	var param api.Parameter
+	for _, p := range res.Parameters {
+		if p.Id == "MapName" {
+			param = p
+			break
+		}
+	}
+	if param.Id != "MapName" {
+		return nil, errors.New("could not find map name parameter")
+	}
+	return strings.Split(param.ValueMember, ","), nil
+}
+
+func (c *Connection) GetClientReferenceData(ctx context.Context, command string) (*api.GetClientReferenceDataResponse, error) {
+	return execCommand[api.GetClientReferenceData, api.GetClientReferenceDataResponse](ctx, c.socket, api.GetClientReferenceData(command))
 }
 
 func execCommand[T, U any](ctx context.Context, so *socket, req T) (result *U, err error) {
