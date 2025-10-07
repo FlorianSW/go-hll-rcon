@@ -65,13 +65,17 @@ func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 		log.Info("start")
 		for {
 			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
-				r, err := c.ShowLog(d)
+				r, err := c.AdminLog(ctx, int32(d.Seconds()), "")
 				if err != nil {
 					log.Error("read", err)
 					errs <- err
 				} else {
-					log.Debug("read", "no", len(r))
-					lines <- r
+					log.Debug("read", "no", len(r.Entries))
+					var logs []string
+					for _, entry := range r.Entries {
+						logs = append(logs, entry.Message)
+					}
+					lines <- logs
 				}
 				d = time.Minute
 				return err
