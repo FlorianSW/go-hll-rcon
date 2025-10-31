@@ -18,6 +18,7 @@ type LogLoop struct {
 	p                  RConPool
 	initialLogDuration time.Duration
 
+	pollTicker     *time.Ticker
 	lastSeen       *StructuredLogLine
 	reconnectTries int
 }
@@ -26,6 +27,7 @@ type LogLoopOptions struct {
 	Logger            *slog.Logger
 	Pool              RConPool
 	InitialLogMinutes *int
+	PollInterval      *time.Duration
 }
 
 // NewLogLoop instantiates a log loop, which periodically requests logs from the game server, parses them and exposes them
@@ -40,10 +42,15 @@ func NewLogLoop(opts LogLoopOptions) *LogLoop {
 	if opts.InitialLogMinutes != nil {
 		initialLogDuration = time.Duration(*opts.InitialLogMinutes) * time.Minute
 	}
+	pollInterval := 5 * time.Second
+	if opts.PollInterval != nil {
+		pollInterval = *opts.PollInterval
+	}
 	return &LogLoop{
 		logger:             opts.Logger,
 		p:                  opts.Pool,
 		initialLogDuration: initialLogDuration,
+		pollTicker:         time.NewTicker(pollInterval),
 	}
 }
 
@@ -61,32 +68,6 @@ func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 	l.lastSeen = nil
 	d := l.initialLogDuration
 	log.Info("initializing")
-	go func() {
-		log.Info("start")
-		for {
-			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
-				r, err := c.AdminLog(ctx, int32(d.Seconds()), "")
-				if err != nil {
-					log.Error("read", err)
-					errs <- err
-				} else {
-					log.Debug("read", "no", len(r.Entries))
-					var logs []string
-					for _, entry := range r.Entries {
-						logs = append(logs, entry.Message)
-					}
-					lines <- logs
-				}
-				d = time.Minute
-				return err
-			})
-			if err != nil {
-				log.Error("init", err)
-				errs <- err
-			}
-			time.Sleep(5 * time.Second)
-		}
-	}()
 
 	for {
 		select {
@@ -109,6 +90,29 @@ func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 			}
 			if stop := f(pl); stop {
 				return nil
+			}
+		case <-l.pollTicker.C:
+			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
+				r, err := c.AdminLog(ctx, int32(d.Seconds()), "")
+				if err != nil {
+					log.Error("read", err)
+					errs <- err
+				} else {
+					log.Debug("read", "no", len(r.Entries))
+					var logs []string
+					for _, entry := range r.Entries {
+						logs = append(logs, entry.Message)
+					}
+					go func(l []string) {
+						lines <- l
+					}(logs)
+				}
+				d = time.Minute
+				return err
+			})
+			if err != nil {
+				log.Error("init", err)
+				errs <- err
 			}
 		case err := <-errs:
 			if !rcon.IsBrokenHllConnection(err) {
