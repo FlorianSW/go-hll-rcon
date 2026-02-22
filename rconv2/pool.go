@@ -99,7 +99,6 @@ func IsBrokenHllConnection(err error) bool {
 		(os.IsTimeout(err) ||
 			errors.Is(err, syscall.ECONNRESET) ||
 			errors.Is(err, syscall.ECONNREFUSED) ||
-			errors.Is(err, syscall.ECONNREFUSED) ||
 			errors.Is(err, syscall.EPIPE))
 }
 
