@@ -16,6 +16,7 @@ import (
 
 var (
 	ErrWriteSentUnequal    = errors.New("write wrote less or more bytes than command is long")
+	ErrReadLengthUnequal   = errors.New("server wrote less bytes than avertised")
 	ReconnectTriesExceeded = errors.New("there are no reconnects left")
 )
 
@@ -268,7 +269,10 @@ func (r *socket) read() ([]byte, error) {
 	}
 
 	answer := make([]byte, contentLength)
-	_, err = io.ReadFull(r.con, answer)
+	l, err := io.ReadFull(r.con, answer)
+	if len(answer) != l {
+		return nil, fmt.Errorf("%w responseId: %d, contentLength: %d, read: %d", ErrReadLengthUnequal, responseId, contentLength, l)
+	}
 
 	return r.xor(answer), err
 }
