@@ -162,6 +162,10 @@ func (c *Connection) SetMapShuffleEnabled(ctx context.Context, enable bool) erro
 	return err
 }
 
+func (c *Connection) GetMapShuffleEnabled(ctx context.Context) (*api.GetMapShuffleEnabledResponse, error) {
+	return execCommand[api.GetMapShuffleEnabled, api.GetMapShuffleEnabledResponse](ctx, c.socket, api.GetMapShuffleEnabled{})
+}
+
 func (c *Connection) MoveMapInSequence(ctx context.Context, currentIndex, newIndex int32) error {
 	_, err := execCommand[api.MoveMapInSequence, any](ctx, c.socket, api.MoveMapInSequence{
 		CurrentIndex: currentIndex,
@@ -177,7 +181,7 @@ func (c *Connection) SetTeamSwitchCooldown(ctx context.Context, timer int32) err
 	return err
 }
 
-func (c *Connection) SetMatchTimer(ctx context.Context, gameMode string, timer int32) error {
+func (c *Connection) SetMatchTimer(ctx context.Context, gameMode api.GameMode, timer int32) error {
 	_, err := execCommand[api.SetMatchTimer, any](ctx, c.socket, api.SetMatchTimer{
 		GameMode:    gameMode,
 		MatchLength: timer,
@@ -185,14 +189,14 @@ func (c *Connection) SetMatchTimer(ctx context.Context, gameMode string, timer i
 	return err
 }
 
-func (c *Connection) RemoveMatchTimer(ctx context.Context, gameMode string) error {
+func (c *Connection) RemoveMatchTimer(ctx context.Context, gameMode api.GameMode) error {
 	_, err := execCommand[api.RemoveMatchTimer, any](ctx, c.socket, api.RemoveMatchTimer{
 		GameMode: gameMode,
 	})
 	return err
 }
 
-func (c *Connection) SetWarmupTimer(ctx context.Context, gameMode string, timer int32) error {
+func (c *Connection) SetWarmupTimer(ctx context.Context, gameMode api.GameMode, timer int32) error {
 	_, err := execCommand[api.SetWarmupTimer, any](ctx, c.socket, api.SetWarmupTimer{
 		GameMode:     gameMode,
 		WarmupLength: timer,
@@ -200,7 +204,7 @@ func (c *Connection) SetWarmupTimer(ctx context.Context, gameMode string, timer 
 	return err
 }
 
-func (c *Connection) RemoveWarmupTimer(ctx context.Context, gameMode string) error {
+func (c *Connection) RemoveWarmupTimer(ctx context.Context, gameMode api.GameMode) error {
 	_, err := execCommand[api.RemoveWarmupTimer, any](ctx, c.socket, api.RemoveWarmupTimer{
 		GameMode: gameMode,
 	})

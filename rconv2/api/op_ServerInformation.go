@@ -176,15 +176,15 @@ type GetServerConfigResponse struct {
 }
 
 type GetSessionResponse struct {
-	ServerName       string `json:"serverName"`
-	MapName          string `json:"mapName"`
-	GameMode         string `json:"gameMode"`
-	MaxPlayerCount   int    `json:"maxPlayerCount"`
-	PlayerCount      int    `json:"playerCount"`
-	MaxQueueCount    int    `json:"maxQueueCount"`
-	QueueCount       int    `json:"queueCount"`
-	MaxVIPQueueCount int    `json:"maxVIPQueueCount"`
-	VIPQueueCount    int    `json:"vIPQueueCount"`
+	ServerName       string   `json:"serverName"`
+	MapName          string   `json:"mapName"`
+	GameMode         GameMode `json:"gameMode"`
+	MaxPlayerCount   int      `json:"maxPlayerCount"`
+	PlayerCount      int      `json:"playerCount"`
+	MaxQueueCount    int      `json:"maxQueueCount"`
+	QueueCount       int      `json:"queueCount"`
+	MaxVIPQueueCount int      `json:"maxVIPQueueCount"`
+	VIPQueueCount    int      `json:"vIPQueueCount"`
 }
 
 type Vector2D struct {
@@ -202,8 +202,8 @@ type mapData struct {
 
 // maps describe the default configuration of a map, or a specific different config if a map
 // is different to the default.
-var maps = map[string]map[string]mapData{
-	"Skirmish": {
+var maps = map[GameMode]map[string]mapData{
+	GameModeSkirmish: {
 		"default": {
 			SectorSize: 13926,
 		},
@@ -224,7 +224,7 @@ var maps = map[string]map[string]mapData{
 			MapCenterOffset: Vector2D{X: -20, Y: 28190},
 		},
 	},
-	"Warfare": {
+	GameModeWarfare: {
 		// all older maps (SME, SMDM, etc) have a default sector width and height
 		"default": {
 			SectorSize: 19840,
@@ -275,11 +275,11 @@ type GetMapSequenceResponse struct {
 }
 
 type Map struct {
-	Name      string `json:"name"`
-	GameMode  string `json:"gameMode"`
-	TimeOfDay string `json:"timeOfDay"`
-	Id        string `json:"iD"`
-	Position  int    `json:"position"`
+	Name      string   `json:"name"`
+	GameMode  GameMode `json:"gameMode"`
+	TimeOfDay string   `json:"timeOfDay"`
+	Id        string   `json:"iD"`
+	Position  int      `json:"position"`
 }
 
 type Grid struct {
