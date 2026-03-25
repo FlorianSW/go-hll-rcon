@@ -223,6 +223,14 @@ var maps = map[GameMode]map[string]mapData{
 			SectorSize:      13926,
 			MapCenterOffset: Vector2D{X: -20, Y: 28190},
 		},
+		"EL ALAMEIN": {
+			SectorSize:      13926,
+			MapCenterOffset: Vector2D{X: -7500, Y: 0},
+		},
+		"STALINGRAD": {
+			SectorSize:      13926,
+			MapCenterOffset: Vector2D{X: 150, Y: -110},
+		},
 	},
 	GameModeWarfare: {
 		// all older maps (SME, SMDM, etc) have a default sector width and height
@@ -243,10 +251,18 @@ var maps = map[GameMode]map[string]mapData{
 		"TOBRUK": {
 			SectorSize: 20000,
 		},
+		"SMOLENSK": {
+			SectorSize: 20000,
+		},
 	},
 }
 
 func (m GetSessionResponse) mapData() *mapData {
+	gm := m.GameMode
+	if gm == GameModeOffensive {
+		// for what mapData is concerned, Offensive behaves (so far) the same as warfare.
+		gm = GameModeWarfare
+	}
 	if mode, exists := maps[m.GameMode]; !exists {
 		return nil
 	} else if md, exists := mode[m.MapName]; exists {
