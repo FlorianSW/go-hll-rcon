@@ -231,6 +231,9 @@ var maps = map[GameMode]map[string]mapData{
 			SectorSize:      13926,
 			MapCenterOffset: Vector2D{X: 150, Y: -110},
 		},
+		"JUNO BEACH": {
+			SectorSize: 13926,
+		},
 	},
 	GameModeWarfare: {
 		// all older maps (SME, SMDM, etc) have a default sector width and height
@@ -252,6 +255,9 @@ var maps = map[GameMode]map[string]mapData{
 			SectorSize: 20000,
 		},
 		"SMOLENSK": {
+			SectorSize: 20000,
+		},
+		"JUNO BEACH": {
 			SectorSize: 20000,
 		},
 	},
