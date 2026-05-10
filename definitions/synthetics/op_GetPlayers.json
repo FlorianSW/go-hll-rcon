@@ -17,5 +17,189 @@
         "players"
       ]
     }
+  ],
+  "response": [
+    {
+      "type": "List",
+      "name": "Players",
+      "id": "players",
+      "members": [
+        {
+          "id": "iD",
+          "name": "Id",
+          "type": "Text"
+        },
+        {
+          "id": "platform",
+          "name": "Platform",
+          "type": "Combo",
+          "displayMember": [
+            "Steam",
+            "Epic Game Store",
+            "Xbox Game Pass",
+            "PlayStation Network",
+            "PlayStation 5",
+            "Xbox Series X"
+          ],
+          "valueMember": [
+            "steam",
+            "epic",
+            "xbl",
+            "psn",
+            "ps5",
+            "xsx"
+          ]
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Text"
+        },
+        {
+          "id": "clanTag",
+          "name": "Clan Tag",
+          "type": "Text"
+        },
+        {
+          "id": "eOSID",
+          "name": "Epic Online Services Id",
+          "type": "Text"
+        },
+        {
+          "id": "level",
+          "name": "Level",
+          "type": "Number"
+        },
+        {
+          "id": "team",
+          "name": "Team",
+          "type": "Combo",
+          "displayMember": [
+            "GER",
+            "US",
+            "SOV",
+            "CW",
+            "DAK",
+            "B8A",
+            "UNASSIGNED"
+          ],
+          "valueMember": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "id": "role",
+          "name": "Role",
+          "type": "Combo",
+          "displayMember": [
+            "Rifleman",
+            "Assault",
+            "AutomaticRifleman",
+            "Medic",
+            "Spotter",
+            "Support",
+            "HeavyMachineGunner",
+            "AntiTank",
+            "Engineer",
+            "Officer",
+            "Sniper",
+            "Crewman",
+            "TankCommander",
+            "ArmyCommander"
+          ],
+          "valueMember": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        },
+        {
+          "id": "platoon",
+          "name": "Platoon",
+          "type": "Text"
+        },
+        {
+          "id": "loadout",
+          "name": "Loadout",
+          "type": "Text"
+        },
+        {
+          "id": "kills",
+          "name": "Kills",
+          "type": "Number"
+        },
+        {
+          "id": "deaths",
+          "name": "Deaths",
+          "type": "Number"
+        },
+        {
+          "id": "scoreData",
+          "name": "ScoreData",
+          "type": "Complex",
+          "members": [
+            {
+              "id": "cOMBAT",
+              "name": "Combat",
+              "type": "Number"
+            },
+            {
+              "id": "offense",
+              "name": "Offensive",
+              "type": "Number"
+            },
+            {
+              "id": "defense",
+              "name": "Defensive",
+              "type": "Number"
+            },
+            {
+              "id": "support",
+              "name": "Support",
+              "type": "Number"
+            }
+          ]
+        },
+        {
+          "id": "worldPosition",
+          "name": "Position",
+          "type": "Complex",
+          "members": [
+            {
+              "id": "x",
+              "name": "X",
+              "type": "Number"
+            },
+            {
+              "id": "y",
+              "name": "Y",
+              "type": "Number"
+            },
+            {
+              "id": "z",
+              "name": "Z",
+              "type": "Number"
+            }
+          ]
+        }
+      ]
+    }
   ]
 }

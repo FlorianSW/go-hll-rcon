@@ -162,7 +162,7 @@ func (c Command) ReturnType() Type {
 	var responseMembers []TypeMember
 	for _, param := range res {
 		responseMembers = append(responseMembers, TypeMember{
-			Name: param.Name,
+			Name: strings.ReplaceAll(param.Name, " ", ""),
 			Type: c.ResponseGoType(param),
 		})
 	}
@@ -180,16 +180,37 @@ func (c Command) ReturnTypeDefinitions() (res []Type) {
 	}
 	r := *c.Response
 	for _, param := range r {
-		if param.Type == ResponseItemTypeList || param.Type == ResponseItemTypeComplex {
+		if param.Type == ResponseItemTypeList && param.ValueMember != nil {
+			res = append(res, c.buildResponseItemCombo(param)...)
+		} else if param.Type == ResponseItemTypeList || param.Type == ResponseItemTypeComplex {
 			res = append(res, c.buildSubTypes(param)...)
+		} else if param.Type == ResponseItemTypeEnum {
+			res = append(res, c.buildResponseItemCombo(param)...)
 		}
 	}
 	return res
 }
 
+func (c Command) buildResponseItemCombo(param ResponseElement) (res []Type) {
+	caser := cases.Title(language.English)
+	singularize := pluralize.NewClient()
+	var members []TypeMember
+	for i := range param.ValueMember {
+		members = append(members, TypeMember{
+			Name: fmt.Sprintf("%s%s%s", c.Id, caser.String(param.Id), singularize.Singular(caser.String(param.DisplayMember[i]))),
+			Type: param.ValueMember[i],
+		})
+	}
+	res = append(res, Type{
+		Name:        fmt.Sprintf("%s%s", c.Id, singularize.Singular(param.Name)),
+		AliasedType: "string",
+		Members:     members,
+	})
+	return
+}
+
 func (c Command) buildSubTypes(param ResponseElement) (res []Type) {
 	var responseMembers []TypeMember
-	caser := cases.Title(language.English)
 	for _, m := range param.Members {
 		responseMembers = append(responseMembers, TypeMember{
 			Name: strings.ReplaceAll(m.Name, " ", ""),
@@ -199,18 +220,7 @@ func (c Command) buildSubTypes(param ResponseElement) (res []Type) {
 		if m.Type == ResponseItemTypeList || m.Type == ResponseItemTypeComplex {
 			res = append(res, c.buildSubTypes(m)...)
 		} else if m.Type == ResponseItemTypeEnum {
-			var members []TypeMember
-			for i := range m.ValueMember {
-				members = append(members, TypeMember{
-					Name: fmt.Sprintf("%s%s%s", c.Id, caser.String(m.Id), caser.String(m.DisplayMember[i])),
-					Type: m.ValueMember[i],
-				})
-			}
-			res = append(res, Type{
-				Name:        fmt.Sprintf("%s%s", c.Id, caser.String(m.Name)),
-				AliasedType: "string",
-				Members:     members,
-			})
+			res = append(res, c.buildResponseItemCombo(m)...)
 		}
 	}
 	res = append(res, Type{

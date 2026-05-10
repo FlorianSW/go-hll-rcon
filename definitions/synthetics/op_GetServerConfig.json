@@ -17,5 +17,37 @@
         "serverconfig"
       ]
     }
+  ],
+  "response": [
+    {
+      "id": "serverName",
+      "name": "ServerName",
+      "type": "Text"
+    },
+    {
+      "id": "buildNumber",
+      "name": "BuildNumber",
+      "type": "Text"
+    },
+    {
+      "id": "buildRevision",
+      "name": "BuildRevision",
+      "type": "Text"
+    },
+    {
+      "id": "supportedPlatforms",
+      "name": "SupportedPlatforms",
+      "type": "List",
+      "displayMember": [
+        "Steam",
+        "eos",
+        "WinGDK"
+      ],
+      "valueMember": [
+        "Steam",
+        "eos",
+        "WinGDK"
+      ]
+    }
   ]
 }
