@@ -1,0 +1,21 @@
+{
+  "text": "Get Map Sequence",
+  "friendlyName": "Get Map Sequence",
+  "description": "Get current map sequence",
+  "id": "GetMapSequence",
+  "commandName": "GetServerInformation",
+  "parameters": [
+    {
+      "type": "Text",
+      "name": "Name",
+      "id": "Name",
+      "fixedValue": "mapsequence",
+      "displayMember": [
+        "mapsequence"
+      ],
+      "valueMember": [
+        "mapsequence"
+      ]
+    }
+  ]
+}

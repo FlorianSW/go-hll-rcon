@@ -1,0 +1,21 @@
+{
+  "text": "Get Server Config",
+  "friendlyName": "Get Server Config",
+  "description": "Get metadata of server",
+  "id": "GetServerConfig",
+  "commandName": "GetServerInformation",
+  "parameters": [
+    {
+      "type": "Text",
+      "name": "Name",
+      "id": "Name",
+      "fixedValue": "serverconfig",
+      "displayMember": [
+        "serverconfig"
+      ],
+      "valueMember": [
+        "serverconfig"
+      ]
+    }
+  ]
+}

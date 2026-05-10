@@ -1,0 +1,26 @@
+{
+  "text": "Get Player",
+  "friendlyName": "Get Player",
+  "description": "Get player information of a connected player",
+  "id": "GetPlayer",
+  "commandName": "GetServerInformation",
+  "parameters": [
+    {
+      "type": "Text",
+      "name": "Name",
+      "id": "Name",
+      "fixedValue": "player",
+      "displayMember": [
+        "player"
+      ],
+      "valueMember": [
+        "player"
+      ]
+    },
+    {
+      "type": "Text",
+      "name": "Value",
+      "id": "Value"
+    }
+  ]
+}

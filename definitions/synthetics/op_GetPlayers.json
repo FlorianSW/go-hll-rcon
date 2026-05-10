@@ -1,0 +1,21 @@
+{
+  "text": "Get Players",
+  "friendlyName": "Get Players",
+  "description": "Get a list of players from the server",
+  "id": "GetPlayers",
+  "commandName": "GetServerInformation",
+  "parameters": [
+    {
+      "type": "Text",
+      "name": "Name",
+      "id": "Name",
+      "fixedValue": "players",
+      "displayMember": [
+        "players"
+      ],
+      "valueMember": [
+        "players"
+      ]
+    }
+  ]
+}

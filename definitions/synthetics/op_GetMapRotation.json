@@ -1,0 +1,21 @@
+{
+  "text": "Get Map Rotation",
+  "friendlyName": "Get Map Rotation",
+  "description": "Get current map rotation",
+  "id": "GetMapRotation",
+  "commandName": "GetServerInformation",
+  "parameters": [
+    {
+      "type": "Text",
+      "name": "Name",
+      "id": "Name",
+      "fixedValue": "maprotation",
+      "displayMember": [
+        "maprotation"
+      ],
+      "valueMember": [
+        "maprotation"
+      ]
+    }
+  ]
+}

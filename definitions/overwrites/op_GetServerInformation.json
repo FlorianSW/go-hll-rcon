@@ -1,0 +1,34 @@
+{
+  "request": {
+    "parameters": [
+      {
+        "type": "Combo",
+        "name": "Name",
+        "id": "Name",
+        "displayMember": [
+          "players",
+          "player",
+          "maprotation",
+          "mapsequence",
+          "session",
+          "serverconfig"
+        ],
+        "valueMember": [
+          "players",
+          "player",
+          "maprotation",
+          "mapsequence",
+          "session",
+          "serverconfig"
+        ]
+      },
+      {
+        "type": "Text",
+        "name": "Value",
+        "id": "Value",
+        "displayMember": null,
+        "valueMember": null
+      }
+    ]
+  }
+}

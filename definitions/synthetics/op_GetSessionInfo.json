@@ -1,0 +1,21 @@
+{
+  "text": "Get Session Info",
+  "friendlyName": "Get Session Info",
+  "description": "Get information about current game state of the server",
+  "id": "GetSessionInfo",
+  "commandName": "GetServerInformation",
+  "parameters": [
+    {
+      "type": "Text",
+      "name": "Name",
+      "id": "Name",
+      "fixedValue": "session",
+      "displayMember": [
+        "session"
+      ],
+      "valueMember": [
+        "session"
+      ]
+    }
+  ]
+}
