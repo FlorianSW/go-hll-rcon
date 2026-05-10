@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"go/format"
 	"io"
 	"os"
 	"text/template"
@@ -48,17 +49,17 @@ import (
 {{if .Command.EnumValues }}
 const (
 	{{- range $name, $enumValue := .Command.EnumValues}}
-	{{$name}} = "{{$enumValue}}"
+	{{$name}} = {{if eq (printf "%T" $enumValue) "string"}}"{{$enumValue}}"{{else if eq (printf "%T" $enumValue) "float64"}}{{$enumValue}}{{end}}
 	{{- end}}
 )
 {{ end }}
 {{- range $index, $type := .Command.Types}}
-{{$type}}
+{{$type.AsTypeDefinition}}
 {{- end}}
 func (c *Connection) {{.Command.Name}}({{.Command.Params.AsNamedArgsWithTypes}}){{.Command.Returns}}{
 	{{if gt (len .Command.Returns) 1 }} return {{else}} _, err := {{end}}execCommand[{{.Command.RequestType.Name}}, {{.Command.ReturnType.Name}}](ctx, c.socket, {{.Command.RequestType.Name}}{
 		{{- range $index, $param := .Command.Params}}
-		{{ if ne $param.Name "ctx" }}{{$param.AsRequestAssignment}}{{end}}
+		{{- if ne $param.Name "ctx" }}{{$param.AsRequestAssignment}}{{end}}
 		{{- end}}
 	})
 	{{if le (len .Command.Returns) 1 }}
@@ -96,6 +97,10 @@ func (g *generator) generateCommand(command Command) error {
 		return fmt.Errorf("error executing template for operation %s: %s", command.Id, err.Error())
 	}
 
-	_, err = f.Write(b.Bytes())
+	result, err := format.Source(b.Bytes())
+	if err != nil {
+		return fmt.Errorf("error formatting generated code for command %s: %s", command.Id, err.Error())
+	}
+	_, err = f.Write(result)
 	return err
 }

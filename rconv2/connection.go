@@ -479,6 +479,5 @@ func execCommand[T, U any](ctx context.Context, so *socket, req T) (result *U, e
 	if res.StatusCode != 200 {
 		return nil, NewUnexpectedStatus(res.StatusCode, res.StatusMessage)
 	}
-	body := res.Body()
-	return &body, nil
+	return new(res.Body()), nil
 }

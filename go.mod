@@ -1,10 +1,9 @@
 module github.com/floriansw/go-hll-rcon
 
-go 1.23.0
-
-toolchain go1.24.1
+go 1.26
 
 require (
+	github.com/gertd/go-pluralize v0.2.1
 	github.com/onsi/ginkgo v1.16.5
 	github.com/onsi/gomega v1.24.2
 	github.com/rivo/tview v0.0.0-20250330220935-949945f8d922

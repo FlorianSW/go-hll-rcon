@@ -99,9 +99,10 @@ func toCommandParameters(parameters []api.Parameter) (r []codegen.CommandParamet
 		display := asSlice(param.DisplayMember)
 		value := asSlice(param.ValueMember)
 		// always exclude player ID parameter members when it is indicated to be an enum
-		if param.Id == "PlayerId" && param.Type == codegen.CommandParameterTypeEnum.String() {
-			display = []string{}
-			value = []string{}
+		if param.Id == "PlayerId" {
+			display = nil
+			value = nil
+			param.Type = codegen.CommandParameterTypeString.String()
 		}
 		r = append(r, codegen.CommandParameter{
 			Type:          codegen.CommandParameterType(param.Type),
