@@ -9,7 +9,7 @@ type RemoveVip struct {
 	PlayerId string `json:"PlayerId"`
 }
 
-// RemoveVip Remove VIP: Remove VIP status from a player.
+// RemoveVip Remove VIP status from a player.
 func (c *Connection) RemoveVip(ctx context.Context, PlayerId string) (any, error) {
 	return execCommand[RemoveVip, any](ctx, c.socket, RemoveVip{PlayerId: PlayerId})
 

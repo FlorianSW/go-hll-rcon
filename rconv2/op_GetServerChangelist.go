@@ -8,7 +8,7 @@ import (
 type GetServerChangelist struct {
 }
 
-// GetServerChangelist Get Server Changelist: Retrieves the servers changelist number.
+// GetServerChangelist Retrieves the servers changelist number.
 func (c *Connection) GetServerChangelist(ctx context.Context) (any, error) {
 	return execCommand[GetServerChangelist, any](ctx, c.socket, GetServerChangelist{})
 

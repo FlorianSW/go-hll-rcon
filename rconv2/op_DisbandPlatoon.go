@@ -17,7 +17,7 @@ type DisbandPlatoon struct {
 	Reason     string                  `json:"Reason"`
 }
 
-// DisbandPlatoon Disband Platoon: Disband a squad and force players within the platoon to redeploy.
+// DisbandPlatoon Disband a squad and force players within the platoon to redeploy.
 func (c *Connection) DisbandPlatoon(ctx context.Context, TeamIndex DisbandPlatoonTeamIndex, SquadIndex int32, Reason string) (any, error) {
 	return execCommand[DisbandPlatoon, any](ctx, c.socket, DisbandPlatoon{TeamIndex: TeamIndex, SquadIndex: SquadIndex, Reason: Reason})
 

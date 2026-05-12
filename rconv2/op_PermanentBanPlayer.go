@@ -11,7 +11,7 @@ type PermanentBanPlayer struct {
 	AdminName string `json:"AdminName"`
 }
 
-// PermanentBanPlayer Permanently Ban Player: Permanently ban a player from the server.
+// PermanentBanPlayer Permanently ban a player from the server.
 func (c *Connection) PermanentBanPlayer(ctx context.Context, PlayerId string, Reason string, AdminName string) (any, error) {
 	return execCommand[PermanentBanPlayer, any](ctx, c.socket, PermanentBanPlayer{PlayerId: PlayerId, Reason: Reason, AdminName: AdminName})
 

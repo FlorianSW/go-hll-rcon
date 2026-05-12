@@ -9,7 +9,7 @@ type SetHighPingThreshold struct {
 	HighPingThresholdMs int32 `json:"HighPingThresholdMs"`
 }
 
-// SetHighPingThreshold Set High Ping Threshold: Set the ping (in ms) that is considered too high for smooth gameplay.
+// SetHighPingThreshold Set the ping (in ms) that is considered too high for smooth gameplay.
 func (c *Connection) SetHighPingThreshold(ctx context.Context, HighPingThresholdMs int32) (any, error) {
 	return execCommand[SetHighPingThreshold, any](ctx, c.socket, SetHighPingThreshold{HighPingThresholdMs: HighPingThresholdMs})
 

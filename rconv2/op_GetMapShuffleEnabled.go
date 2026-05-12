@@ -11,7 +11,7 @@ type GetMapShuffleEnabledResponse struct {
 	Enabled bool `json:"Enable"`
 }
 
-// GetMapShuffleEnabled Get Map Shuffle Enabled: None
+// GetMapShuffleEnabled None
 func (c *Connection) GetMapShuffleEnabled(ctx context.Context) (*GetMapShuffleEnabledResponse, error) {
 	return execCommand[GetMapShuffleEnabled, GetMapShuffleEnabledResponse](ctx, c.socket, GetMapShuffleEnabled{})
 

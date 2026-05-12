@@ -144,7 +144,7 @@ type AddMapToRotation struct {
 	Index   int32   `json:"Index"`
 }
 
-// AddMapToRotation Add Map to Rotation: Add a new map to the map rotation at an index.
+// AddMapToRotation Add a new map to the map rotation at an index.
 func (c *Connection) AddMapToRotation(ctx context.Context, MapName MapName, Index int32) (any, error) {
 	return execCommand[AddMapToRotation, any](ctx, c.socket, AddMapToRotation{MapName: MapName, Index: Index})
 

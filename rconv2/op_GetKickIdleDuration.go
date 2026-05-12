@@ -8,7 +8,7 @@ import (
 type GetKickIdleDuration struct {
 }
 
-// GetKickIdleDuration Get Kick Idle Duration: None
+// GetKickIdleDuration None
 func (c *Connection) GetKickIdleDuration(ctx context.Context) (any, error) {
 	return execCommand[GetKickIdleDuration, any](ctx, c.socket, GetKickIdleDuration{})
 

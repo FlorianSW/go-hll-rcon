@@ -10,7 +10,7 @@ type RemovePlayerFromPlatoon struct {
 	Reason   string `json:"Reason"`
 }
 
-// RemovePlayerFromPlatoon Remove Player From Platoon: Removes a player from their current platoon.
+// RemovePlayerFromPlatoon Removes a player from their current platoon.
 func (c *Connection) RemovePlayerFromPlatoon(ctx context.Context, PlayerId string, Reason string) (any, error) {
 	return execCommand[RemovePlayerFromPlatoon, any](ctx, c.socket, RemovePlayerFromPlatoon{PlayerId: PlayerId, Reason: Reason})
 

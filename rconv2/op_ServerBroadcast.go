@@ -9,7 +9,7 @@ type ServerBroadcast struct {
 	Message string `json:"Message"`
 }
 
-// ServerBroadcast Server Broadcast: Create a message to broadcast to the server.
+// ServerBroadcast Create a message to broadcast to the server.
 func (c *Connection) ServerBroadcast(ctx context.Context, Message string) (any, error) {
 	return execCommand[ServerBroadcast, any](ctx, c.socket, ServerBroadcast{Message: Message})
 

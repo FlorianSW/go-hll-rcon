@@ -9,7 +9,7 @@ type SetTeamSwitchCooldown struct {
 	TeamSwitchTimer int32 `json:"TeamSwitchTimer"`
 }
 
-// SetTeamSwitchCooldown Set Team Switch Cooldown: Set cooldown time for team switching.
+// SetTeamSwitchCooldown Set cooldown time for team switching.
 func (c *Connection) SetTeamSwitchCooldown(ctx context.Context, TeamSwitchTimer int32) (any, error) {
 	return execCommand[SetTeamSwitchCooldown, any](ctx, c.socket, SetTeamSwitchCooldown{TeamSwitchTimer: TeamSwitchTimer})
 

@@ -24,7 +24,7 @@ type GetServerConfigResponse struct {
 }
 type GetServerConfigSupportedPlatform string
 
-// GetServerConfig Get Server Config: Get metadata of server
+// GetServerConfig Get metadata of server
 func (c *Connection) GetServerConfig(ctx context.Context) (*GetServerConfigResponse, error) {
 	return execCommand[GetServerConfig, GetServerConfigResponse](ctx, c.socket, GetServerConfig{Name: "serverconfig"})
 

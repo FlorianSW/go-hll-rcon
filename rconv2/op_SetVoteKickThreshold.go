@@ -9,7 +9,7 @@ type SetVoteKickThreshold struct {
 	ThresholdValue string `json:"ThresholdValue"`
 }
 
-// SetVoteKickThreshold Set Vote to Kick Threshold: Set the vote to kick threshold.
+// SetVoteKickThreshold Set the vote to kick threshold.
 func (c *Connection) SetVoteKickThreshold(ctx context.Context, ThresholdValue string) (any, error) {
 	return execCommand[SetVoteKickThreshold, any](ctx, c.socket, SetVoteKickThreshold{ThresholdValue: ThresholdValue})
 

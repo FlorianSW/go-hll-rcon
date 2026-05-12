@@ -9,7 +9,7 @@ type SetIdleKickDuration struct {
 	IdleTimeoutMinutes int32 `json:"IdleTimeoutMinutes"`
 }
 
-// SetIdleKickDuration Set Idle Kick Duration: Set how long a player can be idle before being kicked.
+// SetIdleKickDuration Set how long a player can be idle before being kicked.
 func (c *Connection) SetIdleKickDuration(ctx context.Context, IdleTimeoutMinutes int32) (any, error) {
 	return execCommand[SetIdleKickDuration, any](ctx, c.socket, SetIdleKickDuration{IdleTimeoutMinutes: IdleTimeoutMinutes})
 

@@ -20,7 +20,7 @@ type GetTemporaryBansBanList struct {
 	AdminName string    `json:"adminName"`
 }
 
-// GetTemporaryBans Get Temporary Bans: Retrieve a list of players who have temporary bans.
+// GetTemporaryBans Retrieve a list of players who have temporary bans.
 func (c *Connection) GetTemporaryBans(ctx context.Context) (*GetTemporaryBansResponse, error) {
 	return execCommand[GetTemporaryBans, GetTemporaryBansResponse](ctx, c.socket, GetTemporaryBans{})
 

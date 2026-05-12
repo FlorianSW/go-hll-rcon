@@ -16,7 +16,7 @@ type ForceTeamSwitch struct {
 	ForceMode ForceTeamSwitchForceMode `json:"ForceMode"`
 }
 
-// ForceTeamSwitch Force Team Switch: Forces a player to switch teams.
+// ForceTeamSwitch Forces a player to switch teams.
 func (c *Connection) ForceTeamSwitch(ctx context.Context, PlayerId string, ForceMode ForceTeamSwitchForceMode) (any, error) {
 	return execCommand[ForceTeamSwitch, any](ctx, c.socket, ForceTeamSwitch{PlayerId: PlayerId, ForceMode: ForceMode})
 

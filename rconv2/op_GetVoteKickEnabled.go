@@ -8,7 +8,7 @@ import (
 type GetVoteKickEnabled struct {
 }
 
-// GetVoteKickEnabled Get Vote Kick Enabled: None
+// GetVoteKickEnabled None
 func (c *Connection) GetVoteKickEnabled(ctx context.Context) (any, error) {
 	return execCommand[GetVoteKickEnabled, any](ctx, c.socket, GetVoteKickEnabled{})
 

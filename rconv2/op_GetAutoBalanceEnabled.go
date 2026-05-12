@@ -8,7 +8,7 @@ import (
 type GetAutoBalanceEnabled struct {
 }
 
-// GetAutoBalanceEnabled Get Auto Balance Enabled: None
+// GetAutoBalanceEnabled None
 func (c *Connection) GetAutoBalanceEnabled(ctx context.Context) (any, error) {
 	return execCommand[GetAutoBalanceEnabled, any](ctx, c.socket, GetAutoBalanceEnabled{})
 

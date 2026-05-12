@@ -9,7 +9,7 @@ type RemoveAdmin struct {
 	PlayerId string `json:"PlayerId"`
 }
 
-// RemoveAdmin Remove Admin: Remove player from admin privileges.
+// RemoveAdmin Remove player from admin privileges.
 func (c *Connection) RemoveAdmin(ctx context.Context, PlayerId string) (any, error) {
 	return execCommand[RemoveAdmin, any](ctx, c.socket, RemoveAdmin{PlayerId: PlayerId})
 

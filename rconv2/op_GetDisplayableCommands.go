@@ -16,7 +16,7 @@ type GetDisplayableCommandsEntry struct {
 	IsClientSupported bool   `json:"isClientSupported"`
 }
 
-// GetDisplayableCommands None: None
+// GetDisplayableCommands None
 func (c *Connection) GetDisplayableCommands(ctx context.Context) (*GetDisplayableCommandsResponse, error) {
 	return execCommand[GetDisplayableCommands, GetDisplayableCommandsResponse](ctx, c.socket, GetDisplayableCommands{})
 

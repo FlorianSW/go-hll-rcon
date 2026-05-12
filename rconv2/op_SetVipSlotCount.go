@@ -9,7 +9,7 @@ type SetVipSlotCount struct {
 	VipSlotCount int32 `json:"VipSlotCount"`
 }
 
-// SetVipSlotCount Set VIP Slot Count: Set the VIP slot count for the server.
+// SetVipSlotCount Set the VIP slot count for the server.
 func (c *Connection) SetVipSlotCount(ctx context.Context, VipSlotCount int32) (any, error) {
 	return execCommand[SetVipSlotCount, any](ctx, c.socket, SetVipSlotCount{VipSlotCount: VipSlotCount})
 

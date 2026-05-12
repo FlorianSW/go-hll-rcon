@@ -8,7 +8,7 @@ import (
 type ResetVoteKickThreshold struct {
 }
 
-// ResetVoteKickThreshold Reset Vote to Kick Threshold: Remove custom vote to kick thresholds and revert to default.
+// ResetVoteKickThreshold Remove custom vote to kick thresholds and revert to default.
 func (c *Connection) ResetVoteKickThreshold(ctx context.Context) (any, error) {
 	return execCommand[ResetVoteKickThreshold, any](ctx, c.socket, ResetVoteKickThreshold{})
 

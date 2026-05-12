@@ -15,7 +15,7 @@ type GetAdminLogEntry struct {
 	Message   string `json:"message"`
 }
 
-// GetAdminLog Get Admin Log: Retrieve admin log.
+// GetAdminLog Retrieve admin log.
 func (c *Connection) GetAdminLog(ctx context.Context) (*GetAdminLogResponse, error) {
 	return execCommand[GetAdminLog, GetAdminLogResponse](ctx, c.socket, GetAdminLog{})
 

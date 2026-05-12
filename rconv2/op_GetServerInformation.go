@@ -20,7 +20,7 @@ type GetServerInformation struct {
 	Value string                   `json:"Value"`
 }
 
-// GetServerInformation Get Server Information: None
+// GetServerInformation None
 func (c *Connection) GetServerInformation(ctx context.Context, Name GetServerInformationName, Value string) (any, error) {
 	return execCommand[GetServerInformation, any](ctx, c.socket, GetServerInformation{Name: Name, Value: Value})
 

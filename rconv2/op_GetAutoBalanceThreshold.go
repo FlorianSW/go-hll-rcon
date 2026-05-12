@@ -8,7 +8,7 @@ import (
 type GetAutoBalanceThreshold struct {
 }
 
-// GetAutoBalanceThreshold Get Auto Balance Threshold: None
+// GetAutoBalanceThreshold None
 func (c *Connection) GetAutoBalanceThreshold(ctx context.Context) (any, error) {
 	return execCommand[GetAutoBalanceThreshold, any](ctx, c.socket, GetAutoBalanceThreshold{})
 

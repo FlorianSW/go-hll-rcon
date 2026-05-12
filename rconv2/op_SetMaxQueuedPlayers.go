@@ -9,7 +9,7 @@ type SetMaxQueuedPlayers struct {
 	MaxQueuedPlayers int32 `json:"MaxQueuedPlayers"`
 }
 
-// SetMaxQueuedPlayers Set Max Queued Players: Set the maximum number of queued players.
+// SetMaxQueuedPlayers Set the maximum number of queued players.
 func (c *Connection) SetMaxQueuedPlayers(ctx context.Context, MaxQueuedPlayers int32) (any, error) {
 	return execCommand[SetMaxQueuedPlayers, any](ctx, c.socket, SetMaxQueuedPlayers{MaxQueuedPlayers: MaxQueuedPlayers})
 

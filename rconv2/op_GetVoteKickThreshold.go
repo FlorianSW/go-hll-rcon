@@ -8,7 +8,7 @@ import (
 type GetVoteKickThreshold struct {
 }
 
-// GetVoteKickThreshold Get Vote Kick Threshold: None
+// GetVoteKickThreshold None
 func (c *Connection) GetVoteKickThreshold(ctx context.Context) (any, error) {
 	return execCommand[GetVoteKickThreshold, any](ctx, c.socket, GetVoteKickThreshold{})
 

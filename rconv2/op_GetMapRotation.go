@@ -14,7 +14,7 @@ type GetMapRotation struct {
 	Name string `json:"Name"`
 }
 
-// GetMapRotation Get Map Rotation: Get current map rotation
+// GetMapRotation Get current map rotation
 func (c *Connection) GetMapRotation(ctx context.Context) (any, error) {
 	return execCommand[GetMapRotation, any](ctx, c.socket, GetMapRotation{Name: "maprotation"})
 

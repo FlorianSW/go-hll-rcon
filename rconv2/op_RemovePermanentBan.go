@@ -9,7 +9,7 @@ type RemovePermanentBan struct {
 	PlayerId string `json:"PlayerId"`
 }
 
-// RemovePermanentBan Remove Permanent Ban: Remove permanent ban on a player
+// RemovePermanentBan Remove permanent ban on a player
 func (c *Connection) RemovePermanentBan(ctx context.Context, PlayerId string) (any, error) {
 	return execCommand[RemovePermanentBan, any](ctx, c.socket, RemovePermanentBan{PlayerId: PlayerId})
 

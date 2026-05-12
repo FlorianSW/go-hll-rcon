@@ -14,7 +14,7 @@ type GetMapSequence struct {
 	Name string `json:"Name"`
 }
 
-// GetMapSequence Get Map Sequence: Get current map sequence
+// GetMapSequence Get current map sequence
 func (c *Connection) GetMapSequence(ctx context.Context) (any, error) {
 	return execCommand[GetMapSequence, any](ctx, c.socket, GetMapSequence{Name: "mapsequence"})
 

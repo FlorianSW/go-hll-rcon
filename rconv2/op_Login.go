@@ -8,7 +8,7 @@ import (
 type Login struct {
 }
 
-// Login Connect: None
+// Login None
 func (c *Connection) Login(ctx context.Context) (any, error) {
 	return execCommand[Login, any](ctx, c.socket, Login{})
 

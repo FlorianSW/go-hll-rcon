@@ -9,7 +9,7 @@ type SetWelcomeMessage struct {
 	Message string `json:"Message"`
 }
 
-// SetWelcomeMessage Set Welcome Message: Send a message to the server.
+// SetWelcomeMessage Send a message to the server.
 func (c *Connection) SetWelcomeMessage(ctx context.Context, Message string) (any, error) {
 	return execCommand[SetWelcomeMessage, any](ctx, c.socket, SetWelcomeMessage{Message: Message})
 

@@ -10,7 +10,7 @@ type AddVip struct {
 	Description string `json:"Description"`
 }
 
-// AddVip Add VIP: Give a player VIP status.
+// AddVip Give a player VIP status.
 func (c *Connection) AddVip(ctx context.Context, PlayerId string, Description string) (any, error) {
 	return execCommand[AddVip, any](ctx, c.socket, AddVip{PlayerId: PlayerId, Description: Description})
 

@@ -9,7 +9,7 @@ type RemoveTemporaryBan struct {
 	PlayerId string `json:"PlayerId"`
 }
 
-// RemoveTemporaryBan Remove Temporary Ban: Remove a temporary ban from a player.
+// RemoveTemporaryBan Remove a temporary ban from a player.
 func (c *Connection) RemoveTemporaryBan(ctx context.Context, PlayerId string) (any, error) {
 	return execCommand[RemoveTemporaryBan, any](ctx, c.socket, RemoveTemporaryBan{PlayerId: PlayerId})
 

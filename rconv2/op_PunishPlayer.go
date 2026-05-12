@@ -10,7 +10,7 @@ type PunishPlayer struct {
 	Reason   string `json:"Reason"`
 }
 
-// PunishPlayer Punish Player: Select a player to punish by killing.
+// PunishPlayer Select a player to punish by killing.
 func (c *Connection) PunishPlayer(ctx context.Context, PlayerId string, Reason string) (any, error) {
 	return execCommand[PunishPlayer, any](ctx, c.socket, PunishPlayer{PlayerId: PlayerId, Reason: Reason})
 

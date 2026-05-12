@@ -8,7 +8,7 @@ import (
 type GetHighPingThreshold struct {
 }
 
-// GetHighPingThreshold Get High Ping Threshold: None
+// GetHighPingThreshold None
 func (c *Connection) GetHighPingThreshold(ctx context.Context) (any, error) {
 	return execCommand[GetHighPingThreshold, any](ctx, c.socket, GetHighPingThreshold{})
 

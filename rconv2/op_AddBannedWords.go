@@ -9,7 +9,7 @@ type AddBannedWords struct {
 	BannedWords string `json:"BannedWords"`
 }
 
-// AddBannedWords Add Banned Words: Add banned words to the profanity filter. Separate words with commas.
+// AddBannedWords Add banned words to the profanity filter. Separate words with commas.
 func (c *Connection) AddBannedWords(ctx context.Context, BannedWords string) (any, error) {
 	return execCommand[AddBannedWords, any](ctx, c.socket, AddBannedWords{BannedWords: BannedWords})
 

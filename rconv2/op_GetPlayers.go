@@ -74,7 +74,7 @@ type GetPlayersPlayer struct {
 	Position             GetPlayersPosition   `json:"worldPosition"`
 }
 
-// GetPlayers Get Players: Get a list of players from the server
+// GetPlayers Get a list of players from the server
 func (c *Connection) GetPlayers(ctx context.Context) (*GetPlayersResponse, error) {
 	return execCommand[GetPlayers, GetPlayersResponse](ctx, c.socket, GetPlayers{Name: "players"})
 

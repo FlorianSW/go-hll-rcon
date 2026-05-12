@@ -10,7 +10,7 @@ type MessagePlayer struct {
 	PlayerId string `json:"PlayerId"`
 }
 
-// MessagePlayer Message Player: Create a message to send to a player in game.
+// MessagePlayer Create a message to send to a player in game.
 func (c *Connection) MessagePlayer(ctx context.Context, Message string, PlayerId string) (any, error) {
 	return execCommand[MessagePlayer, any](ctx, c.socket, MessagePlayer{Message: Message, PlayerId: PlayerId})
 

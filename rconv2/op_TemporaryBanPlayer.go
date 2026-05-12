@@ -12,7 +12,7 @@ type TemporaryBanPlayer struct {
 	AdminName string `json:"AdminName"`
 }
 
-// TemporaryBanPlayer Temporary Ban Player: Temporary ban a player from the server
+// TemporaryBanPlayer Temporary ban a player from the server
 func (c *Connection) TemporaryBanPlayer(ctx context.Context, PlayerId string, Duration int32, Reason string, AdminName string) (any, error) {
 	return execCommand[TemporaryBanPlayer, any](ctx, c.socket, TemporaryBanPlayer{PlayerId: PlayerId, Duration: Duration, Reason: Reason, AdminName: AdminName})
 

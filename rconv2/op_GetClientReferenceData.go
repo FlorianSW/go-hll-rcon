@@ -20,7 +20,7 @@ type GetClientReferenceDataParameter struct {
 	ValueMember   string `json:"valueMember"`
 }
 
-// GetClientReferenceData None: None
+// GetClientReferenceData None
 func (c *Connection) GetClientReferenceData(ctx context.Context, command GetClientReferenceDataCommand) (*GetClientReferenceDataResponse, error) {
 	return execCommand[GetClientReferenceDataCommand, GetClientReferenceDataResponse](ctx, c.socket, command)
 

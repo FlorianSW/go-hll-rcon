@@ -16,7 +16,7 @@ type SetWarmupTimer struct {
 	WarmupLength int32                  `json:"WarmupLength"`
 }
 
-// SetWarmupTimer Set Warmup Timer: Override the length of the warmup timer for a specific game-mode between 1 to 10 minutes.
+// SetWarmupTimer Override the length of the warmup timer for a specific game-mode between 1 to 10 minutes.
 func (c *Connection) SetWarmupTimer(ctx context.Context, GameMode SetWarmupTimerGameMode, WarmupLength int32) (any, error) {
 	return execCommand[SetWarmupTimer, any](ctx, c.socket, SetWarmupTimer{GameMode: GameMode, WarmupLength: WarmupLength})
 

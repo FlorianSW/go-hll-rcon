@@ -17,7 +17,7 @@ type SetMatchTimer struct {
 	MatchLength int32                 `json:"MatchLength"`
 }
 
-// SetMatchTimer Set Match Timer: Configure the match length in minutes for a specific game-mode. Warfare can be between 30 - 180 minutes. Offensive can be between 10 - 60 minutes per capture point. Skirmish can be between 10 - 60 minutes
+// SetMatchTimer Configure the match length in minutes for a specific game-mode. Warfare can be between 30 - 180 minutes. Offensive can be between 10 - 60 minutes per capture point. Skirmish can be between 10 - 60 minutes
 func (c *Connection) SetMatchTimer(ctx context.Context, GameMode SetMatchTimerGameMode, MatchLength int32) (any, error) {
 	return execCommand[SetMatchTimer, any](ctx, c.socket, SetMatchTimer{GameMode: GameMode, MatchLength: MatchLength})
 

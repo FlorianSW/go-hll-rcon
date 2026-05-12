@@ -10,7 +10,7 @@ type KickPlayer struct {
 	PlayerId string `json:"PlayerId"`
 }
 
-// KickPlayer Kick Player: Select player to kick and add a reason.
+// KickPlayer Select player to kick and add a reason.
 func (c *Connection) KickPlayer(ctx context.Context, Reason string, PlayerId string) (any, error) {
 	return execCommand[KickPlayer, any](ctx, c.socket, KickPlayer{Reason: Reason, PlayerId: PlayerId})
 

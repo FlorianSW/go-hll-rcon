@@ -8,7 +8,7 @@ import (
 type GetTeamSwitchCooldown struct {
 }
 
-// GetTeamSwitchCooldown Get Team Switch Cooldown: None
+// GetTeamSwitchCooldown None
 func (c *Connection) GetTeamSwitchCooldown(ctx context.Context) (any, error) {
 	return execCommand[GetTeamSwitchCooldown, any](ctx, c.socket, GetTeamSwitchCooldown{})
 

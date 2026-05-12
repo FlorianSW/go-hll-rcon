@@ -30,7 +30,7 @@ type GetSessionInfoResponse struct {
 }
 type GetSessionInfoGameMode string
 
-// GetSessionInfo Get Session Info: Get information about current game state of the server
+// GetSessionInfo Get information about current game state of the server
 func (c *Connection) GetSessionInfo(ctx context.Context) (*GetSessionInfoResponse, error) {
 	return execCommand[GetSessionInfo, GetSessionInfoResponse](ctx, c.socket, GetSessionInfo{Name: "session"})
 

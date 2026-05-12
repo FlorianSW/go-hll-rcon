@@ -19,7 +19,7 @@ type AddAdmin struct {
 	Comment    string             `json:"Comment"`
 }
 
-// AddAdmin Add Admin: Add a player to the admin list.
+// AddAdmin Add a player to the admin list.
 func (c *Connection) AddAdmin(ctx context.Context, PlayerId string, AdminGroup AddAdminAdminGroup, Comment string) (any, error) {
 	return execCommand[AddAdmin, any](ctx, c.socket, AddAdmin{PlayerId: PlayerId, AdminGroup: AdminGroup, Comment: Comment})
 

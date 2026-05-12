@@ -9,7 +9,7 @@ type ChangeMap struct {
 	MapName MapName `json:"MapName"`
 }
 
-// ChangeMap Change Map: Select a map to change the server map.
+// ChangeMap Select a map to change the server map.
 func (c *Connection) ChangeMap(ctx context.Context, MapName MapName) (any, error) {
 	return execCommand[ChangeMap, any](ctx, c.socket, ChangeMap{MapName: MapName})
 

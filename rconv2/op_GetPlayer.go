@@ -72,7 +72,7 @@ type GetPlayerPosition struct {
 	Z int32 `json:"z"`
 }
 
-// GetPlayer Get Player: Get player information of a connected player
+// GetPlayer Get player information of a connected player
 func (c *Connection) GetPlayer(ctx context.Context, Value string) (*GetPlayerResponse, error) {
 	return execCommand[GetPlayer, GetPlayerResponse](ctx, c.socket, GetPlayer{Name: "player", Value: Value})
 

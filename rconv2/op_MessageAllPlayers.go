@@ -9,7 +9,7 @@ type MessageAllPlayers struct {
 	Message string `json:"Message"`
 }
 
-// MessageAllPlayers Message All Players: Create a message to send to all players in game.
+// MessageAllPlayers Create a message to send to all players in game.
 func (c *Connection) MessageAllPlayers(ctx context.Context, Message string) (any, error) {
 	return execCommand[MessageAllPlayers, any](ctx, c.socket, MessageAllPlayers{Message: Message})
 

@@ -10,7 +10,7 @@ type MoveMapInSequence struct {
 	NewIndex     int32 `json:"NewIndex"`
 }
 
-// MoveMapInSequence Move Map in Sequence: Change the position on a map in the server queue
+// MoveMapInSequence Change the position on a map in the server queue
 func (c *Connection) MoveMapInSequence(ctx context.Context, CurrentIndex int32, NewIndex int32) (any, error) {
 	return execCommand[MoveMapInSequence, any](ctx, c.socket, MoveMapInSequence{CurrentIndex: CurrentIndex, NewIndex: NewIndex})
 

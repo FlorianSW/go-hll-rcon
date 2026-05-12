@@ -15,7 +15,7 @@ type SetAutoBalanceEnabled struct {
 	Enable SetAutoBalanceEnabledEnable `json:"Enable"`
 }
 
-// SetAutoBalanceEnabled Set Auto Balance Enabled: Enable or disable the auto balance.
+// SetAutoBalanceEnabled Enable or disable the auto balance.
 func (c *Connection) SetAutoBalanceEnabled(ctx context.Context, Enable SetAutoBalanceEnabledEnable) (any, error) {
 	return execCommand[SetAutoBalanceEnabled, any](ctx, c.socket, SetAutoBalanceEnabled{Enable: Enable})
 

@@ -20,7 +20,7 @@ type GetPermanentBansBanList struct {
 	AdminName string    `json:"adminName"`
 }
 
-// GetPermanentBans Get Permanent Bans: Retrieve a list of players who have a permanent ban.
+// GetPermanentBans Retrieve a list of players who have a permanent ban.
 func (c *Connection) GetPermanentBans(ctx context.Context) (*GetPermanentBansResponse, error) {
 	return execCommand[GetPermanentBans, GetPermanentBansResponse](ctx, c.socket, GetPermanentBans{})
 

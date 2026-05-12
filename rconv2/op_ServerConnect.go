@@ -8,7 +8,7 @@ import (
 type ServerConnect struct {
 }
 
-// ServerConnect Server Connect: Server Connect
+// ServerConnect Server Connect
 func (c *Connection) ServerConnect(ctx context.Context) (any, error) {
 	return execCommand[ServerConnect, any](ctx, c.socket, ServerConnect{})
 

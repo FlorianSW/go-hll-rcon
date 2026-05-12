@@ -15,7 +15,7 @@ type SetVoteKickEnabled struct {
 	Enable SetVoteKickEnabledEnable `json:"Enable"`
 }
 
-// SetVoteKickEnabled Set Vote to Kick Enabled: Enable or disable the vote to kick functionality.
+// SetVoteKickEnabled Enable or disable the vote to kick functionality.
 func (c *Connection) SetVoteKickEnabled(ctx context.Context, Enable SetVoteKickEnabledEnable) (any, error) {
 	return execCommand[SetVoteKickEnabled, any](ctx, c.socket, SetVoteKickEnabled{Enable: Enable})
 

@@ -9,7 +9,7 @@ type RemoveBannedWords struct {
 	BannedWords string `json:"BannedWords"`
 }
 
-// RemoveBannedWords Remove Banned Words: Remove banned words from the profanity filter. Separate words with commas.
+// RemoveBannedWords Remove banned words from the profanity filter. Separate words with commas.
 func (c *Connection) RemoveBannedWords(ctx context.Context, BannedWords string) (any, error) {
 	return execCommand[RemoveBannedWords, any](ctx, c.socket, RemoveBannedWords{BannedWords: BannedWords})
 

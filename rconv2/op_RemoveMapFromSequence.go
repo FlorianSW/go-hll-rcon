@@ -9,7 +9,7 @@ type RemoveMapFromSequence struct {
 	Index int32 `json:"Index"`
 }
 
-// RemoveMapFromSequence Remove Map From Sequence: Remove map from the server map sequence.
+// RemoveMapFromSequence Remove map from the server map sequence.
 func (c *Connection) RemoveMapFromSequence(ctx context.Context, Index int32) (any, error) {
 	return execCommand[RemoveMapFromSequence, any](ctx, c.socket, RemoveMapFromSequence{Index: Index})
 
