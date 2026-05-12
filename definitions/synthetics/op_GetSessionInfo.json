@@ -17,5 +17,64 @@
         "session"
       ]
     }
+  ],
+  "response": [
+    {
+      "id": "serverName",
+      "name": "ServerName",
+      "type": "Text"
+    },
+    {
+      "id": "mapName",
+      "name": "MapName",
+      "type": "Text"
+    },
+    {
+      "id": "gameMode",
+      "name": "GameMode",
+      "type": "Combo",
+      "displayMember": [
+        "Warfare",
+        "Offensive",
+        "Skirmish",
+        "Conquest"
+      ],
+      "valueMember": [
+        "Warfare",
+        "Offensive",
+        "Skirmish",
+        "Conquest"
+      ]
+    },
+    {
+      "id": "maxPlayerCount",
+      "name": "MaxPlayerCount",
+      "type": "Number"
+    },
+    {
+      "id": "playerCount",
+      "name": "PlayerCount",
+      "type": "Number"
+    },
+    {
+      "id": "maxQueueCount",
+      "name": "MaxQueueCount",
+      "type": "Number"
+    },
+    {
+      "id": "queueCount",
+      "name": "QueueCount",
+      "type": "Number"
+    },
+    {
+      "id": "maxVIPQueueCount",
+      "name": "MaxVIPQueueCount",
+      "type": "Number"
+    },
+    {
+      "id": "vIPQueueCount",
+      "name": "VIPQueueCount",
+      "type": "Number"
+    }
   ]
 }

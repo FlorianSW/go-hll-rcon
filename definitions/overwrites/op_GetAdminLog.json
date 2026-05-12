@@ -1,0 +1,18 @@
+{
+  "response": [
+    {
+      "id": "entries",
+      "name": "Entries",
+      "type": "List",
+      "members": [{
+        "id": "timestamp",
+        "name": "Timestamp",
+        "type": "Text"
+      }, {
+        "id": "message",
+        "name": "Message",
+        "type": "Text"
+      }]
+    }
+  ]
+}

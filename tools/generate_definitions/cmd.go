@@ -9,11 +9,9 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/floriansw/go-hll-rcon/codegen"
 	"github.com/floriansw/go-hll-rcon/rconv2"
-	"github.com/floriansw/go-hll-rcon/rconv2/api"
 )
 
 func main() {
@@ -29,16 +27,19 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(2*time.Second))
+	ctx := context.Background()
 	var res []codegen.Command
 	err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
 		commands, err := c.DisplayableCommands(ctx)
 		if err != nil {
 			return err
 		}
+		println("Found " + strconv.Itoa(len(commands.Entries)) + " commands")
 		for _, entry := range commands.Entries {
-			ref, err := c.GetClientReferenceData(ctx, entry.Id)
+			println("Requesting metadata for: " + entry.Id)
+			ref, err := c.GetClientReferenceData(ctx, rconv2.GetClientReferenceDataCommand(entry.Id))
 			if err != nil {
+				println("Failed to get client reference data: " + err.Error())
 				return err
 			}
 			res = append(res, applyOverwrite(codegen.Command{
@@ -46,7 +47,7 @@ func main() {
 				FriendlyName: entry.FriendlyName,
 				Text:         ref.Text,
 				Description:  ref.Description,
-				Parameters:   toCommandParameters(ref.Parameters),
+				Parameters:   toCommandParameters(*ref),
 			}))
 		}
 		return nil
@@ -91,25 +92,49 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	cancel()
 }
 
-func toCommandParameters(parameters []api.Parameter) (r []codegen.CommandParameter) {
-	for _, param := range parameters {
+func toCommandParameters(resp rconv2.GetClientReferenceDataResponse) (r []codegen.CommandParameter) {
+	for _, param := range resp.Parameters {
 		display := asSlice(param.DisplayMember)
 		value := asSlice(param.ValueMember)
 		// always exclude player ID parameter members when it is indicated to be an enum
-		if param.Id == "PlayerId" {
+		if param.Id == "PlayerId" || resp.Name == "SetSectorLayout" {
 			display = nil
 			value = nil
 			param.Type = codegen.CommandParameterTypeString.String()
+		}
+		var anyValue []any
+		isNumber := false
+		isBoolean := false
+		for _, s := range value {
+			if s == "true" {
+				isBoolean = true
+				anyValue = append(anyValue, true)
+				continue
+			} else if s == "false" {
+				isBoolean = true
+				anyValue = append(anyValue, false)
+				continue
+			} else if isBoolean {
+				panic("Found incompatible types for bool slice in " + param.Name)
+			}
+			n, err := strconv.Atoi(s)
+			if err != nil && isNumber {
+				panic("Found incompatible types for int slice in " + param.Name)
+			} else if err != nil {
+				anyValue = append(anyValue, s)
+			} else {
+				isNumber = true
+				anyValue = append(anyValue, n)
+			}
 		}
 		r = append(r, codegen.CommandParameter{
 			Type:          codegen.CommandParameterType(param.Type),
 			Name:          param.Name,
 			Id:            param.Id,
 			DisplayMember: display,
-			ValueMember:   value,
+			ValueMember:   anyValue,
 		})
 	}
 	return
@@ -123,16 +148,28 @@ func asSlice(s string) []string {
 }
 
 type overWriteCommand struct {
-	Request requestOverwrite `json:"request"`
+	Request  requestOverwrite  `json:"request"`
+	Response *codegen.Response `json:"response"`
 }
 
 type requestOverwrite struct {
-	Parameters *[]codegen.CommandParameter
+	Parameters      *[]codegen.CommandParameter `json:"parameters"`
+	InlineParameter *bool                       `json:"inlineParameter"`
+	CommandName     *string                     `json:"commandName"`
 }
 
 func (o overWriteCommand) Apply(cmd codegen.Command) codegen.Command {
 	if o.Request.Parameters != nil {
 		cmd.Parameters = *o.Request.Parameters
+	}
+	if o.Request.CommandName != nil {
+		cmd.CommandName = o.Request.CommandName
+	}
+	if o.Request.InlineParameter != nil {
+		cmd.InlineParameters = o.Request.InlineParameter
+	}
+	if o.Response != nil {
+		cmd.Response = o.Response
 	}
 	return cmd
 }

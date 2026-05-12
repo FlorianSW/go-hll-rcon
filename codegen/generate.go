@@ -49,25 +49,26 @@ import (
 {{if .Command.EnumValues }}
 const (
 	{{- range $name, $enumValue := .Command.EnumValues}}
-	{{$name}} = {{if eq (printf "%T" $enumValue) "string"}}"{{$enumValue}}"{{else if eq (printf "%T" $enumValue) "float64"}}{{$enumValue}}{{end}}
+	{{$name}} = {{if eq (printf "%T" $enumValue) "string"}}"{{$enumValue}}"{{else}}{{$enumValue}}{{end}}
 	{{- end}}
 )
 {{ end }}
 {{- range $index, $type := .Command.Types}}
 {{$type.AsTypeDefinition}}
 {{- end}}
+// {{.Command.Name}} {{.Command.Description}}
 func (c *Connection) {{.Command.Name}}({{.Command.Params.AsNamedArgsWithTypes}}){{.Command.Returns}}{
-	{{if gt (len .Command.Returns) 1 }} return {{else}} _, err := {{end}}execCommand[{{.Command.RequestType.Name}}, {{.Command.ReturnType.Name}}](ctx, c.socket, {{.Command.RequestType.Name}}{
+	{{if gt (len .Command.Returns) 1 }} return {{else}} _, err := {{end}}execCommand[{{.Command.RequestType.Name}}, {{.Command.ReturnType.Name}}](ctx, c.socket, {{ if not .Command.InlineParameters}}{{.Command.RequestType.Name}}{
 		{{- range $index, $param := .Command.Params}}
 		{{- if ne $param.Name "ctx" }}{{$param.AsRequestAssignment}}{{end}}
 		{{- end}}
-	})
+	}{{else}}{{(index .Command.Params 1).Name}}{{end}})
 	{{if le (len .Command.Returns) 1 }}
 	return err
 	{{end}}
 }
 {{if .Command.CommandName }}
-func (r *{{.Command.RequestType.Name}}) CommandName() string {
+func (r {{.Command.RequestType.Name}}) CommandName() string {
 	return "{{.Command.CommandName}}"
 }
 {{end}}

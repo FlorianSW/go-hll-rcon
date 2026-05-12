@@ -22,13 +22,14 @@ const (
 )
 
 type Command struct {
-	Id           string             `json:"id"`
-	CommandName  *string            `json:"commandName,omitempty"`
-	FriendlyName string             `json:"friendlyName"`
-	Text         string             `json:"text"`
-	Description  string             `json:"description"`
-	Parameters   []CommandParameter `json:"parameters,omitempty"`
-	Response     *Response          `json:"response,omitempty"`
+	Id               string             `json:"id"`
+	CommandName      *string            `json:"commandName,omitempty"`
+	FriendlyName     string             `json:"friendlyName"`
+	Text             string             `json:"text"`
+	Description      string             `json:"description"`
+	Parameters       []CommandParameter `json:"parameters,omitempty"`
+	Response         *Response          `json:"response,omitempty"`
+	InlineParameters *bool              `json:"inline,omitempty"`
 }
 
 func (c Command) Name() string {
@@ -38,6 +39,21 @@ func (c Command) Name() string {
 func (c Command) Imports() Imports {
 	res := Imports{}
 	res.Add("context", "context")
+
+	// a bit hacky way to extract types from the go standard library. Let's hope there will never ever be a type
+	// from outside the std library, as this is most likely not remotely supported.
+	for _, t := range c.ReturnTypeDefinitions() {
+		if strings.Contains(t.AliasedType, ".") {
+			pkg := strings.SplitN(t.AliasedType, ".", 2)[0]
+			res.Add(pkg, pkg)
+		}
+		for _, m := range t.Members {
+			if s, ok := m.Type.(string); ok && strings.Contains(s, ".") {
+				pkg := strings.SplitN(s, ".", 2)[0]
+				res.Add(pkg, pkg)
+			}
+		}
+	}
 	return res
 }
 
@@ -46,12 +62,21 @@ func (c Command) Params() (res Params) {
 		Name: "ctx",
 		Type: "context.Context",
 	})
-	for _, p := range c.Parameters {
+	if c.InlineParameters != nil && *c.InlineParameters && len(c.Parameters) > 0 {
+		caser := cases.Title(language.English, cases.NoLower)
+		p := c.Parameters[0]
 		res = append(res, Param{
-			Name:       p.Id,
-			Type:       c.ParameterGoType(p),
-			FixedValue: p.FixedValue,
+			Name: p.Id,
+			Type: fmt.Sprintf("%s%s", c.Id, caser.String(c.Parameters[0].Id)),
 		})
+	} else {
+		for _, p := range c.Parameters {
+			res = append(res, Param{
+				Name:       p.Id,
+				Type:       c.ParameterGoType(p),
+				FixedValue: p.FixedValue,
+			})
+		}
 	}
 	return
 }
@@ -63,13 +88,14 @@ func (c Command) ParameterGoType(p CommandParameter) string {
 	case CommandParameterTypeInt:
 		return "int32"
 	case CommandParameterTypeEnum:
+		caser := cases.Title(language.English, cases.NoLower)
 		if p.IsMapNameType() {
 			return p.Id
 		}
 		if !p.IsMapNameType() && p.Id == "MapName" {
 			return "MapName"
 		}
-		return fmt.Sprintf("%s%s", c.Id, p.Id)
+		return fmt.Sprintf("%s%s", c.Id, caser.String(p.Id))
 	default:
 		return "any"
 	}
@@ -83,7 +109,7 @@ func (p CommandParameter) IsMapNameType() bool {
 }
 
 func (c Command) Types() (res Types) {
-	caser := cases.Title(language.English)
+	caser := cases.Title(language.English, cases.NoLower)
 	for _, p := range c.Parameters {
 		if !p.IsMapNameType() && p.Id == "MapName" {
 			continue
@@ -120,22 +146,30 @@ func (c Command) Types() (res Types) {
 }
 
 func (c Command) RequestType() Type {
+	caser := cases.Title(language.English, cases.NoLower)
 	var requestMembers []TypeMember
-	for _, param := range c.Parameters {
-		requestMembers = append(requestMembers, TypeMember{
-			Name: param.Id,
-			Type: c.ParameterGoType(param),
-		})
-	}
+	if len(c.Parameters) == 1 && c.InlineParameters != nil && *c.InlineParameters {
+		return Type{
+			Name:        fmt.Sprintf("%s%s", c.Id, caser.String(c.Parameters[0].Id)),
+			AliasedType: "string",
+		}
+	} else {
+		for _, param := range c.Parameters {
+			requestMembers = append(requestMembers, TypeMember{
+				Name: caser.String(param.Id),
+				Type: c.ParameterGoType(param),
+			})
+		}
 
-	return Type{
-		Name:    c.Name(),
-		Members: requestMembers,
+		return Type{
+			Name:    c.Name(),
+			Members: requestMembers,
+		}
 	}
 }
 
 func (c Command) ResponseGoType(p ResponseElement) string {
-	caser := cases.Title(language.English)
+	caser := cases.Title(language.English, cases.NoLower)
 	switch p.Type {
 	case ResponseItemTypeString:
 		return "string"
@@ -143,6 +177,10 @@ func (c Command) ResponseGoType(p ResponseElement) string {
 		return "int32"
 	case ResponseItemTypeEnum:
 		return fmt.Sprintf("%s%s", c.Id, caser.String(p.Name))
+	case ResponseItemTypeBool:
+		return "bool"
+	case ResponseItemTypeTime:
+		return "time.Time"
 	case ResponseItemTypeComplex:
 		return fmt.Sprintf("%s%s", c.Id, pluralize.NewClient().Singular(p.Name))
 	case ResponseItemTypeList:
@@ -164,6 +202,7 @@ func (c Command) ReturnType() Type {
 		responseMembers = append(responseMembers, TypeMember{
 			Name: strings.ReplaceAll(param.Name, " ", ""),
 			Type: c.ResponseGoType(param),
+			Json: new(param.Id),
 		})
 	}
 	return Type{
@@ -180,7 +219,7 @@ func (c Command) ReturnTypeDefinitions() (res []Type) {
 	}
 	r := *c.Response
 	for _, param := range r {
-		if param.Type == ResponseItemTypeList && param.ValueMember != nil {
+		if param.Type == ResponseItemTypeList && (param.ValueMember != nil || param.ListType == ResponseItemListTypeString) {
 			res = append(res, c.buildResponseItemCombo(param)...)
 		} else if param.Type == ResponseItemTypeList || param.Type == ResponseItemTypeComplex {
 			res = append(res, c.buildSubTypes(param)...)
@@ -192,7 +231,7 @@ func (c Command) ReturnTypeDefinitions() (res []Type) {
 }
 
 func (c Command) buildResponseItemCombo(param ResponseElement) (res []Type) {
-	caser := cases.Title(language.English)
+	caser := cases.Title(language.English, cases.NoLower)
 	singularize := pluralize.NewClient()
 	var members []TypeMember
 	for i := range param.ValueMember {
@@ -255,14 +294,26 @@ const (
 	ResponseItemTypeEnum    ResponseItemType = "Combo"
 	ResponseItemTypeList    ResponseItemType = "List"
 	ResponseItemTypeComplex ResponseItemType = "Complex"
+	ResponseItemTypeBool    ResponseItemType = "Bool"
+	ResponseItemTypeTime    ResponseItemType = "Time"
+)
+
+type ResponseItemListType string
+
+const (
+	ResponseItemListTypeString ResponseItemListType = "Text"
 )
 
 type Response []ResponseElement
 
 type ResponseElement struct {
 	Type ResponseItemType `json:"type"`
-	Name string           `json:"name"`
-	Id   string           `json:"id"`
+	// ListType is only applicable for ResponseItemTypeList and can be used to optionally define the type of list.
+	// it has no effect when Members is given (ListType will be implicitly an object), as well as when ValueMember is
+	// provided (ListType will be an Enum).
+	ListType ResponseItemListType `json:"listType"`
+	Name     string               `json:"name"`
+	Id       string               `json:"id"`
 
 	// Only filled for ResponseItemTypeEnum
 	DisplayMember []string `json:"displayMember,omitempty"`
@@ -277,7 +328,7 @@ type CommandParameter struct {
 	Name          string               `json:"name"`
 	Id            string               `json:"id"`
 	DisplayMember []string             `json:"displayMember,omitempty"`
-	ValueMember   []string             `json:"valueMember,omitempty"`
+	ValueMember   []any                `json:"valueMember,omitempty"`
 	FixedValue    *string              `json:"fixedValue"`
 }
 
@@ -396,8 +447,8 @@ func (r Returns) String() string {
 type Imports map[string]Import
 
 func (i *Imports) Add(alias, pkgPath string) {
-	if imp, exists := (*i)[alias]; exists {
-		panic(fmt.Sprintf("duplicate import %s, already exists with path %s", alias, imp.PackagePath))
+	if _, exists := (*i)[alias]; exists {
+		return
 	}
 	(*i)[alias] = Import{Alias: alias, PackagePath: pkgPath}
 }

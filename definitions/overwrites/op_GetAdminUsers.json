@@ -1,0 +1,22 @@
+{
+  "response": [
+    {
+      "id": "AdminUsers",
+      "name": "AdminUsers",
+      "type": "List",
+      "members": [{
+        "id": "userId",
+        "name": "Id",
+        "type": "Text"
+      }, {
+        "id": "group",
+        "name": "group",
+        "type": "Text"
+      }, {
+        "id": "comment",
+        "name": "Comment",
+        "type": "Text"
+      }]
+    }
+  ]
+}

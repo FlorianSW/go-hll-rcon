@@ -1,0 +1,42 @@
+{
+  "response": [
+    {
+      "id": "mAPS",
+      "name": "Maps",
+      "type": "List",
+      "members": [{
+        "id": "name",
+        "name": "Name",
+        "type": "Text"
+      }, {
+        "id": "gameMode",
+        "name": "GameMode",
+        "type": "Combo",
+        "displayMember": [
+          "Warfare",
+          "Offensive",
+          "Skirmish",
+          "Conquest"
+        ],
+        "valueMember": [
+          "Warfare",
+          "Offensive",
+          "Skirmish",
+          "Conquest"
+        ]
+      }, {
+        "id": "timeOfDay",
+        "name": "TimeOfDay",
+        "type": "Text"
+      }, {
+        "id": "iD",
+        "name": "Id",
+        "type": "Text"
+      }, {
+        "id": "position",
+        "name": "Position",
+        "type": "Number"
+      }]
+    }
+  ]
+}

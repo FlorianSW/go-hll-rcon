@@ -1,0 +1,22 @@
+{
+  "response": [
+    {
+      "id": "entries",
+      "name": "Entries",
+      "type": "List",
+      "members": [{
+        "id": "iD",
+        "name": "Id",
+        "type": "Text"
+      }, {
+        "id": "friendlyName",
+        "name": "FriendlyName",
+        "type": "Text"
+      }, {
+        "id": "isClientSupported",
+        "name": "IsClientSupported",
+        "type": "Bool"
+      }]
+    }
+  ]
+}

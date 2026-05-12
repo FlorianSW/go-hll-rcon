@@ -1,0 +1,10 @@
+{
+  "response": [
+    {
+      "id": "GroupNames",
+      "name": "GroupNames",
+      "type": "List",
+      "listType": "Text"
+    }
+  ]
+}

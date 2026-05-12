@@ -1,0 +1,34 @@
+{
+  "response": [
+    {
+      "id": "banList",
+      "name": "BanList",
+      "type": "List",
+      "members": [{
+        "id": "userId",
+        "name": "Id",
+        "type": "Text"
+      }, {
+        "id": "userName",
+        "name": "Name",
+        "type": "Text"
+      }, {
+        "id": "timeOfBanning",
+        "name": "Banned",
+        "type": "Time"
+      }, {
+        "id": "durationHours",
+        "name": "Duration",
+        "type": "Number"
+      }, {
+        "id": "banReason",
+        "name": "Reason",
+        "type": "Text"
+      }, {
+        "id": "adminName",
+        "name": "AdminName",
+        "type": "Text"
+      }]
+    }
+  ]
+}

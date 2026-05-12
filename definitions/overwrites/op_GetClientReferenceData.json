@@ -1,0 +1,62 @@
+{
+  "request": {
+    "commandName": "GetClientReferenceData",
+    "inlineParameter": true,
+    "parameters": [
+      {
+        "type": "Text",
+        "name": "Command",
+        "id": "command"
+      }
+    ]
+  },
+  "response": [
+    {
+      "id": "name",
+      "name": "Name",
+      "type": "Text"
+    },
+    {
+      "id": "text",
+      "name": "Text",
+      "type": "Text"
+    },
+    {
+      "id": "description",
+      "name": "Description",
+      "type": "Text"
+    },
+    {
+      "id": "dialogueParameters",
+      "name": "Parameters",
+      "type": "List",
+      "members": [
+        {
+          "id": "type",
+          "name": "Type",
+          "type": "Text"
+        },
+        {
+          "id": "name",
+          "name": "Name",
+          "type": "Text"
+        },
+        {
+          "id": "iD",
+          "name": "Id",
+          "type": "Text"
+        },
+        {
+          "id": "displayMember",
+          "name": "DisplayMember",
+          "type": "Text"
+        },
+        {
+          "id": "valueMember",
+          "name": "ValueMember",
+          "type": "Text"
+        }
+      ]
+    }
+  ]
+}
