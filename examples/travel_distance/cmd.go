@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/floriansw/go-hll-rcon/rconv2"
-	"github.com/floriansw/go-hll-rcon/rconv2/api"
-	"github.com/rivo/tview"
 	"log/slog"
 	"os"
 	"slices"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/floriansw/go-hll-rcon/rconv2"
+	"github.com/rivo/tview"
 )
 
 // This example tracks players position over the time the tool is running.
@@ -95,7 +95,7 @@ type recorder struct {
 
 type positionData struct {
 	Name      string
-	Positions []api.WorldPosition
+	Positions []rconv2.GetPlayerPosition
 }
 
 func NewRecorder(l *slog.Logger, p *rconv2.ConnectionPool) *recorder {
@@ -110,7 +110,7 @@ func NewRecorder(l *slog.Logger, p *rconv2.ConnectionPool) *recorder {
 
 type PlayerDistance struct {
 	Name     string
-	Distance api.Distance
+	Distance rconv2.Distance
 }
 
 // Distances calculates the distances travelled by each player based on the data that is already recorded.
@@ -118,7 +118,7 @@ type PlayerDistance struct {
 func (r *recorder) Distances() []PlayerDistance {
 	var result []PlayerDistance
 	for _, data := range r.positions {
-		var d api.Distance
+		var d rconv2.Distance
 		for i, position := range data.Positions {
 			if i == 0 {
 				continue
@@ -145,7 +145,7 @@ func (r *recorder) Run(ctx context.Context) {
 			return
 		case _ = <-r.t.C:
 			err := r.p.WithConnection(ctx, func(c *rconv2.Connection) error {
-				players, err := c.Players(ctx)
+				players, err := c.GetPlayers(ctx)
 				if err != nil {
 					r.l.Error("read-players", "error", err)
 					return err
@@ -159,11 +159,11 @@ func (r *recorder) Run(ctx context.Context) {
 					v := r.positions[player.Id]
 					if len(v.Positions) != 0 {
 						last := v.Positions[len(v.Positions)-1]
-						if last.Equal(player.Position) {
+						if last.Equal(player.Position.ToGetPlayerPosition()) {
 							continue
 						}
 					}
-					v.Positions = append(r.positions[player.Id].Positions, player.Position)
+					v.Positions = append(r.positions[player.Id].Positions, player.Position.ToGetPlayerPosition())
 				}
 				return nil
 			})
