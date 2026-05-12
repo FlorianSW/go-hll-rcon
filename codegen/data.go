@@ -9,6 +9,10 @@ import (
 	"golang.org/x/text/language"
 )
 
+var (
+	caser = cases.Title(language.English, cases.NoLower)
+)
+
 type CommandParameterType string
 
 func (c CommandParameterType) String() string {
@@ -63,7 +67,6 @@ func (c Command) Params() (res Params) {
 		Type: "context.Context",
 	})
 	if c.InlineParameters != nil && *c.InlineParameters && len(c.Parameters) > 0 {
-		caser := cases.Title(language.English, cases.NoLower)
 		p := c.Parameters[0]
 		res = append(res, Param{
 			Name: p.Id,
@@ -88,7 +91,6 @@ func (c Command) ParameterGoType(p CommandParameter) string {
 	case CommandParameterTypeInt:
 		return "int32"
 	case CommandParameterTypeEnum:
-		caser := cases.Title(language.English, cases.NoLower)
 		if p.IsMapNameType() {
 			return p.Id
 		}
@@ -109,7 +111,6 @@ func (p CommandParameter) IsMapNameType() bool {
 }
 
 func (c Command) Types() (res Types) {
-	caser := cases.Title(language.English, cases.NoLower)
 	for _, p := range c.Parameters {
 		if !p.IsMapNameType() && p.Id == "MapName" {
 			continue
@@ -146,7 +147,6 @@ func (c Command) Types() (res Types) {
 }
 
 func (c Command) RequestType() Type {
-	caser := cases.Title(language.English, cases.NoLower)
 	var requestMembers []TypeMember
 	if len(c.Parameters) == 1 && c.InlineParameters != nil && *c.InlineParameters {
 		return Type{
@@ -169,7 +169,6 @@ func (c Command) RequestType() Type {
 }
 
 func (c Command) ResponseGoType(p ResponseElement) string {
-	caser := cases.Title(language.English, cases.NoLower)
 	switch p.Type {
 	case ResponseItemTypeString:
 		return "string"
@@ -367,7 +366,7 @@ func (t Type) AsTypeDefinition() string {
 	}
 	members := make([]string, len(t.Members))
 	for i, member := range t.Members {
-		members[i] = fmt.Sprintf("%s %s `json:\"%s\"`", member.Name, member.Type, member.JsonName())
+		members[i] = fmt.Sprintf("%s %s `json:\"%s\"`", caser.String(member.Name), member.Type, member.JsonName())
 	}
 	return fmt.Sprintf(`type %s struct {
 	%s
@@ -391,9 +390,9 @@ type Param struct {
 
 func (p Param) AsRequestAssignment() string {
 	if p.FixedValue != nil {
-		return fmt.Sprintf(`%s: "%s",`, p.Name, *p.FixedValue)
+		return fmt.Sprintf(`%s: "%s",`, caser.String(p.Name), *p.FixedValue)
 	}
-	return fmt.Sprintf(`%s: %s,`, p.Name, p.Name)
+	return fmt.Sprintf(`%s: %s,`, caser.String(p.Name), caser.String(p.Name))
 }
 
 func (p Params) AsNamedArgsWithTypes() string {
