@@ -209,7 +209,7 @@ func (p *ConnectionPool) WithConnection(ctx context.Context, f func(c *Connectio
 	defer p.Return(c, cerr)
 
 	cerr = f(c)
-	return nil
+	return cerr
 }
 
 func (p *ConnectionPool) new(ctx context.Context) (*Connection, error) {
