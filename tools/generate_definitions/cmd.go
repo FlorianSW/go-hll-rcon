@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -28,15 +29,23 @@ func main() {
 		panic(err)
 	}
 	ctx := context.Background()
-	var res []codegen.Command
+	var commands *rconv2.GetDisplayableCommandsResponse
 	err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
-		commands, err := c.GetDisplayableCommands(ctx)
+		commands, err = c.GetDisplayableCommands(ctx)
 		if err != nil {
 			return err
 		}
-		println("Found " + strconv.Itoa(len(commands.Entries)) + " commands")
-		for _, entry := range commands.Entries {
-			println("Requesting metadata for: " + entry.Id)
+		return nil
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	println("Found " + strconv.Itoa(len(commands.Entries)) + " commands")
+	var res []codegen.Command
+	for _, entry := range commands.Entries {
+		println("Requesting metadata for: " + entry.Id)
+		err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
 			ref, err := c.GetClientReferenceData(ctx, rconv2.GetClientReferenceDataCommand(entry.Id))
 			if err != nil {
 				println("Failed to get client reference data: " + err.Error())
@@ -49,11 +58,11 @@ func main() {
 				Description:  ref.Description,
 				Parameters:   toCommandParameters(*ref),
 			}))
+			return nil
+		})
+		if err != nil {
+			panic(err)
 		}
-		return nil
-	})
-	if err != nil {
-		panic(err)
 	}
 
 	op := path.Clean("./definitions/synthetics/")
@@ -80,6 +89,10 @@ func main() {
 		}
 		res = append(res, cmd)
 	}
+
+	slices.SortStableFunc(res, func(a, b codegen.Command) int {
+		return strings.Compare(a.Id, b.Id)
+	})
 
 	f, err := os.OpenFile("./definitions/hll_rcon.json", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {

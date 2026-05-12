@@ -482,6 +482,20 @@
 		"friendlyName": "Get Admin Log",
 		"text": "Get Admin Log",
 		"description": "Retrieve admin log.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "LogBackTrackTime",
+				"id": "LogBackTrackTime",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Filters",
+				"id": "Filters",
+				"fixedValue": null
+			}
+		],
 		"response": [
 			{
 				"type": "List",
@@ -652,6 +666,48 @@
 		"description": "None"
 	},
 	{
+		"id": "GetMapRotation",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Map Rotation",
+		"text": "Get Map Rotation",
+		"description": "Get current map rotation",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"maprotation"
+				],
+				"valueMember": [
+					"maprotation"
+				],
+				"fixedValue": "maprotation"
+			}
+		]
+	},
+	{
+		"id": "GetMapSequence",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Map Sequence",
+		"text": "Get Map Sequence",
+		"description": "Get current map sequence",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"mapsequence"
+				],
+				"valueMember": [
+					"mapsequence"
+				],
+				"fixedValue": "mapsequence"
+			}
+		]
+	},
+	{
 		"id": "GetMapShuffleEnabled",
 		"friendlyName": "Get Map Shuffle Enabled",
 		"text": "Get Map Shuffle Enabled",
@@ -710,10 +766,472 @@
 		]
 	},
 	{
+		"id": "GetPlayer",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Player",
+		"text": "Get Player",
+		"description": "Get player information of a connected player",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"player"
+				],
+				"valueMember": [
+					"player"
+				],
+				"fixedValue": "player"
+			},
+			{
+				"type": "Text",
+				"name": "Value",
+				"id": "Value",
+				"fixedValue": null
+			}
+		],
+		"response": [
+			{
+				"type": "Text",
+				"name": "Id",
+				"id": "iD"
+			},
+			{
+				"type": "Combo",
+				"name": "Platform",
+				"id": "platform",
+				"displayMember": [
+					"Steam",
+					"Epic Game Store",
+					"Xbox Game Pass",
+					"PlayStation Network",
+					"PlayStation 5",
+					"Xbox Series X"
+				],
+				"valueMember": [
+					"steam",
+					"epic",
+					"xbl",
+					"psn",
+					"ps5",
+					"xsx"
+				]
+			},
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "name"
+			},
+			{
+				"type": "Text",
+				"name": "Clan Tag",
+				"id": "clanTag"
+			},
+			{
+				"type": "Text",
+				"name": "Epic Online Services Id",
+				"id": "eOSID"
+			},
+			{
+				"type": "Number",
+				"name": "Level",
+				"id": "level"
+			},
+			{
+				"type": "Combo",
+				"name": "Team",
+				"id": "team",
+				"displayMember": [
+					"GER",
+					"US",
+					"SOV",
+					"CW",
+					"DAK",
+					"B8A",
+					"UNASSIGNED"
+				],
+				"valueMember": [
+					0,
+					1,
+					2,
+					3,
+					4,
+					5,
+					6
+				]
+			},
+			{
+				"type": "Combo",
+				"name": "Role",
+				"id": "role",
+				"displayMember": [
+					"Rifleman",
+					"Assault",
+					"AutomaticRifleman",
+					"Medic",
+					"Spotter",
+					"Support",
+					"HeavyMachineGunner",
+					"AntiTank",
+					"Engineer",
+					"Officer",
+					"Sniper",
+					"Crewman",
+					"TankCommander",
+					"ArmyCommander"
+				],
+				"valueMember": [
+					0,
+					1,
+					2,
+					3,
+					4,
+					5,
+					6,
+					7,
+					8,
+					9,
+					10,
+					11,
+					12,
+					13
+				]
+			},
+			{
+				"type": "Text",
+				"name": "Platoon",
+				"id": "platoon"
+			},
+			{
+				"type": "Text",
+				"name": "Loadout",
+				"id": "loadout"
+			},
+			{
+				"type": "Number",
+				"name": "Kills",
+				"id": "kills"
+			},
+			{
+				"type": "Number",
+				"name": "Deaths",
+				"id": "deaths"
+			},
+			{
+				"type": "Complex",
+				"name": "ScoreData",
+				"id": "scoreData",
+				"members": [
+					{
+						"type": "Number",
+						"name": "Combat",
+						"id": "cOMBAT"
+					},
+					{
+						"type": "Number",
+						"name": "Offensive",
+						"id": "offense"
+					},
+					{
+						"type": "Number",
+						"name": "Defensive",
+						"id": "defense"
+					},
+					{
+						"type": "Number",
+						"name": "Support",
+						"id": "support"
+					}
+				]
+			},
+			{
+				"type": "Complex",
+				"name": "Position",
+				"id": "worldPosition",
+				"members": [
+					{
+						"type": "Number",
+						"name": "X",
+						"id": "x"
+					},
+					{
+						"type": "Number",
+						"name": "Y",
+						"id": "y"
+					},
+					{
+						"type": "Number",
+						"name": "Z",
+						"id": "z"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetPlayers",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Players",
+		"text": "Get Players",
+		"description": "Get a list of players from the server",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"players"
+				],
+				"valueMember": [
+					"players"
+				],
+				"fixedValue": "players"
+			}
+		],
+		"response": [
+			{
+				"type": "List",
+				"name": "Players",
+				"id": "players",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Id",
+						"id": "iD"
+					},
+					{
+						"type": "Combo",
+						"name": "Platform",
+						"id": "platform",
+						"displayMember": [
+							"Steam",
+							"Epic Game Store",
+							"Xbox Game Pass",
+							"PlayStation Network",
+							"PlayStation 5",
+							"Xbox Series X"
+						],
+						"valueMember": [
+							"steam",
+							"epic",
+							"xbl",
+							"psn",
+							"ps5",
+							"xsx"
+						]
+					},
+					{
+						"type": "Text",
+						"name": "Name",
+						"id": "name"
+					},
+					{
+						"type": "Text",
+						"name": "Clan Tag",
+						"id": "clanTag"
+					},
+					{
+						"type": "Text",
+						"name": "Epic Online Services Id",
+						"id": "eOSID"
+					},
+					{
+						"type": "Number",
+						"name": "Level",
+						"id": "level"
+					},
+					{
+						"type": "Combo",
+						"name": "Team",
+						"id": "team",
+						"displayMember": [
+							"GER",
+							"US",
+							"SOV",
+							"CW",
+							"DAK",
+							"B8A",
+							"UNASSIGNED"
+						],
+						"valueMember": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6
+						]
+					},
+					{
+						"type": "Combo",
+						"name": "Role",
+						"id": "role",
+						"displayMember": [
+							"Rifleman",
+							"Assault",
+							"AutomaticRifleman",
+							"Medic",
+							"Spotter",
+							"Support",
+							"HeavyMachineGunner",
+							"AntiTank",
+							"Engineer",
+							"Officer",
+							"Sniper",
+							"Crewman",
+							"TankCommander",
+							"ArmyCommander"
+						],
+						"valueMember": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							10,
+							11,
+							12,
+							13
+						]
+					},
+					{
+						"type": "Text",
+						"name": "Platoon",
+						"id": "platoon"
+					},
+					{
+						"type": "Text",
+						"name": "Loadout",
+						"id": "loadout"
+					},
+					{
+						"type": "Number",
+						"name": "Kills",
+						"id": "kills"
+					},
+					{
+						"type": "Number",
+						"name": "Deaths",
+						"id": "deaths"
+					},
+					{
+						"type": "Complex",
+						"name": "ScoreData",
+						"id": "scoreData",
+						"members": [
+							{
+								"type": "Number",
+								"name": "Combat",
+								"id": "cOMBAT"
+							},
+							{
+								"type": "Number",
+								"name": "Offensive",
+								"id": "offense"
+							},
+							{
+								"type": "Number",
+								"name": "Defensive",
+								"id": "defense"
+							},
+							{
+								"type": "Number",
+								"name": "Support",
+								"id": "support"
+							}
+						]
+					},
+					{
+						"type": "Complex",
+						"name": "Position",
+						"id": "worldPosition",
+						"members": [
+							{
+								"type": "Number",
+								"name": "X",
+								"id": "x"
+							},
+							{
+								"type": "Number",
+								"name": "Y",
+								"id": "y"
+							},
+							{
+								"type": "Number",
+								"name": "Z",
+								"id": "z"
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
 		"id": "GetServerChangelist",
 		"friendlyName": "Get Server Changelist",
 		"text": "Get Server Changelist",
 		"description": "Retrieves the servers changelist number."
+	},
+	{
+		"id": "GetServerConfig",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Server Config",
+		"text": "Get Server Config",
+		"description": "Get metadata of server",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"serverconfig"
+				],
+				"valueMember": [
+					"serverconfig"
+				],
+				"fixedValue": "serverconfig"
+			}
+		],
+		"response": [
+			{
+				"type": "Text",
+				"name": "ServerName",
+				"id": "serverName"
+			},
+			{
+				"type": "Text",
+				"name": "BuildNumber",
+				"id": "buildNumber"
+			},
+			{
+				"type": "Text",
+				"name": "BuildRevision",
+				"id": "buildRevision"
+			},
+			{
+				"type": "List",
+				"name": "SupportedPlatforms",
+				"id": "supportedPlatforms",
+				"displayMember": [
+					"Steam",
+					"eos",
+					"WinGDK"
+				],
+				"valueMember": [
+					"Steam",
+					"eos",
+					"WinGDK"
+				]
+			}
+		]
 	},
 	{
 		"id": "GetServerInformation",
@@ -748,6 +1266,86 @@
 				"name": "Value",
 				"id": "Value",
 				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "GetSessionInfo",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Session Info",
+		"text": "Get Session Info",
+		"description": "Get information about current game state of the server",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"session"
+				],
+				"valueMember": [
+					"session"
+				],
+				"fixedValue": "session"
+			}
+		],
+		"response": [
+			{
+				"type": "Text",
+				"name": "ServerName",
+				"id": "serverName"
+			},
+			{
+				"type": "Text",
+				"name": "MapName",
+				"id": "mapName"
+			},
+			{
+				"type": "Combo",
+				"name": "GameMode",
+				"id": "gameMode",
+				"displayMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish",
+					"Conquest"
+				],
+				"valueMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish",
+					"Conquest"
+				]
+			},
+			{
+				"type": "Number",
+				"name": "MaxPlayerCount",
+				"id": "maxPlayerCount"
+			},
+			{
+				"type": "Number",
+				"name": "PlayerCount",
+				"id": "playerCount"
+			},
+			{
+				"type": "Number",
+				"name": "MaxQueueCount",
+				"id": "maxQueueCount"
+			},
+			{
+				"type": "Number",
+				"name": "QueueCount",
+				"id": "queueCount"
+			},
+			{
+				"type": "Number",
+				"name": "MaxVIPQueueCount",
+				"id": "maxVIPQueueCount"
+			},
+			{
+				"type": "Number",
+				"name": "VIPQueueCount",
+				"id": "vIPQueueCount"
 			}
 		]
 	},
@@ -1467,590 +2065,6 @@
 				"name": "Admin Name",
 				"id": "AdminName",
 				"fixedValue": null
-			}
-		]
-	},
-	{
-		"id": "GetMapRotation",
-		"commandName": "GetServerInformation",
-		"friendlyName": "Get Map Rotation",
-		"text": "Get Map Rotation",
-		"description": "Get current map rotation",
-		"parameters": [
-			{
-				"type": "Text",
-				"name": "Name",
-				"id": "Name",
-				"displayMember": [
-					"maprotation"
-				],
-				"valueMember": [
-					"maprotation"
-				],
-				"fixedValue": "maprotation"
-			}
-		]
-	},
-	{
-		"id": "GetMapSequence",
-		"commandName": "GetServerInformation",
-		"friendlyName": "Get Map Sequence",
-		"text": "Get Map Sequence",
-		"description": "Get current map sequence",
-		"parameters": [
-			{
-				"type": "Text",
-				"name": "Name",
-				"id": "Name",
-				"displayMember": [
-					"mapsequence"
-				],
-				"valueMember": [
-					"mapsequence"
-				],
-				"fixedValue": "mapsequence"
-			}
-		]
-	},
-	{
-		"id": "GetPlayer",
-		"commandName": "GetServerInformation",
-		"friendlyName": "Get Player",
-		"text": "Get Player",
-		"description": "Get player information of a connected player",
-		"parameters": [
-			{
-				"type": "Text",
-				"name": "Name",
-				"id": "Name",
-				"displayMember": [
-					"player"
-				],
-				"valueMember": [
-					"player"
-				],
-				"fixedValue": "player"
-			},
-			{
-				"type": "Text",
-				"name": "Value",
-				"id": "Value",
-				"fixedValue": null
-			}
-		],
-		"response": [
-			{
-				"type": "Text",
-				"name": "Id",
-				"id": "iD"
-			},
-			{
-				"type": "Combo",
-				"name": "Platform",
-				"id": "platform",
-				"displayMember": [
-					"Steam",
-					"Epic Game Store",
-					"Xbox Game Pass",
-					"PlayStation Network",
-					"PlayStation 5",
-					"Xbox Series X"
-				],
-				"valueMember": [
-					"steam",
-					"epic",
-					"xbl",
-					"psn",
-					"ps5",
-					"xsx"
-				]
-			},
-			{
-				"type": "Text",
-				"name": "Name",
-				"id": "name"
-			},
-			{
-				"type": "Text",
-				"name": "Clan Tag",
-				"id": "clanTag"
-			},
-			{
-				"type": "Text",
-				"name": "Epic Online Services Id",
-				"id": "eOSID"
-			},
-			{
-				"type": "Number",
-				"name": "Level",
-				"id": "level"
-			},
-			{
-				"type": "Combo",
-				"name": "Team",
-				"id": "team",
-				"displayMember": [
-					"GER",
-					"US",
-					"SOV",
-					"CW",
-					"DAK",
-					"B8A",
-					"UNASSIGNED"
-				],
-				"valueMember": [
-					0,
-					1,
-					2,
-					3,
-					4,
-					5,
-					6
-				]
-			},
-			{
-				"type": "Combo",
-				"name": "Role",
-				"id": "role",
-				"displayMember": [
-					"Rifleman",
-					"Assault",
-					"AutomaticRifleman",
-					"Medic",
-					"Spotter",
-					"Support",
-					"HeavyMachineGunner",
-					"AntiTank",
-					"Engineer",
-					"Officer",
-					"Sniper",
-					"Crewman",
-					"TankCommander",
-					"ArmyCommander"
-				],
-				"valueMember": [
-					0,
-					1,
-					2,
-					3,
-					4,
-					5,
-					6,
-					7,
-					8,
-					9,
-					10,
-					11,
-					12,
-					13
-				]
-			},
-			{
-				"type": "Text",
-				"name": "Platoon",
-				"id": "platoon"
-			},
-			{
-				"type": "Text",
-				"name": "Loadout",
-				"id": "loadout"
-			},
-			{
-				"type": "Number",
-				"name": "Kills",
-				"id": "kills"
-			},
-			{
-				"type": "Number",
-				"name": "Deaths",
-				"id": "deaths"
-			},
-			{
-				"type": "Complex",
-				"name": "ScoreData",
-				"id": "scoreData",
-				"members": [
-					{
-						"type": "Number",
-						"name": "Combat",
-						"id": "cOMBAT"
-					},
-					{
-						"type": "Number",
-						"name": "Offensive",
-						"id": "offense"
-					},
-					{
-						"type": "Number",
-						"name": "Defensive",
-						"id": "defense"
-					},
-					{
-						"type": "Number",
-						"name": "Support",
-						"id": "support"
-					}
-				]
-			},
-			{
-				"type": "Complex",
-				"name": "Position",
-				"id": "worldPosition",
-				"members": [
-					{
-						"type": "Number",
-						"name": "X",
-						"id": "x"
-					},
-					{
-						"type": "Number",
-						"name": "Y",
-						"id": "y"
-					},
-					{
-						"type": "Number",
-						"name": "Z",
-						"id": "z"
-					}
-				]
-			}
-		]
-	},
-	{
-		"id": "GetPlayers",
-		"commandName": "GetServerInformation",
-		"friendlyName": "Get Players",
-		"text": "Get Players",
-		"description": "Get a list of players from the server",
-		"parameters": [
-			{
-				"type": "Text",
-				"name": "Name",
-				"id": "Name",
-				"displayMember": [
-					"players"
-				],
-				"valueMember": [
-					"players"
-				],
-				"fixedValue": "players"
-			}
-		],
-		"response": [
-			{
-				"type": "List",
-				"name": "Players",
-				"id": "players",
-				"members": [
-					{
-						"type": "Text",
-						"name": "Id",
-						"id": "iD"
-					},
-					{
-						"type": "Combo",
-						"name": "Platform",
-						"id": "platform",
-						"displayMember": [
-							"Steam",
-							"Epic Game Store",
-							"Xbox Game Pass",
-							"PlayStation Network",
-							"PlayStation 5",
-							"Xbox Series X"
-						],
-						"valueMember": [
-							"steam",
-							"epic",
-							"xbl",
-							"psn",
-							"ps5",
-							"xsx"
-						]
-					},
-					{
-						"type": "Text",
-						"name": "Name",
-						"id": "name"
-					},
-					{
-						"type": "Text",
-						"name": "Clan Tag",
-						"id": "clanTag"
-					},
-					{
-						"type": "Text",
-						"name": "Epic Online Services Id",
-						"id": "eOSID"
-					},
-					{
-						"type": "Number",
-						"name": "Level",
-						"id": "level"
-					},
-					{
-						"type": "Combo",
-						"name": "Team",
-						"id": "team",
-						"displayMember": [
-							"GER",
-							"US",
-							"SOV",
-							"CW",
-							"DAK",
-							"B8A",
-							"UNASSIGNED"
-						],
-						"valueMember": [
-							0,
-							1,
-							2,
-							3,
-							4,
-							5,
-							6
-						]
-					},
-					{
-						"type": "Combo",
-						"name": "Role",
-						"id": "role",
-						"displayMember": [
-							"Rifleman",
-							"Assault",
-							"AutomaticRifleman",
-							"Medic",
-							"Spotter",
-							"Support",
-							"HeavyMachineGunner",
-							"AntiTank",
-							"Engineer",
-							"Officer",
-							"Sniper",
-							"Crewman",
-							"TankCommander",
-							"ArmyCommander"
-						],
-						"valueMember": [
-							0,
-							1,
-							2,
-							3,
-							4,
-							5,
-							6,
-							7,
-							8,
-							9,
-							10,
-							11,
-							12,
-							13
-						]
-					},
-					{
-						"type": "Text",
-						"name": "Platoon",
-						"id": "platoon"
-					},
-					{
-						"type": "Text",
-						"name": "Loadout",
-						"id": "loadout"
-					},
-					{
-						"type": "Number",
-						"name": "Kills",
-						"id": "kills"
-					},
-					{
-						"type": "Number",
-						"name": "Deaths",
-						"id": "deaths"
-					},
-					{
-						"type": "Complex",
-						"name": "ScoreData",
-						"id": "scoreData",
-						"members": [
-							{
-								"type": "Number",
-								"name": "Combat",
-								"id": "cOMBAT"
-							},
-							{
-								"type": "Number",
-								"name": "Offensive",
-								"id": "offense"
-							},
-							{
-								"type": "Number",
-								"name": "Defensive",
-								"id": "defense"
-							},
-							{
-								"type": "Number",
-								"name": "Support",
-								"id": "support"
-							}
-						]
-					},
-					{
-						"type": "Complex",
-						"name": "Position",
-						"id": "worldPosition",
-						"members": [
-							{
-								"type": "Number",
-								"name": "X",
-								"id": "x"
-							},
-							{
-								"type": "Number",
-								"name": "Y",
-								"id": "y"
-							},
-							{
-								"type": "Number",
-								"name": "Z",
-								"id": "z"
-							}
-						]
-					}
-				]
-			}
-		]
-	},
-	{
-		"id": "GetServerConfig",
-		"commandName": "GetServerInformation",
-		"friendlyName": "Get Server Config",
-		"text": "Get Server Config",
-		"description": "Get metadata of server",
-		"parameters": [
-			{
-				"type": "Text",
-				"name": "Name",
-				"id": "Name",
-				"displayMember": [
-					"serverconfig"
-				],
-				"valueMember": [
-					"serverconfig"
-				],
-				"fixedValue": "serverconfig"
-			}
-		],
-		"response": [
-			{
-				"type": "Text",
-				"name": "ServerName",
-				"id": "serverName"
-			},
-			{
-				"type": "Text",
-				"name": "BuildNumber",
-				"id": "buildNumber"
-			},
-			{
-				"type": "Text",
-				"name": "BuildRevision",
-				"id": "buildRevision"
-			},
-			{
-				"type": "List",
-				"name": "SupportedPlatforms",
-				"id": "supportedPlatforms",
-				"displayMember": [
-					"Steam",
-					"eos",
-					"WinGDK"
-				],
-				"valueMember": [
-					"Steam",
-					"eos",
-					"WinGDK"
-				]
-			}
-		]
-	},
-	{
-		"id": "GetSessionInfo",
-		"commandName": "GetServerInformation",
-		"friendlyName": "Get Session Info",
-		"text": "Get Session Info",
-		"description": "Get information about current game state of the server",
-		"parameters": [
-			{
-				"type": "Text",
-				"name": "Name",
-				"id": "Name",
-				"displayMember": [
-					"session"
-				],
-				"valueMember": [
-					"session"
-				],
-				"fixedValue": "session"
-			}
-		],
-		"response": [
-			{
-				"type": "Text",
-				"name": "ServerName",
-				"id": "serverName"
-			},
-			{
-				"type": "Text",
-				"name": "MapName",
-				"id": "mapName"
-			},
-			{
-				"type": "Combo",
-				"name": "GameMode",
-				"id": "gameMode",
-				"displayMember": [
-					"Warfare",
-					"Offensive",
-					"Skirmish",
-					"Conquest"
-				],
-				"valueMember": [
-					"Warfare",
-					"Offensive",
-					"Skirmish",
-					"Conquest"
-				]
-			},
-			{
-				"type": "Number",
-				"name": "MaxPlayerCount",
-				"id": "maxPlayerCount"
-			},
-			{
-				"type": "Number",
-				"name": "PlayerCount",
-				"id": "playerCount"
-			},
-			{
-				"type": "Number",
-				"name": "MaxQueueCount",
-				"id": "maxQueueCount"
-			},
-			{
-				"type": "Number",
-				"name": "QueueCount",
-				"id": "queueCount"
-			},
-			{
-				"type": "Number",
-				"name": "MaxVIPQueueCount",
-				"id": "maxVIPQueueCount"
-			},
-			{
-				"type": "Number",
-				"name": "VIPQueueCount",
-				"id": "vIPQueueCount"
 			}
 		]
 	}
