@@ -16,6 +16,7 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -34,8 +35,9 @@ func main() {
 		panic(err)
 	}
 
-	err = p.WithConnection(context.Background(), func(c *rcon.Connection) error {
-		m, err := c.Maps()
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(2*time.Second))
+	err = p.WithConnection(ctx, func(c *rcon.Connection) error {
+		m, err := c.GetAvailableMaps(ctx)
 		if err != nil {
 			println(err.Error())
 			return err
@@ -48,6 +50,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	cancel()
 }
 ```
 
