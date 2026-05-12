@@ -311,7 +311,7 @@ type ResponseElement struct {
 	// ListType is only applicable for ResponseItemTypeList and can be used to optionally define the type of list.
 	// it has no effect when Members is given (ListType will be implicitly an object), as well as when ValueMember is
 	// provided (ListType will be an Enum).
-	ListType ResponseItemListType `json:"listType"`
+	ListType ResponseItemListType `json:"listType,omitempty"`
 	Name     string               `json:"name"`
 	Id       string               `json:"id"`
 

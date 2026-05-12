@@ -30,7 +30,7 @@ func main() {
 	ctx := context.Background()
 	var res []codegen.Command
 	err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
-		commands, err := c.DisplayableCommands(ctx)
+		commands, err := c.GetDisplayableCommands(ctx)
 		if err != nil {
 			return err
 		}
