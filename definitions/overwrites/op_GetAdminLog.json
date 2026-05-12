@@ -1,4 +1,18 @@
 {
+  "request": {
+    "parameters": [
+      {
+        "type": "Number",
+        "name": "LogBackTrackTime",
+        "id": "LogBackTrackTime"
+      },
+      {
+        "type": "Text",
+        "name": "Filters",
+        "id": "Filters"
+      }
+    ]
+  },
   "response": [
     {
       "id": "entries",

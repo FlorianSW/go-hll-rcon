@@ -93,7 +93,7 @@ func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 			}
 		case <-l.pollTicker.C:
 			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
-				r, err := c.AdminLog(ctx, int32(d.Seconds()), "")
+				r, err := c.GetAdminLog(ctx, int32(d.Seconds()), "")
 				if err != nil {
 					log.Error("read", err)
 					errs <- err
