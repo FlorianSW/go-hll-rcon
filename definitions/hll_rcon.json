@@ -1,0 +1,2057 @@
+[
+	{
+		"id": "AddAdmin",
+		"friendlyName": "Add Admin",
+		"text": "Add Admin",
+		"description": "Add a player to the admin list.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Player Id",
+				"id": "PlayerId",
+				"fixedValue": null
+			},
+			{
+				"type": "Combo",
+				"name": "Admin Group",
+				"id": "AdminGroup",
+				"displayMember": [
+					"owner",
+					"senior",
+					"junior",
+					"spectator"
+				],
+				"valueMember": [
+					"owner",
+					"senior",
+					"junior",
+					"spectator"
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Comment",
+				"id": "Comment",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "AddBannedWords",
+		"friendlyName": "Add Banned Words",
+		"text": "Add Banned Words",
+		"description": "Add banned words to the profanity filter. Separate words with commas.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Banned Words",
+				"id": "BannedWords",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "AddMapToRotation",
+		"friendlyName": "Add Map to Rotation",
+		"text": "Add Map to Rotation",
+		"description": "Add a new map to the map rotation at an index.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Map Name",
+				"id": "MapName",
+				"displayMember": [
+					"foy_warfare",
+					"stmariedumont_warfare",
+					"hurtgenforest_warfare_V2",
+					"utahbeach_warfare",
+					"stmereeglise_warfare",
+					"hill400_warfare",
+					"carentan_warfare",
+					"kursk_warfare",
+					"foy_warfare_night",
+					"hurtgenforest_warfare_V2_night",
+					"kursk_warfare_night",
+					"omahabeach_warfare",
+					"kharkov_warfare",
+					"elalamein_warfare",
+					"driel_warfare",
+					"carentan_warfare_night",
+					"stmereeglise_warfare_night",
+					"driel_warfare_night",
+					"elalamein_warfare_night",
+					"kharkov_warfare_night",
+					"mortain_warfare_day",
+					"mortain_warfare_overcast",
+					"stmariedumont_warfare_night",
+					"utahbeach_warfare_night",
+					"omahabeach_warfare_night",
+					"mortain_warfare_dusk",
+					"PHL_L_1944_Warfare",
+					"PHL_L_1944_Warfare_Night",
+					"elsenbornridge_warfare_day",
+					"elsenbornridge_warfare_morning",
+					"elsenbornridge_warfare_night",
+					"tobruk_warfare_day",
+					"tobruk_warfare_dusk",
+					"tobruk_warfare_morning",
+					"STA_L_1942_Warfare",
+					"STA_L_1942_Warfare_Night",
+					"smolensk_warfare_day",
+					"smolensk_warfare_dusk",
+					"smolensk_warfare_night",
+					"REM_L_1945_Warfare",
+					"REM_L_1945_WarfareNight",
+					"utahbeach_offensive_us",
+					"utahbeach_offensive_ger",
+					"omahabeach_offensive_us",
+					"stmereeglise_offensive_ger",
+					"foy_offensive_ger",
+					"hill400_offensive_US",
+					"stmereeglise_offensive_us",
+					"carentan_offensive_us",
+					"hurtgenforest_offensive_ger",
+					"hurtgenforest_offensive_US",
+					"kursk_offensive_ger",
+					"kursk_offensive_rus",
+					"stmariedumont_off_us",
+					"stmariedumont_off_ger",
+					"carentan_offensive_ger",
+					"foy_offensive_us",
+					"hill400_offensive_ger",
+					"omahabeach_offensive_ger",
+					"kharkov_offensive_rus",
+					"kharkov_offensive_ger",
+					"elalamein_offensive_CW",
+					"elalamein_offensive_ger",
+					"driel_offensive_ger",
+					"driel_offensive_us",
+					"mortain_offensiveger_day",
+					"mortain_offensiveger_overcast",
+					"mortain_offensiveUS_day",
+					"mortain_offensiveUS_overcast",
+					"mortain_offensiveUS_dusk",
+					"mortain_offensiveger_dusk",
+					"PHL_L_1944_OffensiveGER",
+					"PHL_L_1944_OffensiveUS",
+					"elsenbornridge_offensiveUS_day",
+					"elsenbornridge_offensiveger_day",
+					"elsenbornridge_offensiveUS_morning",
+					"elsenbornridge_offensiveger_morning",
+					"elsenbornridge_offensiveUS_night",
+					"elsenbornridge_offensiveger_night",
+					"tobruk_offensivebritish_day",
+					"tobruk_offensiveger_day",
+					"tobruk_offensivebritish_dusk",
+					"tobruk_offensiveger_dusk",
+					"tobruk_offensivebritish_morning",
+					"tobruk_offensiveger_morning",
+					"STA_L_1942_OffensiveRUS",
+					"STA_L_1942_OffensiveGER",
+					"smolensk_offensiveGer_Day",
+					"smolensk_offensiveRus_day",
+					"smolensk_offensiveGer_dusk",
+					"smolensk_offensiveRus_dusk",
+					"smolensk_offensiveGer_night",
+					"smolensk_offensiveRus_night",
+					"REM_L_1945_OffensiveUS",
+					"REM_L_1945_OffensiveGER",
+					"ELA_S_1942_P_Skirmish",
+					"ELA_S_1942_Night_P_Skirmish",
+					"DRL_S_1944_P_Skirmish",
+					"DRL_S_1944_Night_P_Skirmish",
+					"DRL_S_1944_Day_P_Skirmish",
+					"mortain_skirmish_day",
+					"mortain_skirmish_overcast",
+					"SMDM_S_1944_Day_P_Skirmish",
+					"SMDM_S_1944_Night_P_Skirmish",
+					"SMDM_S_1944_Rain_P_Skirmish",
+					"CAR_S_1944_Day_P_Skirmish",
+					"CAR_S_1944_Rain_P_Skirmish",
+					"CAR_S_1944_Dusk_P_Skirmish",
+					"SME_S_1944_Day_P_Skirmish",
+					"SME_S_1944_Morning_P_Skirmish",
+					"SME_S_1944_Night_P_Skirmish",
+					"mortain_skirmish_dusk",
+					"PHL_S_1944_Rain_P_Skirmish",
+					"PHL_S_1944_Morning_P_Skirmish",
+					"PHL_S_1944_Night_P_Skirmish",
+					"HIL_S_1944_Day_P_Skirmish",
+					"HIL_S_1944_Dusk_P_Skirmish",
+					"elsenbornridge_skirmish_day",
+					"elsenbornridge_skirmish_morning",
+					"elsenbornridge_skirmish_night",
+					"tobruk_skirmish_day",
+					"tobruk_skirmish_dusk",
+					"tobruk_skirmish_morning",
+					"STA_S_1942_P_Skirmish_Dusk",
+					"STA_S_1942_P_Skirmish_Overcast",
+					"smolensk_skirmish_day",
+					"smolensk_skirmish_dusk",
+					"smolensk_skirmish_night",
+					"REM_S_1945_P_Skirmish_Day",
+					"REM_S_1945_P_Skirmish_Night"
+				],
+				"valueMember": [
+					"foy_warfare",
+					"stmariedumont_warfare",
+					"hurtgenforest_warfare_V2",
+					"utahbeach_warfare",
+					"stmereeglise_warfare",
+					"hill400_warfare",
+					"carentan_warfare",
+					"kursk_warfare",
+					"foy_warfare_night",
+					"hurtgenforest_warfare_V2_night",
+					"kursk_warfare_night",
+					"omahabeach_warfare",
+					"kharkov_warfare",
+					"elalamein_warfare",
+					"driel_warfare",
+					"carentan_warfare_night",
+					"stmereeglise_warfare_night",
+					"driel_warfare_night",
+					"elalamein_warfare_night",
+					"kharkov_warfare_night",
+					"mortain_warfare_day",
+					"mortain_warfare_overcast",
+					"stmariedumont_warfare_night",
+					"utahbeach_warfare_night",
+					"omahabeach_warfare_night",
+					"mortain_warfare_dusk",
+					"PHL_L_1944_Warfare",
+					"PHL_L_1944_Warfare_Night",
+					"elsenbornridge_warfare_day",
+					"elsenbornridge_warfare_morning",
+					"elsenbornridge_warfare_night",
+					"tobruk_warfare_day",
+					"tobruk_warfare_dusk",
+					"tobruk_warfare_morning",
+					"STA_L_1942_Warfare",
+					"STA_L_1942_Warfare_Night",
+					"smolensk_warfare_day",
+					"smolensk_warfare_dusk",
+					"smolensk_warfare_night",
+					"REM_L_1945_Warfare",
+					"REM_L_1945_WarfareNight",
+					"utahbeach_offensive_us",
+					"utahbeach_offensive_ger",
+					"omahabeach_offensive_us",
+					"stmereeglise_offensive_ger",
+					"foy_offensive_ger",
+					"hill400_offensive_US",
+					"stmereeglise_offensive_us",
+					"carentan_offensive_us",
+					"hurtgenforest_offensive_ger",
+					"hurtgenforest_offensive_US",
+					"kursk_offensive_ger",
+					"kursk_offensive_rus",
+					"stmariedumont_off_us",
+					"stmariedumont_off_ger",
+					"carentan_offensive_ger",
+					"foy_offensive_us",
+					"hill400_offensive_ger",
+					"omahabeach_offensive_ger",
+					"kharkov_offensive_rus",
+					"kharkov_offensive_ger",
+					"elalamein_offensive_CW",
+					"elalamein_offensive_ger",
+					"driel_offensive_ger",
+					"driel_offensive_us",
+					"mortain_offensiveger_day",
+					"mortain_offensiveger_overcast",
+					"mortain_offensiveUS_day",
+					"mortain_offensiveUS_overcast",
+					"mortain_offensiveUS_dusk",
+					"mortain_offensiveger_dusk",
+					"PHL_L_1944_OffensiveGER",
+					"PHL_L_1944_OffensiveUS",
+					"elsenbornridge_offensiveUS_day",
+					"elsenbornridge_offensiveger_day",
+					"elsenbornridge_offensiveUS_morning",
+					"elsenbornridge_offensiveger_morning",
+					"elsenbornridge_offensiveUS_night",
+					"elsenbornridge_offensiveger_night",
+					"tobruk_offensivebritish_day",
+					"tobruk_offensiveger_day",
+					"tobruk_offensivebritish_dusk",
+					"tobruk_offensiveger_dusk",
+					"tobruk_offensivebritish_morning",
+					"tobruk_offensiveger_morning",
+					"STA_L_1942_OffensiveRUS",
+					"STA_L_1942_OffensiveGER",
+					"smolensk_offensiveGer_Day",
+					"smolensk_offensiveRus_day",
+					"smolensk_offensiveGer_dusk",
+					"smolensk_offensiveRus_dusk",
+					"smolensk_offensiveGer_night",
+					"smolensk_offensiveRus_night",
+					"REM_L_1945_OffensiveUS",
+					"REM_L_1945_OffensiveGER",
+					"ELA_S_1942_P_Skirmish",
+					"ELA_S_1942_Night_P_Skirmish",
+					"DRL_S_1944_P_Skirmish",
+					"DRL_S_1944_Night_P_Skirmish",
+					"DRL_S_1944_Day_P_Skirmish",
+					"mortain_skirmish_day",
+					"mortain_skirmish_overcast",
+					"SMDM_S_1944_Day_P_Skirmish",
+					"SMDM_S_1944_Night_P_Skirmish",
+					"SMDM_S_1944_Rain_P_Skirmish",
+					"CAR_S_1944_Day_P_Skirmish",
+					"CAR_S_1944_Rain_P_Skirmish",
+					"CAR_S_1944_Dusk_P_Skirmish",
+					"SME_S_1944_Day_P_Skirmish",
+					"SME_S_1944_Morning_P_Skirmish",
+					"SME_S_1944_Night_P_Skirmish",
+					"mortain_skirmish_dusk",
+					"PHL_S_1944_Rain_P_Skirmish",
+					"PHL_S_1944_Morning_P_Skirmish",
+					"PHL_S_1944_Night_P_Skirmish",
+					"HIL_S_1944_Day_P_Skirmish",
+					"HIL_S_1944_Dusk_P_Skirmish",
+					"elsenbornridge_skirmish_day",
+					"elsenbornridge_skirmish_morning",
+					"elsenbornridge_skirmish_night",
+					"tobruk_skirmish_day",
+					"tobruk_skirmish_dusk",
+					"tobruk_skirmish_morning",
+					"STA_S_1942_P_Skirmish_Dusk",
+					"STA_S_1942_P_Skirmish_Overcast",
+					"smolensk_skirmish_day",
+					"smolensk_skirmish_dusk",
+					"smolensk_skirmish_night",
+					"REM_S_1945_P_Skirmish_Day",
+					"REM_S_1945_P_Skirmish_Night"
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Number",
+				"name": "At Index",
+				"id": "Index",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "AddMapToSequence",
+		"friendlyName": "Add Map to Sequence",
+		"text": "Add Map to Sequence",
+		"description": "Add map to server map sequence.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Map Name",
+				"id": "MapName",
+				"displayMember": [
+					"stmariedumont_warfare"
+				],
+				"valueMember": [
+					"stmariedumont_warfare"
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Number",
+				"name": "At Index",
+				"id": "Index",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "AddVip",
+		"friendlyName": "Add VIP",
+		"text": "Add VIP",
+		"description": "Give a player VIP status.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Player ID",
+				"id": "PlayerId",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Description",
+				"id": "Description",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "ChangeMap",
+		"friendlyName": "Change Map",
+		"text": "Change Map",
+		"description": "Select a map to change the server map.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "MapName",
+				"id": "MapName",
+				"displayMember": [
+					"stmariedumont_warfare"
+				],
+				"valueMember": [
+					"stmariedumont_warfare"
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "DisbandPlatoon",
+		"friendlyName": "Disband Platoon",
+		"text": "Disband Platoon",
+		"description": "Disband a squad and force players within the platoon to redeploy.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Team",
+				"id": "TeamIndex",
+				"displayMember": [
+					"Axis",
+					"Allies"
+				],
+				"valueMember": [
+					1,
+					2
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Number",
+				"name": "Platoon Index",
+				"id": "SquadIndex",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Reason",
+				"id": "Reason",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "ForceTeamSwitch",
+		"friendlyName": "Force Team Switch",
+		"text": "Force Team Switch",
+		"description": "Forces a player to switch teams.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Players",
+				"id": "PlayerId",
+				"fixedValue": null
+			},
+			{
+				"type": "Combo",
+				"name": "Force Mode",
+				"id": "ForceMode",
+				"displayMember": [
+					"OnDeath",
+					"Immediate"
+				],
+				"valueMember": [
+					0,
+					1
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "GetAdminGroups",
+		"friendlyName": "Get Admin Groups",
+		"text": "Get Admin Groups",
+		"description": "Get a list of admin user groups.",
+		"response": [
+			{
+				"type": "List",
+				"listType": "Text",
+				"name": "GroupNames",
+				"id": "GroupNames"
+			}
+		]
+	},
+	{
+		"id": "GetAdminLog",
+		"friendlyName": "Get Admin Log",
+		"text": "Get Admin Log",
+		"description": "Retrieve admin log.",
+		"response": [
+			{
+				"type": "List",
+				"name": "Entries",
+				"id": "entries",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Timestamp",
+						"id": "timestamp"
+					},
+					{
+						"type": "Text",
+						"name": "Message",
+						"id": "message"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetAdminUsers",
+		"friendlyName": "Get Admin Users",
+		"text": "Get Admin Users",
+		"description": "Get a list of admin users.",
+		"response": [
+			{
+				"type": "List",
+				"name": "AdminUsers",
+				"id": "AdminUsers",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Id",
+						"id": "userId"
+					},
+					{
+						"type": "Text",
+						"name": "group",
+						"id": "group"
+					},
+					{
+						"type": "Text",
+						"name": "Comment",
+						"id": "comment"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetAutoBalanceEnabled",
+		"friendlyName": "Get Auto Balance Enabled",
+		"text": "Get Auto Balance Enabled",
+		"description": "None"
+	},
+	{
+		"id": "GetAutoBalanceThreshold",
+		"friendlyName": "Get Auto Balance Threshold",
+		"text": "Get Auto Balance Threshold",
+		"description": "None"
+	},
+	{
+		"id": "GetClientReferenceData",
+		"commandName": "GetClientReferenceData",
+		"friendlyName": "None",
+		"text": "None",
+		"description": "None",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Command",
+				"id": "command",
+				"fixedValue": null
+			}
+		],
+		"response": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "name"
+			},
+			{
+				"type": "Text",
+				"name": "Text",
+				"id": "text"
+			},
+			{
+				"type": "Text",
+				"name": "Description",
+				"id": "description"
+			},
+			{
+				"type": "List",
+				"name": "Parameters",
+				"id": "dialogueParameters",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Type",
+						"id": "type"
+					},
+					{
+						"type": "Text",
+						"name": "Name",
+						"id": "name"
+					},
+					{
+						"type": "Text",
+						"name": "Id",
+						"id": "iD"
+					},
+					{
+						"type": "Text",
+						"name": "DisplayMember",
+						"id": "displayMember"
+					},
+					{
+						"type": "Text",
+						"name": "ValueMember",
+						"id": "valueMember"
+					}
+				]
+			}
+		],
+		"inline": true
+	},
+	{
+		"id": "GetDisplayableCommands",
+		"friendlyName": "None",
+		"text": "None",
+		"description": "None",
+		"response": [
+			{
+				"type": "List",
+				"name": "Entries",
+				"id": "entries",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Id",
+						"id": "iD"
+					},
+					{
+						"type": "Text",
+						"name": "FriendlyName",
+						"id": "friendlyName"
+					},
+					{
+						"type": "Bool",
+						"name": "IsClientSupported",
+						"id": "isClientSupported"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetHighPingThreshold",
+		"friendlyName": "Get High Ping Threshold",
+		"text": "Get High Ping Threshold",
+		"description": "None"
+	},
+	{
+		"id": "GetKickIdleDuration",
+		"friendlyName": "Get Kick Idle Duration",
+		"text": "Get Kick Idle Duration",
+		"description": "None"
+	},
+	{
+		"id": "GetMapShuffleEnabled",
+		"friendlyName": "Get Map Shuffle Enabled",
+		"text": "Get Map Shuffle Enabled",
+		"description": "None",
+		"response": [
+			{
+				"type": "Bool",
+				"name": "Enabled",
+				"id": "Enable"
+			}
+		]
+	},
+	{
+		"id": "GetPermanentBans",
+		"friendlyName": "Get Permanent Bans",
+		"text": "Get Permanent Bans",
+		"description": "Retrieve a list of players who have a permanent ban.",
+		"response": [
+			{
+				"type": "List",
+				"name": "BanList",
+				"id": "banList",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Id",
+						"id": "userId"
+					},
+					{
+						"type": "Text",
+						"name": "Name",
+						"id": "userName"
+					},
+					{
+						"type": "Time",
+						"name": "Banned",
+						"id": "timeOfBanning"
+					},
+					{
+						"type": "Number",
+						"name": "Duration",
+						"id": "durationHours"
+					},
+					{
+						"type": "Text",
+						"name": "Reason",
+						"id": "banReason"
+					},
+					{
+						"type": "Text",
+						"name": "AdminName",
+						"id": "adminName"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetServerChangelist",
+		"friendlyName": "Get Server Changelist",
+		"text": "Get Server Changelist",
+		"description": "Retrieves the servers changelist number."
+	},
+	{
+		"id": "GetServerInformation",
+		"friendlyName": "Get Server Information",
+		"text": "Get Server Information",
+		"description": "None",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"players",
+					"player",
+					"maprotation",
+					"mapsequence",
+					"session",
+					"serverconfig"
+				],
+				"valueMember": [
+					"players",
+					"player",
+					"maprotation",
+					"mapsequence",
+					"session",
+					"serverconfig"
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Value",
+				"id": "Value",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "GetTeamSwitchCooldown",
+		"friendlyName": "Get Team Switch Cooldown",
+		"text": "Get Team Switch Cooldown",
+		"description": "None"
+	},
+	{
+		"id": "GetTemporaryBans",
+		"friendlyName": "Get Temporary Bans",
+		"text": "Get Temporary Bans",
+		"description": "Retrieve a list of players who have temporary bans.",
+		"response": [
+			{
+				"type": "List",
+				"name": "BanList",
+				"id": "banList",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Id",
+						"id": "userId"
+					},
+					{
+						"type": "Text",
+						"name": "Name",
+						"id": "userName"
+					},
+					{
+						"type": "Time",
+						"name": "Banned",
+						"id": "timeOfBanning"
+					},
+					{
+						"type": "Number",
+						"name": "Duration",
+						"id": "durationHours"
+					},
+					{
+						"type": "Text",
+						"name": "Reason",
+						"id": "banReason"
+					},
+					{
+						"type": "Text",
+						"name": "AdminName",
+						"id": "adminName"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetVoteKickEnabled",
+		"friendlyName": "Get Vote Kick Enabled",
+		"text": "Get Vote Kick Enabled",
+		"description": "None"
+	},
+	{
+		"id": "GetVoteKickThreshold",
+		"friendlyName": "Get Vote Kick Threshold",
+		"text": "Get Vote Kick Threshold",
+		"description": "None"
+	},
+	{
+		"id": "KickPlayer",
+		"friendlyName": "Kick Player",
+		"text": "Kick Player",
+		"description": "Select player to kick and add a reason.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Reason",
+				"id": "Reason",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Player",
+				"id": "PlayerId",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "Login",
+		"friendlyName": "Connect",
+		"text": "Connect",
+		"description": "None"
+	},
+	{
+		"id": "MessageAllPlayers",
+		"friendlyName": "Message All Players",
+		"text": "Message All Players",
+		"description": "Create a message to send to all players in game.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Message",
+				"id": "Message",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "MessagePlayer",
+		"friendlyName": "Message Player",
+		"text": "Message Player",
+		"description": "Create a message to send to a player in game.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Message",
+				"id": "Message",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Player",
+				"id": "PlayerId",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "MoveMapInSequence",
+		"friendlyName": "Move Map in Sequence",
+		"text": "Move Map in Sequence",
+		"description": "Change the position on a map in the server queue",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "From",
+				"id": "CurrentIndex",
+				"fixedValue": null
+			},
+			{
+				"type": "Number",
+				"name": "To",
+				"id": "NewIndex",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "PermanentBanPlayer",
+		"friendlyName": "Permanently Ban Player",
+		"text": "Permanently Ban Player",
+		"description": "Permanently ban a player from the server.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Players",
+				"id": "PlayerId",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Reason",
+				"id": "Reason",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Admin Name",
+				"id": "AdminName",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "PunishPlayer",
+		"friendlyName": "Punish Player",
+		"text": "Punish Player",
+		"description": "Select a player to punish by killing.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Players",
+				"id": "PlayerId",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Reason",
+				"id": "Reason",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveAdmin",
+		"friendlyName": "Remove Admin",
+		"text": "Remove Admin",
+		"description": "Remove player from admin privileges.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Player Id",
+				"id": "PlayerId",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveBannedWords",
+		"friendlyName": "Remove Banned Words",
+		"text": "Remove Banned Words",
+		"description": "Remove banned words from the profanity filter. Separate words with commas.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Banned Words",
+				"id": "BannedWords",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveMapFromRotation",
+		"friendlyName": "Remove Map From Rotation",
+		"text": "Remove Map From Rotation",
+		"description": "Remove map from the map rotation at an index.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "At Index",
+				"id": "Index",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveMapFromSequence",
+		"friendlyName": "Remove Map From Sequence",
+		"text": "Remove Map From Sequence",
+		"description": "Remove map from the server map sequence.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "At Index",
+				"id": "Index",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveMatchTimer",
+		"friendlyName": "Remove Match Timer",
+		"text": "Remove Match Timer",
+		"description": "Remove the match timer override for a specific game-mode.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Game Mode",
+				"id": "GameMode",
+				"displayMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish"
+				],
+				"valueMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish"
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemovePermanentBan",
+		"friendlyName": "Remove Permanent Ban",
+		"text": "Remove Permanent Ban",
+		"description": "Remove permanent ban on a player",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Players",
+				"id": "PlayerId",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemovePlayerFromPlatoon",
+		"friendlyName": "Remove Player From Platoon",
+		"text": "Remove Player From Platoon",
+		"description": "Removes a player from their current platoon.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Players",
+				"id": "PlayerId",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Reason",
+				"id": "Reason",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveTemporaryBan",
+		"friendlyName": "Remove Temporary Ban",
+		"text": "Remove Temporary Ban",
+		"description": "Remove a temporary ban from a player.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Players",
+				"id": "PlayerId",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveVip",
+		"friendlyName": "Remove VIP",
+		"text": "Remove VIP",
+		"description": "Remove VIP status from a player.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Player ID",
+				"id": "PlayerId",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "RemoveWarmupTimer",
+		"friendlyName": "Remove Warmup Timer",
+		"text": "Remove Warmup Timer",
+		"description": "Remove warmup timer override for a specific game mode.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Game Mode",
+				"id": "GameMode",
+				"displayMember": [
+					"Warfare",
+					"Skirmish"
+				],
+				"valueMember": [
+					"Warfare",
+					"Skirmish"
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "ResetVoteKickThreshold",
+		"friendlyName": "Reset Vote to Kick Threshold",
+		"text": "Reset Vote to Kick Threshold",
+		"description": "Remove custom vote to kick thresholds and revert to default."
+	},
+	{
+		"id": "ServerBroadcast",
+		"friendlyName": "Server Broadcast",
+		"text": "Server Broadcast",
+		"description": "Create a message to broadcast to the server.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Broadcast Message",
+				"id": "Message",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "ServerConnect",
+		"friendlyName": "Server Connect",
+		"text": "Server Connect",
+		"description": "Server Connect"
+	},
+	{
+		"id": "SetAutoBalanceEnabled",
+		"friendlyName": "Set Auto Balance Enabled",
+		"text": "Set Auto Balance Enabled",
+		"description": "Enable or disable the auto balance.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Set Auto Balance",
+				"id": "Enable",
+				"displayMember": [
+					"On",
+					"Off"
+				],
+				"valueMember": [
+					true,
+					false
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetAutoBalanceThreshold",
+		"friendlyName": "Set Auto Balance Threshold",
+		"text": "Set Auto Balance Threshold",
+		"description": "Set the threshold value for teams when using auto balance.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "SetAutoAutoBalance",
+				"id": "AutoBalanceThreshold",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetDynamicWeatherEnabled",
+		"friendlyName": "Set Dynamic Weather Enabled",
+		"text": "Set Dynamic Weather Enabled",
+		"description": "Enable or disable dynamic weather for a specific map.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Map ID",
+				"id": "MapId",
+				"displayMember": [
+					"stmariedumont_warfare"
+				],
+				"valueMember": [
+					"stmariedumont_warfare"
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Combo",
+				"name": "Enable",
+				"id": "Enable",
+				"displayMember": [
+					"On",
+					"Off"
+				],
+				"valueMember": [
+					true,
+					false
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetHighPingThreshold",
+		"friendlyName": "Set High Ping Threshold",
+		"text": "Set High Ping Threshold",
+		"description": "Set the ping (in ms) that is considered too high for smooth gameplay.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "SetHighPingThreshold",
+				"id": "HighPingThresholdMs",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetIdleKickDuration",
+		"friendlyName": "Set Idle Kick Duration",
+		"text": "Set Idle Kick Duration",
+		"description": "Set how long a player can be idle before being kicked.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "Set Idle Kick Duration in Minutes",
+				"id": "IdleTimeoutMinutes",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetMapShuffleEnabled",
+		"friendlyName": "Set Map Shuffle Enabled",
+		"text": "Set Map Shuffle Enabled",
+		"description": "Randomises the server map queue",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Enable Map Shuffle",
+				"id": "Enable",
+				"displayMember": [
+					"On",
+					"Off"
+				],
+				"valueMember": [
+					true,
+					false
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetMatchTimer",
+		"friendlyName": "Set Match Timer",
+		"text": "Set Match Timer",
+		"description": "Configure the match length in minutes for a specific game-mode. Warfare can be between 30 - 180 minutes. Offensive can be between 10 - 60 minutes per capture point. Skirmish can be between 10 - 60 minutes",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Game Mode",
+				"id": "GameMode",
+				"displayMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish"
+				],
+				"valueMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish"
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Number",
+				"name": "Match Length (Minutes)",
+				"id": "MatchLength",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetMaxQueuedPlayers",
+		"friendlyName": "Set Max Queued Players",
+		"text": "Set Max Queued Players",
+		"description": "Set the maximum number of queued players.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "Set Max Queued Players",
+				"id": "MaxQueuedPlayers",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetSectorLayout",
+		"friendlyName": "Set Sector Layout",
+		"text": "Set Sector Layout",
+		"description": "Configure the active sector layout",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Sector 1",
+				"id": "Sector_1",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Sector 2",
+				"id": "Sector_2",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Sector 3",
+				"id": "Sector_3",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Sector 4",
+				"id": "Sector_4",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Sector 5",
+				"id": "Sector_5",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetTeamSwitchCooldown",
+		"friendlyName": "Set Team Switch Cooldown",
+		"text": "Set Team Switch Cooldown",
+		"description": "Set cooldown time for team switching.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "Team Switch Timer",
+				"id": "TeamSwitchTimer",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetVipSlotCount",
+		"friendlyName": "Set VIP Slot Count",
+		"text": "Set VIP Slot Count",
+		"description": "Set the VIP slot count for the server.",
+		"parameters": [
+			{
+				"type": "Number",
+				"name": "VIP Slot Count",
+				"id": "VipSlotCount",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetVoteKickEnabled",
+		"friendlyName": "Set Vote to Kick Enabled",
+		"text": "Set Vote to Kick Enabled",
+		"description": "Enable or disable the vote to kick functionality.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Enable",
+				"id": "Enable",
+				"displayMember": [
+					"On",
+					"Off"
+				],
+				"valueMember": [
+					true,
+					false
+				],
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetVoteKickThreshold",
+		"friendlyName": "Set Vote to Kick Threshold",
+		"text": "Set Vote to Kick Threshold",
+		"description": "Set the vote to kick threshold.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Threshold (Format: Player Count, Threshold ...)",
+				"id": "ThresholdValue",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetWarmupTimer",
+		"friendlyName": "Set Warmup Timer",
+		"text": "Set Warmup Timer",
+		"description": "Override the length of the warmup timer for a specific game-mode between 1 to 10 minutes.",
+		"parameters": [
+			{
+				"type": "Combo",
+				"name": "Game Mode",
+				"id": "GameMode",
+				"displayMember": [
+					"Warfare",
+					"Skirmish"
+				],
+				"valueMember": [
+					"Warfare",
+					"Skirmish"
+				],
+				"fixedValue": null
+			},
+			{
+				"type": "Number",
+				"name": "Warmup Timer Length (Minutes)",
+				"id": "WarmupLength",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "SetWelcomeMessage",
+		"friendlyName": "Set Welcome Message",
+		"text": "Set Welcome Message",
+		"description": "Send a message to the server.",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Server Message",
+				"id": "Message",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "TemporaryBanPlayer",
+		"friendlyName": "Temporary Ban Player",
+		"text": "Temporary Ban Player",
+		"description": "Temporary ban a player from the server",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Players",
+				"id": "PlayerId",
+				"fixedValue": null
+			},
+			{
+				"type": "Number",
+				"name": "Duration (Hours)",
+				"id": "Duration",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Reason",
+				"id": "Reason",
+				"fixedValue": null
+			},
+			{
+				"type": "Text",
+				"name": "Admin Name",
+				"id": "AdminName",
+				"fixedValue": null
+			}
+		]
+	},
+	{
+		"id": "GetMapRotation",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Map Rotation",
+		"text": "Get Map Rotation",
+		"description": "Get current map rotation",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"maprotation"
+				],
+				"valueMember": [
+					"maprotation"
+				],
+				"fixedValue": "maprotation"
+			}
+		]
+	},
+	{
+		"id": "GetMapSequence",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Map Sequence",
+		"text": "Get Map Sequence",
+		"description": "Get current map sequence",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"mapsequence"
+				],
+				"valueMember": [
+					"mapsequence"
+				],
+				"fixedValue": "mapsequence"
+			}
+		]
+	},
+	{
+		"id": "GetPlayer",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Player",
+		"text": "Get Player",
+		"description": "Get player information of a connected player",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"player"
+				],
+				"valueMember": [
+					"player"
+				],
+				"fixedValue": "player"
+			},
+			{
+				"type": "Text",
+				"name": "Value",
+				"id": "Value",
+				"fixedValue": null
+			}
+		],
+		"response": [
+			{
+				"type": "Text",
+				"name": "Id",
+				"id": "iD"
+			},
+			{
+				"type": "Combo",
+				"name": "Platform",
+				"id": "platform",
+				"displayMember": [
+					"Steam",
+					"Epic Game Store",
+					"Xbox Game Pass",
+					"PlayStation Network",
+					"PlayStation 5",
+					"Xbox Series X"
+				],
+				"valueMember": [
+					"steam",
+					"epic",
+					"xbl",
+					"psn",
+					"ps5",
+					"xsx"
+				]
+			},
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "name"
+			},
+			{
+				"type": "Text",
+				"name": "Clan Tag",
+				"id": "clanTag"
+			},
+			{
+				"type": "Text",
+				"name": "Epic Online Services Id",
+				"id": "eOSID"
+			},
+			{
+				"type": "Number",
+				"name": "Level",
+				"id": "level"
+			},
+			{
+				"type": "Combo",
+				"name": "Team",
+				"id": "team",
+				"displayMember": [
+					"GER",
+					"US",
+					"SOV",
+					"CW",
+					"DAK",
+					"B8A",
+					"UNASSIGNED"
+				],
+				"valueMember": [
+					0,
+					1,
+					2,
+					3,
+					4,
+					5,
+					6
+				]
+			},
+			{
+				"type": "Combo",
+				"name": "Role",
+				"id": "role",
+				"displayMember": [
+					"Rifleman",
+					"Assault",
+					"AutomaticRifleman",
+					"Medic",
+					"Spotter",
+					"Support",
+					"HeavyMachineGunner",
+					"AntiTank",
+					"Engineer",
+					"Officer",
+					"Sniper",
+					"Crewman",
+					"TankCommander",
+					"ArmyCommander"
+				],
+				"valueMember": [
+					0,
+					1,
+					2,
+					3,
+					4,
+					5,
+					6,
+					7,
+					8,
+					9,
+					10,
+					11,
+					12,
+					13
+				]
+			},
+			{
+				"type": "Text",
+				"name": "Platoon",
+				"id": "platoon"
+			},
+			{
+				"type": "Text",
+				"name": "Loadout",
+				"id": "loadout"
+			},
+			{
+				"type": "Number",
+				"name": "Kills",
+				"id": "kills"
+			},
+			{
+				"type": "Number",
+				"name": "Deaths",
+				"id": "deaths"
+			},
+			{
+				"type": "Complex",
+				"name": "ScoreData",
+				"id": "scoreData",
+				"members": [
+					{
+						"type": "Number",
+						"name": "Combat",
+						"id": "cOMBAT"
+					},
+					{
+						"type": "Number",
+						"name": "Offensive",
+						"id": "offense"
+					},
+					{
+						"type": "Number",
+						"name": "Defensive",
+						"id": "defense"
+					},
+					{
+						"type": "Number",
+						"name": "Support",
+						"id": "support"
+					}
+				]
+			},
+			{
+				"type": "Complex",
+				"name": "Position",
+				"id": "worldPosition",
+				"members": [
+					{
+						"type": "Number",
+						"name": "X",
+						"id": "x"
+					},
+					{
+						"type": "Number",
+						"name": "Y",
+						"id": "y"
+					},
+					{
+						"type": "Number",
+						"name": "Z",
+						"id": "z"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetPlayers",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Players",
+		"text": "Get Players",
+		"description": "Get a list of players from the server",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"players"
+				],
+				"valueMember": [
+					"players"
+				],
+				"fixedValue": "players"
+			}
+		],
+		"response": [
+			{
+				"type": "List",
+				"name": "Players",
+				"id": "players",
+				"members": [
+					{
+						"type": "Text",
+						"name": "Id",
+						"id": "iD"
+					},
+					{
+						"type": "Combo",
+						"name": "Platform",
+						"id": "platform",
+						"displayMember": [
+							"Steam",
+							"Epic Game Store",
+							"Xbox Game Pass",
+							"PlayStation Network",
+							"PlayStation 5",
+							"Xbox Series X"
+						],
+						"valueMember": [
+							"steam",
+							"epic",
+							"xbl",
+							"psn",
+							"ps5",
+							"xsx"
+						]
+					},
+					{
+						"type": "Text",
+						"name": "Name",
+						"id": "name"
+					},
+					{
+						"type": "Text",
+						"name": "Clan Tag",
+						"id": "clanTag"
+					},
+					{
+						"type": "Text",
+						"name": "Epic Online Services Id",
+						"id": "eOSID"
+					},
+					{
+						"type": "Number",
+						"name": "Level",
+						"id": "level"
+					},
+					{
+						"type": "Combo",
+						"name": "Team",
+						"id": "team",
+						"displayMember": [
+							"GER",
+							"US",
+							"SOV",
+							"CW",
+							"DAK",
+							"B8A",
+							"UNASSIGNED"
+						],
+						"valueMember": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6
+						]
+					},
+					{
+						"type": "Combo",
+						"name": "Role",
+						"id": "role",
+						"displayMember": [
+							"Rifleman",
+							"Assault",
+							"AutomaticRifleman",
+							"Medic",
+							"Spotter",
+							"Support",
+							"HeavyMachineGunner",
+							"AntiTank",
+							"Engineer",
+							"Officer",
+							"Sniper",
+							"Crewman",
+							"TankCommander",
+							"ArmyCommander"
+						],
+						"valueMember": [
+							0,
+							1,
+							2,
+							3,
+							4,
+							5,
+							6,
+							7,
+							8,
+							9,
+							10,
+							11,
+							12,
+							13
+						]
+					},
+					{
+						"type": "Text",
+						"name": "Platoon",
+						"id": "platoon"
+					},
+					{
+						"type": "Text",
+						"name": "Loadout",
+						"id": "loadout"
+					},
+					{
+						"type": "Number",
+						"name": "Kills",
+						"id": "kills"
+					},
+					{
+						"type": "Number",
+						"name": "Deaths",
+						"id": "deaths"
+					},
+					{
+						"type": "Complex",
+						"name": "ScoreData",
+						"id": "scoreData",
+						"members": [
+							{
+								"type": "Number",
+								"name": "Combat",
+								"id": "cOMBAT"
+							},
+							{
+								"type": "Number",
+								"name": "Offensive",
+								"id": "offense"
+							},
+							{
+								"type": "Number",
+								"name": "Defensive",
+								"id": "defense"
+							},
+							{
+								"type": "Number",
+								"name": "Support",
+								"id": "support"
+							}
+						]
+					},
+					{
+						"type": "Complex",
+						"name": "Position",
+						"id": "worldPosition",
+						"members": [
+							{
+								"type": "Number",
+								"name": "X",
+								"id": "x"
+							},
+							{
+								"type": "Number",
+								"name": "Y",
+								"id": "y"
+							},
+							{
+								"type": "Number",
+								"name": "Z",
+								"id": "z"
+							}
+						]
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "GetServerConfig",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Server Config",
+		"text": "Get Server Config",
+		"description": "Get metadata of server",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"serverconfig"
+				],
+				"valueMember": [
+					"serverconfig"
+				],
+				"fixedValue": "serverconfig"
+			}
+		],
+		"response": [
+			{
+				"type": "Text",
+				"name": "ServerName",
+				"id": "serverName"
+			},
+			{
+				"type": "Text",
+				"name": "BuildNumber",
+				"id": "buildNumber"
+			},
+			{
+				"type": "Text",
+				"name": "BuildRevision",
+				"id": "buildRevision"
+			},
+			{
+				"type": "List",
+				"name": "SupportedPlatforms",
+				"id": "supportedPlatforms",
+				"displayMember": [
+					"Steam",
+					"eos",
+					"WinGDK"
+				],
+				"valueMember": [
+					"Steam",
+					"eos",
+					"WinGDK"
+				]
+			}
+		]
+	},
+	{
+		"id": "GetSessionInfo",
+		"commandName": "GetServerInformation",
+		"friendlyName": "Get Session Info",
+		"text": "Get Session Info",
+		"description": "Get information about current game state of the server",
+		"parameters": [
+			{
+				"type": "Text",
+				"name": "Name",
+				"id": "Name",
+				"displayMember": [
+					"session"
+				],
+				"valueMember": [
+					"session"
+				],
+				"fixedValue": "session"
+			}
+		],
+		"response": [
+			{
+				"type": "Text",
+				"name": "ServerName",
+				"id": "serverName"
+			},
+			{
+				"type": "Text",
+				"name": "MapName",
+				"id": "mapName"
+			},
+			{
+				"type": "Combo",
+				"name": "GameMode",
+				"id": "gameMode",
+				"displayMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish",
+					"Conquest"
+				],
+				"valueMember": [
+					"Warfare",
+					"Offensive",
+					"Skirmish",
+					"Conquest"
+				]
+			},
+			{
+				"type": "Number",
+				"name": "MaxPlayerCount",
+				"id": "maxPlayerCount"
+			},
+			{
+				"type": "Number",
+				"name": "PlayerCount",
+				"id": "playerCount"
+			},
+			{
+				"type": "Number",
+				"name": "MaxQueueCount",
+				"id": "maxQueueCount"
+			},
+			{
+				"type": "Number",
+				"name": "QueueCount",
+				"id": "queueCount"
+			},
+			{
+				"type": "Number",
+				"name": "MaxVIPQueueCount",
+				"id": "maxVIPQueueCount"
+			},
+			{
+				"type": "Number",
+				"name": "VIPQueueCount",
+				"id": "vIPQueueCount"
+			}
+		]
+	}
+]
