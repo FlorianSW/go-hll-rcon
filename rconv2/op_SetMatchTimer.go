@@ -12,6 +12,11 @@ const (
 )
 
 type SetMatchTimerGameMode string
+
+func (r SetMatchTimerGameMode) String() string {
+	return string(r)
+}
+
 type SetMatchTimer struct {
 	GameMode    SetMatchTimerGameMode `json:"GameMode"`
 	MatchLength int32                 `json:"MatchLength"`

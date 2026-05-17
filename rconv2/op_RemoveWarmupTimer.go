@@ -11,6 +11,11 @@ const (
 )
 
 type RemoveWarmupTimerGameMode string
+
+func (r RemoveWarmupTimerGameMode) String() string {
+	return string(r)
+}
+
 type RemoveWarmupTimer struct {
 	GameMode RemoveWarmupTimerGameMode `json:"GameMode"`
 }

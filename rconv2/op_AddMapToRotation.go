@@ -139,6 +139,11 @@ const (
 )
 
 type MapName string
+
+func (r MapName) String() string {
+	return string(r)
+}
+
 type AddMapToRotation struct {
 	MapName MapName `json:"MapName"`
 	Index   int32   `json:"Index"`

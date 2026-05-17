@@ -37,6 +37,11 @@ const (
 )
 
 type GetPlayerName string
+
+func (r GetPlayerName) String() string {
+	return string(r)
+}
+
 type GetPlayer struct {
 	Name  string `json:"Name"`
 	Value string `json:"Value"`
@@ -58,6 +63,11 @@ type GetPlayerResponse struct {
 	Position             GetPlayerPosition   `json:"worldPosition"`
 }
 type GetPlayerPlatform string
+
+func (r GetPlayerPlatform) String() string {
+	return string(r)
+}
+
 type GetPlayerTeam int32
 type GetPlayerRole int32
 type GetPlayerScoreDatum struct {

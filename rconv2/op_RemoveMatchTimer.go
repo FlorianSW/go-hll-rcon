@@ -12,6 +12,11 @@ const (
 )
 
 type RemoveMatchTimerGameMode string
+
+func (r RemoveMatchTimerGameMode) String() string {
+	return string(r)
+}
+
 type RemoveMatchTimer struct {
 	GameMode RemoveMatchTimerGameMode `json:"GameMode"`
 }

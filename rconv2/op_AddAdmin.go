@@ -13,6 +13,11 @@ const (
 )
 
 type AddAdminAdminGroup string
+
+func (r AddAdminAdminGroup) String() string {
+	return string(r)
+}
+
 type AddAdmin struct {
 	PlayerId   string             `json:"PlayerId"`
 	AdminGroup AddAdminAdminGroup `json:"AdminGroup"`

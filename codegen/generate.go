@@ -66,6 +66,11 @@ const (
 {{ end }}
 {{- range $index, $type := .Command.Types}}
 {{$type.AsTypeDefinition}}
+{{- if eq $type.AliasedType "string" }}
+func (r {{$type.Name}}) String() string {
+	return string(r)
+}
+{{- end }}
 {{- end}}
 // {{.Command.Name}} {{.Command.Description}}
 func (c *Connection) {{.Command.Name}}({{.Command.Params.AsNamedArgsWithTypes}}){{.Command.Returns}}{

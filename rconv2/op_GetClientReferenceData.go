@@ -6,6 +6,11 @@ import (
 )
 
 type GetClientReferenceDataCommand string
+
+func (r GetClientReferenceDataCommand) String() string {
+	return string(r)
+}
+
 type GetClientReferenceDataResponse struct {
 	Name        string                            `json:"name"`
 	Text        string                            `json:"text"`

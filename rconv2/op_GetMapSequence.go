@@ -10,6 +10,11 @@ const (
 )
 
 type GetMapSequenceName string
+
+func (r GetMapSequenceName) String() string {
+	return string(r)
+}
+
 type GetMapSequence struct {
 	Name string `json:"Name"`
 }

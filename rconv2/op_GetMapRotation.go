@@ -10,6 +10,11 @@ const (
 )
 
 type GetMapRotationName string
+
+func (r GetMapRotationName) String() string {
+	return string(r)
+}
+
 type GetMapRotation struct {
 	Name string `json:"Name"`
 }

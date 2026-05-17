@@ -13,6 +13,11 @@ const (
 )
 
 type GetServerConfigName string
+
+func (r GetServerConfigName) String() string {
+	return string(r)
+}
+
 type GetServerConfig struct {
 	Name string `json:"Name"`
 }
@@ -23,6 +28,10 @@ type GetServerConfigResponse struct {
 	SupportedPlatforms []GetServerConfigSupportedPlatform `json:"supportedPlatforms"`
 }
 type GetServerConfigSupportedPlatform string
+
+func (r GetServerConfigSupportedPlatform) String() string {
+	return string(r)
+}
 
 // GetServerConfig Get metadata of server
 func (c *Connection) GetServerConfig(ctx context.Context) (*GetServerConfigResponse, error) {

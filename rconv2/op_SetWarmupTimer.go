@@ -11,6 +11,11 @@ const (
 )
 
 type SetWarmupTimerGameMode string
+
+func (r SetWarmupTimerGameMode) String() string {
+	return string(r)
+}
+
 type SetWarmupTimer struct {
 	GameMode     SetWarmupTimerGameMode `json:"GameMode"`
 	WarmupLength int32                  `json:"WarmupLength"`

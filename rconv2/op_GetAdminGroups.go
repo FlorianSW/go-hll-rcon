@@ -12,6 +12,10 @@ type GetAdminGroupsResponse struct {
 }
 type GetAdminGroupsGroupName string
 
+func (r GetAdminGroupsGroupName) String() string {
+	return string(r)
+}
+
 // GetAdminGroups Get a list of admin user groups.
 func (c *Connection) GetAdminGroups(ctx context.Context) (*GetAdminGroupsResponse, error) {
 	return execCommand[GetAdminGroups, GetAdminGroupsResponse](ctx, c.socket, GetAdminGroups{})

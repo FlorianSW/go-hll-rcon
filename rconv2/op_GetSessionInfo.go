@@ -14,6 +14,11 @@ const (
 )
 
 type GetSessionInfoName string
+
+func (r GetSessionInfoName) String() string {
+	return string(r)
+}
+
 type GetSessionInfo struct {
 	Name string `json:"Name"`
 }
@@ -29,6 +34,10 @@ type GetSessionInfoResponse struct {
 	VIPQueueCount    int32                  `json:"vIPQueueCount"`
 }
 type GetSessionInfoGameMode string
+
+func (r GetSessionInfoGameMode) String() string {
+	return string(r)
+}
 
 // GetSessionInfo Get information about current game state of the server
 func (c *Connection) GetSessionInfo(ctx context.Context) (*GetSessionInfoResponse, error) {

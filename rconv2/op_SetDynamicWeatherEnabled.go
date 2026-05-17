@@ -12,6 +12,11 @@ const (
 )
 
 type SetDynamicWeatherEnabledMapId string
+
+func (r SetDynamicWeatherEnabledMapId) String() string {
+	return string(r)
+}
+
 type SetDynamicWeatherEnabledEnable any
 type SetDynamicWeatherEnabled struct {
 	MapId  SetDynamicWeatherEnabledMapId  `json:"MapId"`
