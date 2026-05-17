@@ -7,7 +7,15 @@ import (
 	"go/format"
 	"io"
 	"os"
+	"slices"
 	"text/template"
+)
+
+var (
+	ignoredCommands = []string{
+		"Login",
+		"GetServerInformation",
+	}
 )
 
 type generator struct {
@@ -29,6 +37,9 @@ func (g *generator) Generate(defs io.Reader) error {
 		return fmt.Errorf("error reading definitions file: %s", err.Error())
 	}
 	for _, command := range commands {
+		if slices.Contains(ignoredCommands, command.Id) {
+			continue
+		}
 		if err = g.generateCommand(command); err != nil {
 			return err
 		}
