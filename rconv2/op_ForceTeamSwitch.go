@@ -10,14 +10,16 @@ const (
 	ForceTeamSwitchForceModeOnDeath   = 0
 )
 
-type ForceTeamSwitchForceMode string
+type ForceTeamSwitchForceMode int32
 type ForceTeamSwitch struct {
 	PlayerId  string                   `json:"PlayerId"`
 	ForceMode ForceTeamSwitchForceMode `json:"ForceMode"`
 }
 
 // ForceTeamSwitch Forces a player to switch teams.
-func (c *Connection) ForceTeamSwitch(ctx context.Context, PlayerId string, ForceMode ForceTeamSwitchForceMode) (any, error) {
-	return execCommand[ForceTeamSwitch, any](ctx, c.socket, ForceTeamSwitch{PlayerId: PlayerId, ForceMode: ForceMode})
+func (c *Connection) ForceTeamSwitch(ctx context.Context, PlayerId string, ForceMode ForceTeamSwitchForceMode) error {
+	_, err := execCommand[ForceTeamSwitch, any](ctx, c.socket, ForceTeamSwitch{PlayerId: PlayerId, ForceMode: ForceMode})
+
+	return err
 
 }

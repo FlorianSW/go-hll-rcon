@@ -7,9 +7,12 @@ import (
 
 type GetTeamSwitchCooldown struct {
 }
+type GetTeamSwitchCooldownResponse struct {
+	TeamSwitchTimer int32 `json:"teamSwitchTimer"`
+}
 
 // GetTeamSwitchCooldown None
-func (c *Connection) GetTeamSwitchCooldown(ctx context.Context) (any, error) {
-	return execCommand[GetTeamSwitchCooldown, any](ctx, c.socket, GetTeamSwitchCooldown{})
+func (c *Connection) GetTeamSwitchCooldown(ctx context.Context) (*GetTeamSwitchCooldownResponse, error) {
+	return execCommand[GetTeamSwitchCooldown, GetTeamSwitchCooldownResponse](ctx, c.socket, GetTeamSwitchCooldown{})
 
 }

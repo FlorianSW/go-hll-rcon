@@ -7,9 +7,12 @@ import (
 
 type GetVoteKickEnabled struct {
 }
+type GetVoteKickEnabledResponse struct {
+	Enable bool `json:"enable"`
+}
 
 // GetVoteKickEnabled None
-func (c *Connection) GetVoteKickEnabled(ctx context.Context) (any, error) {
-	return execCommand[GetVoteKickEnabled, any](ctx, c.socket, GetVoteKickEnabled{})
+func (c *Connection) GetVoteKickEnabled(ctx context.Context) (*GetVoteKickEnabledResponse, error) {
+	return execCommand[GetVoteKickEnabled, GetVoteKickEnabledResponse](ctx, c.socket, GetVoteKickEnabled{})
 
 }

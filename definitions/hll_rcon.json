@@ -550,13 +550,27 @@
 		"id": "GetAutoBalanceEnabled",
 		"friendlyName": "Get Auto Balance Enabled",
 		"text": "Get Auto Balance Enabled",
-		"description": "None"
+		"description": "None",
+		"response": [
+			{
+				"type": "Bool",
+				"name": "Enable",
+				"id": "enable"
+			}
+		]
 	},
 	{
 		"id": "GetAutoBalanceThreshold",
 		"friendlyName": "Get Auto Balance Threshold",
 		"text": "Get Auto Balance Threshold",
-		"description": "None"
+		"description": "None",
+		"response": [
+			{
+				"type": "Number",
+				"name": "AutoBalanceThreshold",
+				"id": "autoBalanceThreshold"
+			}
+		]
 	},
 	{
 		"id": "GetClientReferenceData",
@@ -657,13 +671,27 @@
 		"id": "GetHighPingThreshold",
 		"friendlyName": "Get High Ping Threshold",
 		"text": "Get High Ping Threshold",
-		"description": "None"
+		"description": "None",
+		"response": [
+			{
+				"type": "Number",
+				"name": "HighPingThresholdMs",
+				"id": "highPingThresholdMs"
+			}
+		]
 	},
 	{
 		"id": "GetKickIdleDuration",
 		"friendlyName": "Get Kick Idle Duration",
 		"text": "Get Kick Idle Duration",
-		"description": "None"
+		"description": "None",
+		"response": [
+			{
+				"type": "Number",
+				"name": "IdleTimeoutMinutes",
+				"id": "idleTimeoutMinutes"
+			}
+		]
 	},
 	{
 		"id": "GetMapRotation",
@@ -1178,7 +1206,14 @@
 		"id": "GetServerChangelist",
 		"friendlyName": "Get Server Changelist",
 		"text": "Get Server Changelist",
-		"description": "Retrieves the servers changelist number."
+		"description": "Retrieves the servers changelist number.",
+		"response": [
+			{
+				"type": "Text",
+				"name": "Changelist",
+				"id": "changelist"
+			}
+		]
 	},
 	{
 		"id": "GetServerConfig",
@@ -1353,7 +1388,14 @@
 		"id": "GetTeamSwitchCooldown",
 		"friendlyName": "Get Team Switch Cooldown",
 		"text": "Get Team Switch Cooldown",
-		"description": "None"
+		"description": "None",
+		"response": [
+			{
+				"type": "Number",
+				"name": "TeamSwitchTimer",
+				"id": "teamSwitchTimer"
+			}
+		]
 	},
 	{
 		"id": "GetTemporaryBans",
@@ -1404,13 +1446,39 @@
 		"id": "GetVoteKickEnabled",
 		"friendlyName": "Get Vote Kick Enabled",
 		"text": "Get Vote Kick Enabled",
-		"description": "None"
+		"description": "None",
+		"response": [
+			{
+				"type": "Bool",
+				"name": "Enable",
+				"id": "enable"
+			}
+		]
 	},
 	{
 		"id": "GetVoteKickThreshold",
 		"friendlyName": "Get Vote Kick Threshold",
 		"text": "Get Vote Kick Threshold",
-		"description": "None"
+		"description": "None",
+		"response": [
+			{
+				"type": "List",
+				"name": "VoteThresholdList",
+				"id": "voteThresholdList",
+				"members": [
+					{
+						"type": "Number",
+						"name": "PlayerCount",
+						"id": "playerCount"
+					},
+					{
+						"type": "Number",
+						"name": "VoteThreshold",
+						"id": "voteThreshold"
+					}
+				]
+			}
+		]
 	},
 	{
 		"id": "KickPlayer",

@@ -133,7 +133,7 @@ func (c Command) Types() (res Types) {
 			}
 			res = append(res, Type{
 				Name:        typeName,
-				AliasedType: "string",
+				AliasedType: aliasedType(p.ValueMember),
 				Members:     members,
 			})
 		}
@@ -146,12 +146,29 @@ func (c Command) Types() (res Types) {
 	return res
 }
 
+func aliasedType(valueMembers []any, defaultType ...string) string {
+	if len(valueMembers) == 0 {
+		if len(defaultType) > 0 {
+			return defaultType[0]
+		}
+		return ""
+	}
+	switch valueMembers[0].(type) {
+	case string:
+		return "string"
+	case float64:
+		return "int32"
+	default:
+		return "any"
+	}
+}
+
 func (c Command) RequestType() Type {
 	var requestMembers []TypeMember
 	if len(c.Parameters) == 1 && c.InlineParameters != nil && *c.InlineParameters {
 		return Type{
 			Name:        fmt.Sprintf("%s%s", c.Id, caser.String(c.Parameters[0].Id)),
-			AliasedType: "string",
+			AliasedType: aliasedType(c.Parameters[0].ValueMember, "string"),
 		}
 	} else {
 		for _, param := range c.Parameters {
@@ -189,11 +206,9 @@ func (c Command) ResponseGoType(p ResponseElement) string {
 	}
 }
 
-func (c Command) ReturnType() Type {
+func (c Command) ReturnType() *Type {
 	if c.Response == nil {
-		return Type{
-			Name: "any",
-		}
+		return nil
 	}
 	res := *c.Response
 	var responseMembers []TypeMember
@@ -204,7 +219,7 @@ func (c Command) ReturnType() Type {
 			Json: new(param.Id),
 		})
 	}
-	return Type{
+	return &Type{
 		Name:      fmt.Sprintf("%sResponse", c.Id),
 		IsPointer: true,
 		Members:   responseMembers,
@@ -212,7 +227,9 @@ func (c Command) ReturnType() Type {
 }
 
 func (c Command) ReturnTypeDefinitions() (res []Type) {
-	res = append(res, c.ReturnType())
+	if retval := c.ReturnType(); retval != nil {
+		res = append(res, *retval)
+	}
 	if c.Response == nil {
 		return
 	}
@@ -230,7 +247,6 @@ func (c Command) ReturnTypeDefinitions() (res []Type) {
 }
 
 func (c Command) buildResponseItemCombo(param ResponseElement) (res []Type) {
-	caser := cases.Title(language.English, cases.NoLower)
 	singularize := pluralize.NewClient()
 	var members []TypeMember
 	for i := range param.ValueMember {
@@ -241,7 +257,7 @@ func (c Command) buildResponseItemCombo(param ResponseElement) (res []Type) {
 	}
 	res = append(res, Type{
 		Name:        fmt.Sprintf("%s%s", c.Id, singularize.Singular(param.Name)),
-		AliasedType: "string",
+		AliasedType: aliasedType(param.ValueMember, "string"),
 		Members:     members,
 	})
 	return
@@ -411,12 +427,14 @@ func (p Params) AsNamedArgsWithTypes() string {
 }
 
 func (c Command) Returns() Returns {
-	return Returns{
-		c.ReturnType(),
-		{
-			Name: "error",
-		},
+	ret := Returns{}
+	if returnType := c.ReturnType(); returnType != nil {
+		ret = append(ret, *returnType)
 	}
+	ret = append(ret, Type{
+		Name: "error",
+	})
+	return ret
 }
 
 type Returns []Type

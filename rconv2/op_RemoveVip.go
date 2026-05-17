@@ -10,7 +10,9 @@ type RemoveVip struct {
 }
 
 // RemoveVip Remove VIP status from a player.
-func (c *Connection) RemoveVip(ctx context.Context, PlayerId string) (any, error) {
-	return execCommand[RemoveVip, any](ctx, c.socket, RemoveVip{PlayerId: PlayerId})
+func (c *Connection) RemoveVip(ctx context.Context, PlayerId string) error {
+	_, err := execCommand[RemoveVip, any](ctx, c.socket, RemoveVip{PlayerId: PlayerId})
+
+	return err
 
 }

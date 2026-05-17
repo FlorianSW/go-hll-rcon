@@ -1,0 +1,9 @@
+{
+  "response": [
+    {
+      "id": "highPingThresholdMs",
+      "name": "HighPingThresholdMs",
+      "type": "Number"
+    }
+  ]
+}

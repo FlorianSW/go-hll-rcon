@@ -58,7 +58,7 @@ const (
 {{- end}}
 // {{.Command.Name}} {{.Command.Description}}
 func (c *Connection) {{.Command.Name}}({{.Command.Params.AsNamedArgsWithTypes}}){{.Command.Returns}}{
-	{{if gt (len .Command.Returns) 1 }} return {{else}} _, err := {{end}}execCommand[{{.Command.RequestType.Name}}, {{.Command.ReturnType.Name}}](ctx, c.socket, {{ if not .Command.InlineParameters}}{{.Command.RequestType.Name}}{
+	{{if gt (len .Command.Returns) 1 }} return {{else}} _, err := {{end}}execCommand[{{.Command.RequestType.Name}}, {{if .Command.ReturnType }}{{.Command.ReturnType.Name}}{{else}}any{{end}}](ctx, c.socket, {{ if not .Command.InlineParameters}}{{.Command.RequestType.Name}}{
 		{{- range $index, $param := .Command.Params}}
 		{{- if ne $param.Name "ctx" }}{{$param.AsRequestAssignment}}{{end}}
 		{{- end}}

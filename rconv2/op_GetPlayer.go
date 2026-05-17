@@ -58,8 +58,8 @@ type GetPlayerResponse struct {
 	Position             GetPlayerPosition   `json:"worldPosition"`
 }
 type GetPlayerPlatform string
-type GetPlayerTeam string
-type GetPlayerRole string
+type GetPlayerTeam int32
+type GetPlayerRole int32
 type GetPlayerScoreDatum struct {
 	Combat    int32 `json:"cOMBAT"`
 	Offensive int32 `json:"offense"`

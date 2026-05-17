@@ -10,7 +10,9 @@ type AddBannedWords struct {
 }
 
 // AddBannedWords Add banned words to the profanity filter. Separate words with commas.
-func (c *Connection) AddBannedWords(ctx context.Context, BannedWords string) (any, error) {
-	return execCommand[AddBannedWords, any](ctx, c.socket, AddBannedWords{BannedWords: BannedWords})
+func (c *Connection) AddBannedWords(ctx context.Context, BannedWords string) error {
+	_, err := execCommand[AddBannedWords, any](ctx, c.socket, AddBannedWords{BannedWords: BannedWords})
+
+	return err
 
 }

@@ -10,7 +10,9 @@ type SetAutoBalanceThreshold struct {
 }
 
 // SetAutoBalanceThreshold Set the threshold value for teams when using auto balance.
-func (c *Connection) SetAutoBalanceThreshold(ctx context.Context, AutoBalanceThreshold int32) (any, error) {
-	return execCommand[SetAutoBalanceThreshold, any](ctx, c.socket, SetAutoBalanceThreshold{AutoBalanceThreshold: AutoBalanceThreshold})
+func (c *Connection) SetAutoBalanceThreshold(ctx context.Context, AutoBalanceThreshold int32) error {
+	_, err := execCommand[SetAutoBalanceThreshold, any](ctx, c.socket, SetAutoBalanceThreshold{AutoBalanceThreshold: AutoBalanceThreshold})
+
+	return err
 
 }

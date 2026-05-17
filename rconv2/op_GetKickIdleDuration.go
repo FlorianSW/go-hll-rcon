@@ -7,9 +7,12 @@ import (
 
 type GetKickIdleDuration struct {
 }
+type GetKickIdleDurationResponse struct {
+	IdleTimeoutMinutes int32 `json:"idleTimeoutMinutes"`
+}
 
 // GetKickIdleDuration None
-func (c *Connection) GetKickIdleDuration(ctx context.Context) (any, error) {
-	return execCommand[GetKickIdleDuration, any](ctx, c.socket, GetKickIdleDuration{})
+func (c *Connection) GetKickIdleDuration(ctx context.Context) (*GetKickIdleDurationResponse, error) {
+	return execCommand[GetKickIdleDuration, GetKickIdleDurationResponse](ctx, c.socket, GetKickIdleDuration{})
 
 }

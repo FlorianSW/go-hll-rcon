@@ -10,7 +10,9 @@ type SetIdleKickDuration struct {
 }
 
 // SetIdleKickDuration Set how long a player can be idle before being kicked.
-func (c *Connection) SetIdleKickDuration(ctx context.Context, IdleTimeoutMinutes int32) (any, error) {
-	return execCommand[SetIdleKickDuration, any](ctx, c.socket, SetIdleKickDuration{IdleTimeoutMinutes: IdleTimeoutMinutes})
+func (c *Connection) SetIdleKickDuration(ctx context.Context, IdleTimeoutMinutes int32) error {
+	_, err := execCommand[SetIdleKickDuration, any](ctx, c.socket, SetIdleKickDuration{IdleTimeoutMinutes: IdleTimeoutMinutes})
+
+	return err
 
 }

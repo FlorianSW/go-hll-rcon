@@ -10,7 +10,9 @@ type RemoveTemporaryBan struct {
 }
 
 // RemoveTemporaryBan Remove a temporary ban from a player.
-func (c *Connection) RemoveTemporaryBan(ctx context.Context, PlayerId string) (any, error) {
-	return execCommand[RemoveTemporaryBan, any](ctx, c.socket, RemoveTemporaryBan{PlayerId: PlayerId})
+func (c *Connection) RemoveTemporaryBan(ctx context.Context, PlayerId string) error {
+	_, err := execCommand[RemoveTemporaryBan, any](ctx, c.socket, RemoveTemporaryBan{PlayerId: PlayerId})
+
+	return err
 
 }

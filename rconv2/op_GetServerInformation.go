@@ -21,7 +21,9 @@ type GetServerInformation struct {
 }
 
 // GetServerInformation None
-func (c *Connection) GetServerInformation(ctx context.Context, Name GetServerInformationName, Value string) (any, error) {
-	return execCommand[GetServerInformation, any](ctx, c.socket, GetServerInformation{Name: Name, Value: Value})
+func (c *Connection) GetServerInformation(ctx context.Context, Name GetServerInformationName, Value string) error {
+	_, err := execCommand[GetServerInformation, any](ctx, c.socket, GetServerInformation{Name: Name, Value: Value})
+
+	return err
 
 }

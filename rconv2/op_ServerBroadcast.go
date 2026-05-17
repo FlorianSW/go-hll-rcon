@@ -10,7 +10,9 @@ type ServerBroadcast struct {
 }
 
 // ServerBroadcast Create a message to broadcast to the server.
-func (c *Connection) ServerBroadcast(ctx context.Context, Message string) (any, error) {
-	return execCommand[ServerBroadcast, any](ctx, c.socket, ServerBroadcast{Message: Message})
+func (c *Connection) ServerBroadcast(ctx context.Context, Message string) error {
+	_, err := execCommand[ServerBroadcast, any](ctx, c.socket, ServerBroadcast{Message: Message})
+
+	return err
 
 }

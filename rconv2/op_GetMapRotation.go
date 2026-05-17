@@ -15,8 +15,10 @@ type GetMapRotation struct {
 }
 
 // GetMapRotation Get current map rotation
-func (c *Connection) GetMapRotation(ctx context.Context) (any, error) {
-	return execCommand[GetMapRotation, any](ctx, c.socket, GetMapRotation{Name: "maprotation"})
+func (c *Connection) GetMapRotation(ctx context.Context) error {
+	_, err := execCommand[GetMapRotation, any](ctx, c.socket, GetMapRotation{Name: "maprotation"})
+
+	return err
 
 }
 

@@ -10,7 +10,9 @@ type SetWelcomeMessage struct {
 }
 
 // SetWelcomeMessage Send a message to the server.
-func (c *Connection) SetWelcomeMessage(ctx context.Context, Message string) (any, error) {
-	return execCommand[SetWelcomeMessage, any](ctx, c.socket, SetWelcomeMessage{Message: Message})
+func (c *Connection) SetWelcomeMessage(ctx context.Context, Message string) error {
+	_, err := execCommand[SetWelcomeMessage, any](ctx, c.socket, SetWelcomeMessage{Message: Message})
+
+	return err
 
 }

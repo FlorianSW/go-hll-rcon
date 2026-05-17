@@ -9,7 +9,9 @@ type ServerConnect struct {
 }
 
 // ServerConnect Server Connect
-func (c *Connection) ServerConnect(ctx context.Context) (any, error) {
-	return execCommand[ServerConnect, any](ctx, c.socket, ServerConnect{})
+func (c *Connection) ServerConnect(ctx context.Context) error {
+	_, err := execCommand[ServerConnect, any](ctx, c.socket, ServerConnect{})
+
+	return err
 
 }

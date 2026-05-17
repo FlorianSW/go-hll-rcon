@@ -7,9 +7,12 @@ import (
 
 type GetAutoBalanceThreshold struct {
 }
+type GetAutoBalanceThresholdResponse struct {
+	AutoBalanceThreshold int32 `json:"autoBalanceThreshold"`
+}
 
 // GetAutoBalanceThreshold None
-func (c *Connection) GetAutoBalanceThreshold(ctx context.Context) (any, error) {
-	return execCommand[GetAutoBalanceThreshold, any](ctx, c.socket, GetAutoBalanceThreshold{})
+func (c *Connection) GetAutoBalanceThreshold(ctx context.Context) (*GetAutoBalanceThresholdResponse, error) {
+	return execCommand[GetAutoBalanceThreshold, GetAutoBalanceThresholdResponse](ctx, c.socket, GetAutoBalanceThreshold{})
 
 }

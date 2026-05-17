@@ -7,9 +7,16 @@ import (
 
 type GetVoteKickThreshold struct {
 }
+type GetVoteKickThresholdResponse struct {
+	VoteThresholdList []GetVoteKickThresholdVoteThresholdList `json:"voteThresholdList"`
+}
+type GetVoteKickThresholdVoteThresholdList struct {
+	PlayerCount   int32 `json:"playerCount"`
+	VoteThreshold int32 `json:"voteThreshold"`
+}
 
 // GetVoteKickThreshold None
-func (c *Connection) GetVoteKickThreshold(ctx context.Context) (any, error) {
-	return execCommand[GetVoteKickThreshold, any](ctx, c.socket, GetVoteKickThreshold{})
+func (c *Connection) GetVoteKickThreshold(ctx context.Context) (*GetVoteKickThresholdResponse, error) {
+	return execCommand[GetVoteKickThreshold, GetVoteKickThresholdResponse](ctx, c.socket, GetVoteKickThreshold{})
 
 }

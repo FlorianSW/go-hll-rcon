@@ -15,8 +15,10 @@ type GetMapSequence struct {
 }
 
 // GetMapSequence Get current map sequence
-func (c *Connection) GetMapSequence(ctx context.Context) (any, error) {
-	return execCommand[GetMapSequence, any](ctx, c.socket, GetMapSequence{Name: "mapsequence"})
+func (c *Connection) GetMapSequence(ctx context.Context) error {
+	_, err := execCommand[GetMapSequence, any](ctx, c.socket, GetMapSequence{Name: "mapsequence"})
+
+	return err
 
 }
 

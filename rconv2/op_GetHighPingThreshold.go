@@ -7,9 +7,12 @@ import (
 
 type GetHighPingThreshold struct {
 }
+type GetHighPingThresholdResponse struct {
+	HighPingThresholdMs int32 `json:"highPingThresholdMs"`
+}
 
 // GetHighPingThreshold None
-func (c *Connection) GetHighPingThreshold(ctx context.Context) (any, error) {
-	return execCommand[GetHighPingThreshold, any](ctx, c.socket, GetHighPingThreshold{})
+func (c *Connection) GetHighPingThreshold(ctx context.Context) (*GetHighPingThresholdResponse, error) {
+	return execCommand[GetHighPingThreshold, GetHighPingThresholdResponse](ctx, c.socket, GetHighPingThreshold{})
 
 }

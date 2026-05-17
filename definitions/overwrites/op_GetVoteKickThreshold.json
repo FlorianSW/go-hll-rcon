@@ -1,0 +1,18 @@
+{
+  "response": [
+    {
+      "id": "voteThresholdList",
+      "name": "VoteThresholdList",
+      "type": "List",
+      "members": [{
+        "id": "playerCount",
+        "name": "PlayerCount",
+        "type": "Number"
+      }, {
+        "id": "voteThreshold",
+        "name": "VoteThreshold",
+        "type": "Number"
+      }]
+    }
+  ]
+}

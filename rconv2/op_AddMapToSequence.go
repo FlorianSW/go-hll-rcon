@@ -11,7 +11,9 @@ type AddMapToSequence struct {
 }
 
 // AddMapToSequence Add map to server map sequence.
-func (c *Connection) AddMapToSequence(ctx context.Context, MapName MapName, Index int32) (any, error) {
-	return execCommand[AddMapToSequence, any](ctx, c.socket, AddMapToSequence{MapName: MapName, Index: Index})
+func (c *Connection) AddMapToSequence(ctx context.Context, MapName MapName, Index int32) error {
+	_, err := execCommand[AddMapToSequence, any](ctx, c.socket, AddMapToSequence{MapName: MapName, Index: Index})
+
+	return err
 
 }

@@ -11,7 +11,9 @@ type MoveMapInSequence struct {
 }
 
 // MoveMapInSequence Change the position on a map in the server queue
-func (c *Connection) MoveMapInSequence(ctx context.Context, CurrentIndex int32, NewIndex int32) (any, error) {
-	return execCommand[MoveMapInSequence, any](ctx, c.socket, MoveMapInSequence{CurrentIndex: CurrentIndex, NewIndex: NewIndex})
+func (c *Connection) MoveMapInSequence(ctx context.Context, CurrentIndex int32, NewIndex int32) error {
+	_, err := execCommand[MoveMapInSequence, any](ctx, c.socket, MoveMapInSequence{CurrentIndex: CurrentIndex, NewIndex: NewIndex})
+
+	return err
 
 }

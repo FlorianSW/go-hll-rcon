@@ -11,7 +11,9 @@ type AddVip struct {
 }
 
 // AddVip Give a player VIP status.
-func (c *Connection) AddVip(ctx context.Context, PlayerId string, Description string) (any, error) {
-	return execCommand[AddVip, any](ctx, c.socket, AddVip{PlayerId: PlayerId, Description: Description})
+func (c *Connection) AddVip(ctx context.Context, PlayerId string, Description string) error {
+	_, err := execCommand[AddVip, any](ctx, c.socket, AddVip{PlayerId: PlayerId, Description: Description})
+
+	return err
 
 }

@@ -10,13 +10,15 @@ const (
 	SetAutoBalanceEnabledEnableOn  = true
 )
 
-type SetAutoBalanceEnabledEnable string
+type SetAutoBalanceEnabledEnable any
 type SetAutoBalanceEnabled struct {
 	Enable SetAutoBalanceEnabledEnable `json:"Enable"`
 }
 
 // SetAutoBalanceEnabled Enable or disable the auto balance.
-func (c *Connection) SetAutoBalanceEnabled(ctx context.Context, Enable SetAutoBalanceEnabledEnable) (any, error) {
-	return execCommand[SetAutoBalanceEnabled, any](ctx, c.socket, SetAutoBalanceEnabled{Enable: Enable})
+func (c *Connection) SetAutoBalanceEnabled(ctx context.Context, Enable SetAutoBalanceEnabledEnable) error {
+	_, err := execCommand[SetAutoBalanceEnabled, any](ctx, c.socket, SetAutoBalanceEnabled{Enable: Enable})
+
+	return err
 
 }

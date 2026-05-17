@@ -10,7 +10,9 @@ type RemoveMapFromRotation struct {
 }
 
 // RemoveMapFromRotation Remove map from the map rotation at an index.
-func (c *Connection) RemoveMapFromRotation(ctx context.Context, Index int32) (any, error) {
-	return execCommand[RemoveMapFromRotation, any](ctx, c.socket, RemoveMapFromRotation{Index: Index})
+func (c *Connection) RemoveMapFromRotation(ctx context.Context, Index int32) error {
+	_, err := execCommand[RemoveMapFromRotation, any](ctx, c.socket, RemoveMapFromRotation{Index: Index})
+
+	return err
 
 }

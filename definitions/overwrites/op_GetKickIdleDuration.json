@@ -1,0 +1,9 @@
+{
+  "response": [
+    {
+      "id": "idleTimeoutMinutes",
+      "name": "IdleTimeoutMinutes",
+      "type": "Number"
+    }
+  ]
+}

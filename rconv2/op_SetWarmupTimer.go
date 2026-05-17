@@ -17,7 +17,9 @@ type SetWarmupTimer struct {
 }
 
 // SetWarmupTimer Override the length of the warmup timer for a specific game-mode between 1 to 10 minutes.
-func (c *Connection) SetWarmupTimer(ctx context.Context, GameMode SetWarmupTimerGameMode, WarmupLength int32) (any, error) {
-	return execCommand[SetWarmupTimer, any](ctx, c.socket, SetWarmupTimer{GameMode: GameMode, WarmupLength: WarmupLength})
+func (c *Connection) SetWarmupTimer(ctx context.Context, GameMode SetWarmupTimerGameMode, WarmupLength int32) error {
+	_, err := execCommand[SetWarmupTimer, any](ctx, c.socket, SetWarmupTimer{GameMode: GameMode, WarmupLength: WarmupLength})
+
+	return err
 
 }

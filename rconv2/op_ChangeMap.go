@@ -10,7 +10,9 @@ type ChangeMap struct {
 }
 
 // ChangeMap Select a map to change the server map.
-func (c *Connection) ChangeMap(ctx context.Context, MapName MapName) (any, error) {
-	return execCommand[ChangeMap, any](ctx, c.socket, ChangeMap{MapName: MapName})
+func (c *Connection) ChangeMap(ctx context.Context, MapName MapName) error {
+	_, err := execCommand[ChangeMap, any](ctx, c.socket, ChangeMap{MapName: MapName})
+
+	return err
 
 }

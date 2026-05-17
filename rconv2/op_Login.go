@@ -9,7 +9,9 @@ type Login struct {
 }
 
 // Login None
-func (c *Connection) Login(ctx context.Context) (any, error) {
-	return execCommand[Login, any](ctx, c.socket, Login{})
+func (c *Connection) Login(ctx context.Context) error {
+	_, err := execCommand[Login, any](ctx, c.socket, Login{})
+
+	return err
 
 }

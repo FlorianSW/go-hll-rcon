@@ -10,13 +10,15 @@ const (
 	SetVoteKickEnabledEnableOn  = true
 )
 
-type SetVoteKickEnabledEnable string
+type SetVoteKickEnabledEnable any
 type SetVoteKickEnabled struct {
 	Enable SetVoteKickEnabledEnable `json:"Enable"`
 }
 
 // SetVoteKickEnabled Enable or disable the vote to kick functionality.
-func (c *Connection) SetVoteKickEnabled(ctx context.Context, Enable SetVoteKickEnabledEnable) (any, error) {
-	return execCommand[SetVoteKickEnabled, any](ctx, c.socket, SetVoteKickEnabled{Enable: Enable})
+func (c *Connection) SetVoteKickEnabled(ctx context.Context, Enable SetVoteKickEnabledEnable) error {
+	_, err := execCommand[SetVoteKickEnabled, any](ctx, c.socket, SetVoteKickEnabled{Enable: Enable})
+
+	return err
 
 }

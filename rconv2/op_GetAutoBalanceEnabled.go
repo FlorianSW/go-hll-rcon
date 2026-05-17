@@ -7,9 +7,12 @@ import (
 
 type GetAutoBalanceEnabled struct {
 }
+type GetAutoBalanceEnabledResponse struct {
+	Enable bool `json:"enable"`
+}
 
 // GetAutoBalanceEnabled None
-func (c *Connection) GetAutoBalanceEnabled(ctx context.Context) (any, error) {
-	return execCommand[GetAutoBalanceEnabled, any](ctx, c.socket, GetAutoBalanceEnabled{})
+func (c *Connection) GetAutoBalanceEnabled(ctx context.Context) (*GetAutoBalanceEnabledResponse, error) {
+	return execCommand[GetAutoBalanceEnabled, GetAutoBalanceEnabledResponse](ctx, c.socket, GetAutoBalanceEnabled{})
 
 }

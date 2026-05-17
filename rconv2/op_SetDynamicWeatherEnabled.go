@@ -12,14 +12,16 @@ const (
 )
 
 type SetDynamicWeatherEnabledMapId string
-type SetDynamicWeatherEnabledEnable string
+type SetDynamicWeatherEnabledEnable any
 type SetDynamicWeatherEnabled struct {
 	MapId  SetDynamicWeatherEnabledMapId  `json:"MapId"`
 	Enable SetDynamicWeatherEnabledEnable `json:"Enable"`
 }
 
 // SetDynamicWeatherEnabled Enable or disable dynamic weather for a specific map.
-func (c *Connection) SetDynamicWeatherEnabled(ctx context.Context, MapId SetDynamicWeatherEnabledMapId, Enable SetDynamicWeatherEnabledEnable) (any, error) {
-	return execCommand[SetDynamicWeatherEnabled, any](ctx, c.socket, SetDynamicWeatherEnabled{MapId: MapId, Enable: Enable})
+func (c *Connection) SetDynamicWeatherEnabled(ctx context.Context, MapId SetDynamicWeatherEnabledMapId, Enable SetDynamicWeatherEnabledEnable) error {
+	_, err := execCommand[SetDynamicWeatherEnabled, any](ctx, c.socket, SetDynamicWeatherEnabled{MapId: MapId, Enable: Enable})
+
+	return err
 
 }

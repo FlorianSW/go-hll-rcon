@@ -20,7 +20,9 @@ type AddAdmin struct {
 }
 
 // AddAdmin Add a player to the admin list.
-func (c *Connection) AddAdmin(ctx context.Context, PlayerId string, AdminGroup AddAdminAdminGroup, Comment string) (any, error) {
-	return execCommand[AddAdmin, any](ctx, c.socket, AddAdmin{PlayerId: PlayerId, AdminGroup: AdminGroup, Comment: Comment})
+func (c *Connection) AddAdmin(ctx context.Context, PlayerId string, AdminGroup AddAdminAdminGroup, Comment string) error {
+	_, err := execCommand[AddAdmin, any](ctx, c.socket, AddAdmin{PlayerId: PlayerId, AdminGroup: AdminGroup, Comment: Comment})
+
+	return err
 
 }

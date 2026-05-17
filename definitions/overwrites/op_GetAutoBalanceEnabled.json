@@ -1,0 +1,9 @@
+{
+  "response": [
+    {
+      "id": "enable",
+      "name": "Enable",
+      "type": "Bool"
+    }
+  ]
+}

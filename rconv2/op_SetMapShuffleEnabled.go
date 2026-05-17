@@ -10,13 +10,15 @@ const (
 	SetMapShuffleEnabledEnableOn  = true
 )
 
-type SetMapShuffleEnabledEnable string
+type SetMapShuffleEnabledEnable any
 type SetMapShuffleEnabled struct {
 	Enable SetMapShuffleEnabledEnable `json:"Enable"`
 }
 
 // SetMapShuffleEnabled Randomises the server map queue
-func (c *Connection) SetMapShuffleEnabled(ctx context.Context, Enable SetMapShuffleEnabledEnable) (any, error) {
-	return execCommand[SetMapShuffleEnabled, any](ctx, c.socket, SetMapShuffleEnabled{Enable: Enable})
+func (c *Connection) SetMapShuffleEnabled(ctx context.Context, Enable SetMapShuffleEnabledEnable) error {
+	_, err := execCommand[SetMapShuffleEnabled, any](ctx, c.socket, SetMapShuffleEnabled{Enable: Enable})
+
+	return err
 
 }

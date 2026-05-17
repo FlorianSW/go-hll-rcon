@@ -12,7 +12,9 @@ type PermanentBanPlayer struct {
 }
 
 // PermanentBanPlayer Permanently ban a player from the server.
-func (c *Connection) PermanentBanPlayer(ctx context.Context, PlayerId string, Reason string, AdminName string) (any, error) {
-	return execCommand[PermanentBanPlayer, any](ctx, c.socket, PermanentBanPlayer{PlayerId: PlayerId, Reason: Reason, AdminName: AdminName})
+func (c *Connection) PermanentBanPlayer(ctx context.Context, PlayerId string, Reason string, AdminName string) error {
+	_, err := execCommand[PermanentBanPlayer, any](ctx, c.socket, PermanentBanPlayer{PlayerId: PlayerId, Reason: Reason, AdminName: AdminName})
+
+	return err
 
 }

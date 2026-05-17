@@ -10,7 +10,9 @@ type SetVoteKickThreshold struct {
 }
 
 // SetVoteKickThreshold Set the vote to kick threshold.
-func (c *Connection) SetVoteKickThreshold(ctx context.Context, ThresholdValue string) (any, error) {
-	return execCommand[SetVoteKickThreshold, any](ctx, c.socket, SetVoteKickThreshold{ThresholdValue: ThresholdValue})
+func (c *Connection) SetVoteKickThreshold(ctx context.Context, ThresholdValue string) error {
+	_, err := execCommand[SetVoteKickThreshold, any](ctx, c.socket, SetVoteKickThreshold{ThresholdValue: ThresholdValue})
+
+	return err
 
 }

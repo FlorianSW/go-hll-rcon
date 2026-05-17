@@ -10,7 +10,9 @@ type MessageAllPlayers struct {
 }
 
 // MessageAllPlayers Create a message to send to all players in game.
-func (c *Connection) MessageAllPlayers(ctx context.Context, Message string) (any, error) {
-	return execCommand[MessageAllPlayers, any](ctx, c.socket, MessageAllPlayers{Message: Message})
+func (c *Connection) MessageAllPlayers(ctx context.Context, Message string) error {
+	_, err := execCommand[MessageAllPlayers, any](ctx, c.socket, MessageAllPlayers{Message: Message})
+
+	return err
 
 }

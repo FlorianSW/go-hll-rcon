@@ -44,8 +44,8 @@ type GetPlayersResponse struct {
 	Players []GetPlayersPlayer `json:"players"`
 }
 type GetPlayersPlatform string
-type GetPlayersTeam string
-type GetPlayersRole string
+type GetPlayersTeam int32
+type GetPlayersRole int32
 type GetPlayersScoreDatum struct {
 	Combat    int32 `json:"cOMBAT"`
 	Offensive int32 `json:"offense"`
