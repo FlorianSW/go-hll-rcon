@@ -14,5 +14,4 @@ type GetKickIdleDurationResponse struct {
 // GetKickIdleDuration None
 func (c *Connection) GetKickIdleDuration(ctx context.Context) (*GetKickIdleDurationResponse, error) {
 	return execCommand[GetKickIdleDuration, GetKickIdleDurationResponse](ctx, c.socket, GetKickIdleDuration{})
-
 }

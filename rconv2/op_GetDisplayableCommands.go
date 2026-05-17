@@ -19,5 +19,4 @@ type GetDisplayableCommandsEntry struct {
 // GetDisplayableCommands None
 func (c *Connection) GetDisplayableCommands(ctx context.Context) (*GetDisplayableCommandsResponse, error) {
 	return execCommand[GetDisplayableCommands, GetDisplayableCommandsResponse](ctx, c.socket, GetDisplayableCommands{})
-
 }

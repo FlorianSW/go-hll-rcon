@@ -18,7 +18,5 @@ type SetVoteKickEnabled struct {
 // SetVoteKickEnabled Enable or disable the vote to kick functionality.
 func (c *Connection) SetVoteKickEnabled(ctx context.Context, Enable SetVoteKickEnabledEnable) error {
 	_, err := execCommand[SetVoteKickEnabled, any](ctx, c.socket, SetVoteKickEnabled{Enable: Enable})
-
 	return err
-
 }

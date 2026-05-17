@@ -19,5 +19,4 @@ func (r GetAdminGroupsGroupName) String() string {
 // GetAdminGroups Get a list of admin user groups.
 func (c *Connection) GetAdminGroups(ctx context.Context) (*GetAdminGroupsResponse, error) {
 	return execCommand[GetAdminGroups, GetAdminGroupsResponse](ctx, c.socket, GetAdminGroups{})
-
 }

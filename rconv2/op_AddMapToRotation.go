@@ -152,7 +152,5 @@ type AddMapToRotation struct {
 // AddMapToRotation Add a new map to the map rotation at an index.
 func (c *Connection) AddMapToRotation(ctx context.Context, MapName MapName, Index int) error {
 	_, err := execCommand[AddMapToRotation, any](ctx, c.socket, AddMapToRotation{MapName: MapName, Index: Index})
-
 	return err
-
 }

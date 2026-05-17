@@ -13,7 +13,5 @@ type KickPlayer struct {
 // KickPlayer Select player to kick and add a reason.
 func (c *Connection) KickPlayer(ctx context.Context, Reason string, PlayerId string) error {
 	_, err := execCommand[KickPlayer, any](ctx, c.socket, KickPlayer{Reason: Reason, PlayerId: PlayerId})
-
 	return err
-
 }

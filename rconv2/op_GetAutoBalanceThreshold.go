@@ -14,5 +14,4 @@ type GetAutoBalanceThresholdResponse struct {
 // GetAutoBalanceThreshold None
 func (c *Connection) GetAutoBalanceThreshold(ctx context.Context) (*GetAutoBalanceThresholdResponse, error) {
 	return execCommand[GetAutoBalanceThreshold, GetAutoBalanceThresholdResponse](ctx, c.socket, GetAutoBalanceThreshold{})
-
 }

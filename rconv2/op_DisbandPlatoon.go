@@ -20,7 +20,5 @@ type DisbandPlatoon struct {
 // DisbandPlatoon Disband a squad and force players within the platoon to redeploy.
 func (c *Connection) DisbandPlatoon(ctx context.Context, TeamIndex DisbandPlatoonTeamIndex, SquadIndex int, Reason string) error {
 	_, err := execCommand[DisbandPlatoon, any](ctx, c.socket, DisbandPlatoon{TeamIndex: TeamIndex, SquadIndex: SquadIndex, Reason: Reason})
-
 	return err
-
 }

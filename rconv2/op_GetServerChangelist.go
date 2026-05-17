@@ -14,5 +14,4 @@ type GetServerChangelistResponse struct {
 // GetServerChangelist Retrieves the servers changelist number.
 func (c *Connection) GetServerChangelist(ctx context.Context) (*GetServerChangelistResponse, error) {
 	return execCommand[GetServerChangelist, GetServerChangelistResponse](ctx, c.socket, GetServerChangelist{})
-
 }

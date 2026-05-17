@@ -14,5 +14,4 @@ type GetMapShuffleEnabledResponse struct {
 // GetMapShuffleEnabled None
 func (c *Connection) GetMapShuffleEnabled(ctx context.Context) (*GetMapShuffleEnabledResponse, error) {
 	return execCommand[GetMapShuffleEnabled, GetMapShuffleEnabledResponse](ctx, c.socket, GetMapShuffleEnabled{})
-
 }

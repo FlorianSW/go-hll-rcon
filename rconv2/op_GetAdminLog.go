@@ -20,5 +20,4 @@ type GetAdminLogEntry struct {
 // GetAdminLog Retrieve admin log.
 func (c *Connection) GetAdminLog(ctx context.Context, LogBackTrackTime int, Filters string) (*GetAdminLogResponse, error) {
 	return execCommand[GetAdminLog, GetAdminLogResponse](ctx, c.socket, GetAdminLog{LogBackTrackTime: LogBackTrackTime, Filters: Filters})
-
 }

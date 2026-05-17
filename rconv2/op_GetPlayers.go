@@ -87,7 +87,6 @@ type GetPlayersPlayer struct {
 // GetPlayers Get a list of players from the server
 func (c *Connection) GetPlayers(ctx context.Context) (*GetPlayersResponse, error) {
 	return execCommand[GetPlayers, GetPlayersResponse](ctx, c.socket, GetPlayers{Name: "players"})
-
 }
 
 func (r GetPlayers) CommandName() string {

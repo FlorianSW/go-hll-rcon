@@ -12,7 +12,5 @@ type SetTeamSwitchCooldown struct {
 // SetTeamSwitchCooldown Set cooldown time for team switching.
 func (c *Connection) SetTeamSwitchCooldown(ctx context.Context, TeamSwitchTimer int) error {
 	_, err := execCommand[SetTeamSwitchCooldown, any](ctx, c.socket, SetTeamSwitchCooldown{TeamSwitchTimer: TeamSwitchTimer})
-
 	return err
-
 }

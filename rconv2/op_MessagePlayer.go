@@ -13,7 +13,5 @@ type MessagePlayer struct {
 // MessagePlayer Create a message to send to a player in game.
 func (c *Connection) MessagePlayer(ctx context.Context, Message string, PlayerId string) error {
 	_, err := execCommand[MessagePlayer, any](ctx, c.socket, MessagePlayer{Message: Message, PlayerId: PlayerId})
-
 	return err
-
 }

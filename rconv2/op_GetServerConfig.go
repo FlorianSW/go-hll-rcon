@@ -36,7 +36,6 @@ func (r GetServerConfigSupportedPlatform) String() string {
 // GetServerConfig Get metadata of server
 func (c *Connection) GetServerConfig(ctx context.Context) (*GetServerConfigResponse, error) {
 	return execCommand[GetServerConfig, GetServerConfigResponse](ctx, c.socket, GetServerConfig{Name: "serverconfig"})
-
 }
 
 func (r GetServerConfig) CommandName() string {

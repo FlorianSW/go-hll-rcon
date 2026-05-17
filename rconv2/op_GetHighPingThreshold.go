@@ -14,5 +14,4 @@ type GetHighPingThresholdResponse struct {
 // GetHighPingThreshold None
 func (c *Connection) GetHighPingThreshold(ctx context.Context) (*GetHighPingThresholdResponse, error) {
 	return execCommand[GetHighPingThreshold, GetHighPingThresholdResponse](ctx, c.socket, GetHighPingThreshold{})
-
 }

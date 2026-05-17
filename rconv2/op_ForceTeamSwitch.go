@@ -19,7 +19,5 @@ type ForceTeamSwitch struct {
 // ForceTeamSwitch Forces a player to switch teams.
 func (c *Connection) ForceTeamSwitch(ctx context.Context, PlayerId string, ForceMode ForceTeamSwitchForceMode) error {
 	_, err := execCommand[ForceTeamSwitch, any](ctx, c.socket, ForceTeamSwitch{PlayerId: PlayerId, ForceMode: ForceMode})
-
 	return err
-
 }

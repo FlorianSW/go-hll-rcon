@@ -18,5 +18,4 @@ type GetVoteKickThresholdVoteThresholdList struct {
 // GetVoteKickThreshold None
 func (c *Connection) GetVoteKickThreshold(ctx context.Context) (*GetVoteKickThresholdResponse, error) {
 	return execCommand[GetVoteKickThreshold, GetVoteKickThresholdResponse](ctx, c.socket, GetVoteKickThreshold{})
-
 }

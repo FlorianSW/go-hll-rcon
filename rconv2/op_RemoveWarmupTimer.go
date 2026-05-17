@@ -23,7 +23,5 @@ type RemoveWarmupTimer struct {
 // RemoveWarmupTimer Remove warmup timer override for a specific game mode.
 func (c *Connection) RemoveWarmupTimer(ctx context.Context, GameMode RemoveWarmupTimerGameMode) error {
 	_, err := execCommand[RemoveWarmupTimer, any](ctx, c.socket, RemoveWarmupTimer{GameMode: GameMode})
-
 	return err
-
 }

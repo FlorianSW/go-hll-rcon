@@ -14,5 +14,4 @@ type GetVoteKickEnabledResponse struct {
 // GetVoteKickEnabled None
 func (c *Connection) GetVoteKickEnabled(ctx context.Context) (*GetVoteKickEnabledResponse, error) {
 	return execCommand[GetVoteKickEnabled, GetVoteKickEnabledResponse](ctx, c.socket, GetVoteKickEnabled{})
-
 }

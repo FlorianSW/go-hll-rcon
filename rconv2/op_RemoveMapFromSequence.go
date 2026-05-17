@@ -12,7 +12,5 @@ type RemoveMapFromSequence struct {
 // RemoveMapFromSequence Remove map from the server map sequence.
 func (c *Connection) RemoveMapFromSequence(ctx context.Context, Index int) error {
 	_, err := execCommand[RemoveMapFromSequence, any](ctx, c.socket, RemoveMapFromSequence{Index: Index})
-
 	return err
-
 }

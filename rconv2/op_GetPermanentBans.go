@@ -23,5 +23,4 @@ type GetPermanentBansBanList struct {
 // GetPermanentBans Retrieve a list of players who have a permanent ban.
 func (c *Connection) GetPermanentBans(ctx context.Context) (*GetPermanentBansResponse, error) {
 	return execCommand[GetPermanentBans, GetPermanentBansResponse](ctx, c.socket, GetPermanentBans{})
-
 }

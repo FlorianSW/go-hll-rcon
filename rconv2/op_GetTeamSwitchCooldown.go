@@ -14,5 +14,4 @@ type GetTeamSwitchCooldownResponse struct {
 // GetTeamSwitchCooldown None
 func (c *Connection) GetTeamSwitchCooldown(ctx context.Context) (*GetTeamSwitchCooldownResponse, error) {
 	return execCommand[GetTeamSwitchCooldown, GetTeamSwitchCooldownResponse](ctx, c.socket, GetTeamSwitchCooldown{})
-
 }

@@ -12,7 +12,5 @@ type SetHighPingThreshold struct {
 // SetHighPingThreshold Set the ping (in ms) that is considered too high for smooth gameplay.
 func (c *Connection) SetHighPingThreshold(ctx context.Context, HighPingThresholdMs int) error {
 	_, err := execCommand[SetHighPingThreshold, any](ctx, c.socket, SetHighPingThreshold{HighPingThresholdMs: HighPingThresholdMs})
-
 	return err
-
 }

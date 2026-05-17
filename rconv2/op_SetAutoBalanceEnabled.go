@@ -18,7 +18,5 @@ type SetAutoBalanceEnabled struct {
 // SetAutoBalanceEnabled Enable or disable the auto balance.
 func (c *Connection) SetAutoBalanceEnabled(ctx context.Context, Enable SetAutoBalanceEnabledEnable) error {
 	_, err := execCommand[SetAutoBalanceEnabled, any](ctx, c.socket, SetAutoBalanceEnabled{Enable: Enable})
-
 	return err
-
 }

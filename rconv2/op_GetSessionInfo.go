@@ -42,7 +42,6 @@ func (r GetSessionInfoGameMode) String() string {
 // GetSessionInfo Get information about current game state of the server
 func (c *Connection) GetSessionInfo(ctx context.Context) (*GetSessionInfoResponse, error) {
 	return execCommand[GetSessionInfo, GetSessionInfoResponse](ctx, c.socket, GetSessionInfo{Name: "session"})
-
 }
 
 func (r GetSessionInfo) CommandName() string {

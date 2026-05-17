@@ -12,7 +12,5 @@ type SetVipSlotCount struct {
 // SetVipSlotCount Set the VIP slot count for the server.
 func (c *Connection) SetVipSlotCount(ctx context.Context, VipSlotCount int) error {
 	_, err := execCommand[SetVipSlotCount, any](ctx, c.socket, SetVipSlotCount{VipSlotCount: VipSlotCount})
-
 	return err
-
 }

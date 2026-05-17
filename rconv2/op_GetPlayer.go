@@ -85,7 +85,6 @@ type GetPlayerPosition struct {
 // GetPlayer Get player information of a connected player
 func (c *Connection) GetPlayer(ctx context.Context, Value string) (*GetPlayerResponse, error) {
 	return execCommand[GetPlayer, GetPlayerResponse](ctx, c.socket, GetPlayer{Name: "player", Value: Value})
-
 }
 
 func (r GetPlayer) CommandName() string {

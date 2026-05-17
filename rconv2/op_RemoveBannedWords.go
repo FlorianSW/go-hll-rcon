@@ -12,7 +12,5 @@ type RemoveBannedWords struct {
 // RemoveBannedWords Remove banned words from the profanity filter. Separate words with commas.
 func (c *Connection) RemoveBannedWords(ctx context.Context, BannedWords string) error {
 	_, err := execCommand[RemoveBannedWords, any](ctx, c.socket, RemoveBannedWords{BannedWords: BannedWords})
-
 	return err
-
 }

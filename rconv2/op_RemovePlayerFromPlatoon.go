@@ -13,7 +13,5 @@ type RemovePlayerFromPlatoon struct {
 // RemovePlayerFromPlatoon Removes a player from their current platoon.
 func (c *Connection) RemovePlayerFromPlatoon(ctx context.Context, PlayerId string, Reason string) error {
 	_, err := execCommand[RemovePlayerFromPlatoon, any](ctx, c.socket, RemovePlayerFromPlatoon{PlayerId: PlayerId, Reason: Reason})
-
 	return err
-
 }

@@ -16,7 +16,5 @@ type SetSectorLayout struct {
 // SetSectorLayout Configure the active sector layout
 func (c *Connection) SetSectorLayout(ctx context.Context, Sector_1 string, Sector_2 string, Sector_3 string, Sector_4 string, Sector_5 string) error {
 	_, err := execCommand[SetSectorLayout, any](ctx, c.socket, SetSectorLayout{Sector_1: Sector_1, Sector_2: Sector_2, Sector_3: Sector_3, Sector_4: Sector_4, Sector_5: Sector_5})
-
 	return err
-
 }

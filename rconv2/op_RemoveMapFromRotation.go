@@ -12,7 +12,5 @@ type RemoveMapFromRotation struct {
 // RemoveMapFromRotation Remove map from the map rotation at an index.
 func (c *Connection) RemoveMapFromRotation(ctx context.Context, Index int) error {
 	_, err := execCommand[RemoveMapFromRotation, any](ctx, c.socket, RemoveMapFromRotation{Index: Index})
-
 	return err
-
 }

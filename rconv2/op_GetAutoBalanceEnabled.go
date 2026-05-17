@@ -14,5 +14,4 @@ type GetAutoBalanceEnabledResponse struct {
 // GetAutoBalanceEnabled None
 func (c *Connection) GetAutoBalanceEnabled(ctx context.Context) (*GetAutoBalanceEnabledResponse, error) {
 	return execCommand[GetAutoBalanceEnabled, GetAutoBalanceEnabledResponse](ctx, c.socket, GetAutoBalanceEnabled{})
-
 }

@@ -28,7 +28,6 @@ type GetClientReferenceDataParameter struct {
 // GetClientReferenceData None
 func (c *Connection) GetClientReferenceData(ctx context.Context, command GetClientReferenceDataCommand) (*GetClientReferenceDataResponse, error) {
 	return execCommand[GetClientReferenceDataCommand, GetClientReferenceDataResponse](ctx, c.socket, command)
-
 }
 
 func (r GetClientReferenceDataCommand) CommandName() string {

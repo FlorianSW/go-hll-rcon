@@ -24,7 +24,5 @@ type RemoveMatchTimer struct {
 // RemoveMatchTimer Remove the match timer override for a specific game-mode.
 func (c *Connection) RemoveMatchTimer(ctx context.Context, GameMode RemoveMatchTimerGameMode) error {
 	_, err := execCommand[RemoveMatchTimer, any](ctx, c.socket, RemoveMatchTimer{GameMode: GameMode})
-
 	return err
-
 }

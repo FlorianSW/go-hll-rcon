@@ -12,7 +12,5 @@ type RemoveAdmin struct {
 // RemoveAdmin Remove player from admin privileges.
 func (c *Connection) RemoveAdmin(ctx context.Context, PlayerId string) error {
 	_, err := execCommand[RemoveAdmin, any](ctx, c.socket, RemoveAdmin{PlayerId: PlayerId})
-
 	return err
-
 }

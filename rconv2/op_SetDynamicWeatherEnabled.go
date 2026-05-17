@@ -26,7 +26,5 @@ type SetDynamicWeatherEnabled struct {
 // SetDynamicWeatherEnabled Enable or disable dynamic weather for a specific map.
 func (c *Connection) SetDynamicWeatherEnabled(ctx context.Context, MapId SetDynamicWeatherEnabledMapId, Enable SetDynamicWeatherEnabledEnable) error {
 	_, err := execCommand[SetDynamicWeatherEnabled, any](ctx, c.socket, SetDynamicWeatherEnabled{MapId: MapId, Enable: Enable})
-
 	return err
-
 }

@@ -79,9 +79,9 @@ func (c *Connection) {{.Command.Name}}({{.Command.Params.AsNamedArgsWithTypes}})
 		{{- if ne $param.Name "ctx" }}{{$param.AsRequestAssignment}}{{end}}
 		{{- end}}
 	}{{else}}{{(index .Command.Params 1).Name}}{{end}})
-	{{if le (len .Command.Returns) 1 }}
+	{{- if le (len .Command.Returns) 1 }}
 	return err
-	{{end}}
+	{{- end}}
 }
 {{if .Command.CommandName }}
 func (r {{.Command.RequestType.Name}}) CommandName() string {

@@ -19,5 +19,4 @@ type GetAdminUsersAdminUser struct {
 // GetAdminUsers Get a list of admin users.
 func (c *Connection) GetAdminUsers(ctx context.Context) (*GetAdminUsersResponse, error) {
 	return execCommand[GetAdminUsers, GetAdminUsersResponse](ctx, c.socket, GetAdminUsers{})
-
 }

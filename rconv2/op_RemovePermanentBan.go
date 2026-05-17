@@ -12,7 +12,5 @@ type RemovePermanentBan struct {
 // RemovePermanentBan Remove permanent ban on a player
 func (c *Connection) RemovePermanentBan(ctx context.Context, PlayerId string) error {
 	_, err := execCommand[RemovePermanentBan, any](ctx, c.socket, RemovePermanentBan{PlayerId: PlayerId})
-
 	return err
-
 }
