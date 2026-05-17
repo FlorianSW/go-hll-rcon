@@ -10,7 +10,7 @@ const (
 	ForceTeamSwitchForceModeOnDeath   = 0
 )
 
-type ForceTeamSwitchForceMode int32
+type ForceTeamSwitchForceMode int
 type ForceTeamSwitch struct {
 	PlayerId  string                   `json:"PlayerId"`
 	ForceMode ForceTeamSwitchForceMode `json:"ForceMode"`

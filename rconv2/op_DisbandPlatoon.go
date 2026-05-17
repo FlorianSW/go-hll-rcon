@@ -10,15 +10,15 @@ const (
 	DisbandPlatoonTeamIndexAxis   = 1
 )
 
-type DisbandPlatoonTeamIndex int32
+type DisbandPlatoonTeamIndex int
 type DisbandPlatoon struct {
 	TeamIndex  DisbandPlatoonTeamIndex `json:"TeamIndex"`
-	SquadIndex int32                   `json:"SquadIndex"`
+	SquadIndex int                     `json:"SquadIndex"`
 	Reason     string                  `json:"Reason"`
 }
 
 // DisbandPlatoon Disband a squad and force players within the platoon to redeploy.
-func (c *Connection) DisbandPlatoon(ctx context.Context, TeamIndex DisbandPlatoonTeamIndex, SquadIndex int32, Reason string) error {
+func (c *Connection) DisbandPlatoon(ctx context.Context, TeamIndex DisbandPlatoonTeamIndex, SquadIndex int, Reason string) error {
 	_, err := execCommand[DisbandPlatoon, any](ctx, c.socket, DisbandPlatoon{TeamIndex: TeamIndex, SquadIndex: SquadIndex, Reason: Reason})
 
 	return err

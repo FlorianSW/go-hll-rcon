@@ -89,7 +89,7 @@ func (c Command) ParameterGoType(p CommandParameter) string {
 	case CommandParameterTypeString:
 		return "string"
 	case CommandParameterTypeInt:
-		return "int32"
+		return "int"
 	case CommandParameterTypeEnum:
 		if p.IsMapNameType() {
 			return p.Id
@@ -157,7 +157,7 @@ func aliasedType(valueMembers []any, defaultType ...string) string {
 	case string:
 		return "string"
 	case float64:
-		return "int32"
+		return "int"
 	default:
 		return "any"
 	}
@@ -190,7 +190,7 @@ func (c Command) ResponseGoType(p ResponseElement) string {
 	case ResponseItemTypeString:
 		return "string"
 	case ResponseItemTypeInt:
-		return "int32"
+		return "int"
 	case ResponseItemTypeEnum:
 		return fmt.Sprintf("%s%s", c.Id, caser.String(p.Name))
 	case ResponseItemTypeBool:

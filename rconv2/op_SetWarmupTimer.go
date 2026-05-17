@@ -18,11 +18,11 @@ func (r SetWarmupTimerGameMode) String() string {
 
 type SetWarmupTimer struct {
 	GameMode     SetWarmupTimerGameMode `json:"GameMode"`
-	WarmupLength int32                  `json:"WarmupLength"`
+	WarmupLength int                    `json:"WarmupLength"`
 }
 
 // SetWarmupTimer Override the length of the warmup timer for a specific game-mode between 1 to 10 minutes.
-func (c *Connection) SetWarmupTimer(ctx context.Context, GameMode SetWarmupTimerGameMode, WarmupLength int32) error {
+func (c *Connection) SetWarmupTimer(ctx context.Context, GameMode SetWarmupTimerGameMode, WarmupLength int) error {
 	_, err := execCommand[SetWarmupTimer, any](ctx, c.socket, SetWarmupTimer{GameMode: GameMode, WarmupLength: WarmupLength})
 
 	return err

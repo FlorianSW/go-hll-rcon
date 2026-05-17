@@ -6,11 +6,11 @@ import (
 )
 
 type RemoveMapFromRotation struct {
-	Index int32 `json:"Index"`
+	Index int `json:"Index"`
 }
 
 // RemoveMapFromRotation Remove map from the map rotation at an index.
-func (c *Connection) RemoveMapFromRotation(ctx context.Context, Index int32) error {
+func (c *Connection) RemoveMapFromRotation(ctx context.Context, Index int) error {
 	_, err := execCommand[RemoveMapFromRotation, any](ctx, c.socket, RemoveMapFromRotation{Index: Index})
 
 	return err

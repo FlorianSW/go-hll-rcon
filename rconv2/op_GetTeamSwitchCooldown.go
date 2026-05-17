@@ -8,7 +8,7 @@ import (
 type GetTeamSwitchCooldown struct {
 }
 type GetTeamSwitchCooldownResponse struct {
-	TeamSwitchTimer int32 `json:"teamSwitchTimer"`
+	TeamSwitchTimer int `json:"teamSwitchTimer"`
 }
 
 // GetTeamSwitchCooldown None

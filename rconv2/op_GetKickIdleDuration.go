@@ -8,7 +8,7 @@ import (
 type GetKickIdleDuration struct {
 }
 type GetKickIdleDurationResponse struct {
-	IdleTimeoutMinutes int32 `json:"idleTimeoutMinutes"`
+	IdleTimeoutMinutes int `json:"idleTimeoutMinutes"`
 }
 
 // GetKickIdleDuration None

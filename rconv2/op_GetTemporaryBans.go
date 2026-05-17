@@ -15,7 +15,7 @@ type GetTemporaryBansBanList struct {
 	Id        string    `json:"userId"`
 	Name      string    `json:"userName"`
 	Banned    time.Time `json:"timeOfBanning"`
-	Duration  int32     `json:"durationHours"`
+	Duration  int       `json:"durationHours"`
 	Reason    string    `json:"banReason"`
 	AdminName string    `json:"adminName"`
 }

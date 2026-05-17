@@ -6,11 +6,11 @@ import (
 )
 
 type SetHighPingThreshold struct {
-	HighPingThresholdMs int32 `json:"HighPingThresholdMs"`
+	HighPingThresholdMs int `json:"HighPingThresholdMs"`
 }
 
 // SetHighPingThreshold Set the ping (in ms) that is considered too high for smooth gameplay.
-func (c *Connection) SetHighPingThreshold(ctx context.Context, HighPingThresholdMs int32) error {
+func (c *Connection) SetHighPingThreshold(ctx context.Context, HighPingThresholdMs int) error {
 	_, err := execCommand[SetHighPingThreshold, any](ctx, c.socket, SetHighPingThreshold{HighPingThresholdMs: HighPingThresholdMs})
 
 	return err

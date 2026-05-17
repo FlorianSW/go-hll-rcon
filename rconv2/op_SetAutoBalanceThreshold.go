@@ -6,11 +6,11 @@ import (
 )
 
 type SetAutoBalanceThreshold struct {
-	AutoBalanceThreshold int32 `json:"AutoBalanceThreshold"`
+	AutoBalanceThreshold int `json:"AutoBalanceThreshold"`
 }
 
 // SetAutoBalanceThreshold Set the threshold value for teams when using auto balance.
-func (c *Connection) SetAutoBalanceThreshold(ctx context.Context, AutoBalanceThreshold int32) error {
+func (c *Connection) SetAutoBalanceThreshold(ctx context.Context, AutoBalanceThreshold int) error {
 	_, err := execCommand[SetAutoBalanceThreshold, any](ctx, c.socket, SetAutoBalanceThreshold{AutoBalanceThreshold: AutoBalanceThreshold})
 
 	return err

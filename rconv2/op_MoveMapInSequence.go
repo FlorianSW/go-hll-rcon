@@ -6,12 +6,12 @@ import (
 )
 
 type MoveMapInSequence struct {
-	CurrentIndex int32 `json:"CurrentIndex"`
-	NewIndex     int32 `json:"NewIndex"`
+	CurrentIndex int `json:"CurrentIndex"`
+	NewIndex     int `json:"NewIndex"`
 }
 
 // MoveMapInSequence Change the position on a map in the server queue
-func (c *Connection) MoveMapInSequence(ctx context.Context, CurrentIndex int32, NewIndex int32) error {
+func (c *Connection) MoveMapInSequence(ctx context.Context, CurrentIndex int, NewIndex int) error {
 	_, err := execCommand[MoveMapInSequence, any](ctx, c.socket, MoveMapInSequence{CurrentIndex: CurrentIndex, NewIndex: NewIndex})
 
 	return err

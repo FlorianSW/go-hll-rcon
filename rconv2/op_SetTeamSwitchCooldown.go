@@ -6,11 +6,11 @@ import (
 )
 
 type SetTeamSwitchCooldown struct {
-	TeamSwitchTimer int32 `json:"TeamSwitchTimer"`
+	TeamSwitchTimer int `json:"TeamSwitchTimer"`
 }
 
 // SetTeamSwitchCooldown Set cooldown time for team switching.
-func (c *Connection) SetTeamSwitchCooldown(ctx context.Context, TeamSwitchTimer int32) error {
+func (c *Connection) SetTeamSwitchCooldown(ctx context.Context, TeamSwitchTimer int) error {
 	_, err := execCommand[SetTeamSwitchCooldown, any](ctx, c.socket, SetTeamSwitchCooldown{TeamSwitchTimer: TeamSwitchTimer})
 
 	return err

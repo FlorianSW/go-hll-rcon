@@ -11,8 +11,8 @@ type GetVoteKickThresholdResponse struct {
 	VoteThresholdList []GetVoteKickThresholdVoteThresholdList `json:"voteThresholdList"`
 }
 type GetVoteKickThresholdVoteThresholdList struct {
-	PlayerCount   int32 `json:"playerCount"`
-	VoteThreshold int32 `json:"voteThreshold"`
+	PlayerCount   int `json:"playerCount"`
+	VoteThreshold int `json:"voteThreshold"`
 }
 
 // GetVoteKickThreshold None

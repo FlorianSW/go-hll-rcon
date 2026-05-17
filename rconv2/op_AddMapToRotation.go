@@ -146,11 +146,11 @@ func (r MapName) String() string {
 
 type AddMapToRotation struct {
 	MapName MapName `json:"MapName"`
-	Index   int32   `json:"Index"`
+	Index   int     `json:"Index"`
 }
 
 // AddMapToRotation Add a new map to the map rotation at an index.
-func (c *Connection) AddMapToRotation(ctx context.Context, MapName MapName, Index int32) error {
+func (c *Connection) AddMapToRotation(ctx context.Context, MapName MapName, Index int) error {
 	_, err := execCommand[AddMapToRotation, any](ctx, c.socket, AddMapToRotation{MapName: MapName, Index: Index})
 
 	return err

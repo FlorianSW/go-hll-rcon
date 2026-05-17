@@ -8,7 +8,7 @@ import (
 type GetHighPingThreshold struct {
 }
 type GetHighPingThresholdResponse struct {
-	HighPingThresholdMs int32 `json:"highPingThresholdMs"`
+	HighPingThresholdMs int `json:"highPingThresholdMs"`
 }
 
 // GetHighPingThreshold None

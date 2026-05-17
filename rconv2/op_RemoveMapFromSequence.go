@@ -6,11 +6,11 @@ import (
 )
 
 type RemoveMapFromSequence struct {
-	Index int32 `json:"Index"`
+	Index int `json:"Index"`
 }
 
 // RemoveMapFromSequence Remove map from the server map sequence.
-func (c *Connection) RemoveMapFromSequence(ctx context.Context, Index int32) error {
+func (c *Connection) RemoveMapFromSequence(ctx context.Context, Index int) error {
 	_, err := execCommand[RemoveMapFromSequence, any](ctx, c.socket, RemoveMapFromSequence{Index: Index})
 
 	return err

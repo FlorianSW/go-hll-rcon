@@ -7,13 +7,13 @@ import (
 
 type TemporaryBanPlayer struct {
 	PlayerId  string `json:"PlayerId"`
-	Duration  int32  `json:"Duration"`
+	Duration  int    `json:"Duration"`
 	Reason    string `json:"Reason"`
 	AdminName string `json:"AdminName"`
 }
 
 // TemporaryBanPlayer Temporary ban a player from the server
-func (c *Connection) TemporaryBanPlayer(ctx context.Context, PlayerId string, Duration int32, Reason string, AdminName string) error {
+func (c *Connection) TemporaryBanPlayer(ctx context.Context, PlayerId string, Duration int, Reason string, AdminName string) error {
 	_, err := execCommand[TemporaryBanPlayer, any](ctx, c.socket, TemporaryBanPlayer{PlayerId: PlayerId, Duration: Duration, Reason: Reason, AdminName: AdminName})
 
 	return err

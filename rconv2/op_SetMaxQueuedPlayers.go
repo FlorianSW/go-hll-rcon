@@ -6,11 +6,11 @@ import (
 )
 
 type SetMaxQueuedPlayers struct {
-	MaxQueuedPlayers int32 `json:"MaxQueuedPlayers"`
+	MaxQueuedPlayers int `json:"MaxQueuedPlayers"`
 }
 
 // SetMaxQueuedPlayers Set the maximum number of queued players.
-func (c *Connection) SetMaxQueuedPlayers(ctx context.Context, MaxQueuedPlayers int32) error {
+func (c *Connection) SetMaxQueuedPlayers(ctx context.Context, MaxQueuedPlayers int) error {
 	_, err := execCommand[SetMaxQueuedPlayers, any](ctx, c.socket, SetMaxQueuedPlayers{MaxQueuedPlayers: MaxQueuedPlayers})
 
 	return err

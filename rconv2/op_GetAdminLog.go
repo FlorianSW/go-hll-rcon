@@ -6,7 +6,7 @@ import (
 )
 
 type GetAdminLog struct {
-	LogBackTrackTime int32  `json:"LogBackTrackTime"`
+	LogBackTrackTime int    `json:"LogBackTrackTime"`
 	Filters          string `json:"Filters"`
 }
 type GetAdminLogResponse struct {
@@ -18,7 +18,7 @@ type GetAdminLogEntry struct {
 }
 
 // GetAdminLog Retrieve admin log.
-func (c *Connection) GetAdminLog(ctx context.Context, LogBackTrackTime int32, Filters string) (*GetAdminLogResponse, error) {
+func (c *Connection) GetAdminLog(ctx context.Context, LogBackTrackTime int, Filters string) (*GetAdminLogResponse, error) {
 	return execCommand[GetAdminLog, GetAdminLogResponse](ctx, c.socket, GetAdminLog{LogBackTrackTime: LogBackTrackTime, Filters: Filters})
 
 }

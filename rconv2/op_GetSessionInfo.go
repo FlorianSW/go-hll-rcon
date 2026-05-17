@@ -26,12 +26,12 @@ type GetSessionInfoResponse struct {
 	ServerName       string                 `json:"serverName"`
 	MapName          string                 `json:"mapName"`
 	GameMode         GetSessionInfoGameMode `json:"gameMode"`
-	MaxPlayerCount   int32                  `json:"maxPlayerCount"`
-	PlayerCount      int32                  `json:"playerCount"`
-	MaxQueueCount    int32                  `json:"maxQueueCount"`
-	QueueCount       int32                  `json:"queueCount"`
-	MaxVIPQueueCount int32                  `json:"maxVIPQueueCount"`
-	VIPQueueCount    int32                  `json:"vIPQueueCount"`
+	MaxPlayerCount   int                    `json:"maxPlayerCount"`
+	PlayerCount      int                    `json:"playerCount"`
+	MaxQueueCount    int                    `json:"maxQueueCount"`
+	QueueCount       int                    `json:"queueCount"`
+	MaxVIPQueueCount int                    `json:"maxVIPQueueCount"`
+	VIPQueueCount    int                    `json:"vIPQueueCount"`
 }
 type GetSessionInfoGameMode string
 

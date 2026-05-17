@@ -7,11 +7,11 @@ import (
 
 type AddMapToSequence struct {
 	MapName MapName `json:"MapName"`
-	Index   int32   `json:"Index"`
+	Index   int     `json:"Index"`
 }
 
 // AddMapToSequence Add map to server map sequence.
-func (c *Connection) AddMapToSequence(ctx context.Context, MapName MapName, Index int32) error {
+func (c *Connection) AddMapToSequence(ctx context.Context, MapName MapName, Index int) error {
 	_, err := execCommand[AddMapToSequence, any](ctx, c.socket, AddMapToSequence{MapName: MapName, Index: Index})
 
 	return err

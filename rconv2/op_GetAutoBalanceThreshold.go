@@ -8,7 +8,7 @@ import (
 type GetAutoBalanceThreshold struct {
 }
 type GetAutoBalanceThresholdResponse struct {
-	AutoBalanceThreshold int32 `json:"autoBalanceThreshold"`
+	AutoBalanceThreshold int `json:"autoBalanceThreshold"`
 }
 
 // GetAutoBalanceThreshold None

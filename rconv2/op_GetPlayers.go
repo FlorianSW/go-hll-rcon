@@ -54,18 +54,18 @@ func (r GetPlayersPlatform) String() string {
 	return string(r)
 }
 
-type GetPlayersTeam int32
-type GetPlayersRole int32
+type GetPlayersTeam int
+type GetPlayersRole int
 type GetPlayersScoreDatum struct {
-	Combat    int32 `json:"cOMBAT"`
-	Offensive int32 `json:"offense"`
-	Defensive int32 `json:"defense"`
-	Support   int32 `json:"support"`
+	Combat    int `json:"cOMBAT"`
+	Offensive int `json:"offense"`
+	Defensive int `json:"defense"`
+	Support   int `json:"support"`
 }
 type GetPlayersPosition struct {
-	X int32 `json:"x"`
-	Y int32 `json:"y"`
-	Z int32 `json:"z"`
+	X int `json:"x"`
+	Y int `json:"y"`
+	Z int `json:"z"`
 }
 type GetPlayersPlayer struct {
 	Id                   string               `json:"iD"`
@@ -73,13 +73,13 @@ type GetPlayersPlayer struct {
 	Name                 string               `json:"name"`
 	ClanTag              string               `json:"clanTag"`
 	EpicOnlineServicesId string               `json:"eOSID"`
-	Level                int32                `json:"level"`
+	Level                int                  `json:"level"`
 	Team                 GetPlayersTeam       `json:"team"`
 	Role                 GetPlayersRole       `json:"role"`
 	Platoon              string               `json:"platoon"`
 	Loadout              string               `json:"loadout"`
-	Kills                int32                `json:"kills"`
-	Deaths               int32                `json:"deaths"`
+	Kills                int                  `json:"kills"`
+	Deaths               int                  `json:"deaths"`
 	ScoreData            GetPlayersScoreDatum `json:"scoreData"`
 	Position             GetPlayersPosition   `json:"worldPosition"`
 }
