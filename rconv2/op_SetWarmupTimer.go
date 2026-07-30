@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	SetWarmupTimerGameModeConquest = "Conquest"
 	SetWarmupTimerGameModeSkirmish = "Skirmish"
 	SetWarmupTimerGameModeWarfare  = "Warfare"
 )

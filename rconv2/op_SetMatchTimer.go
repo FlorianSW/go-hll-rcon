@@ -6,6 +6,7 @@ import (
 )
 
 const (
+	SetMatchTimerGameModeConquest  = "Conquest"
 	SetMatchTimerGameModeOffensive = "Offensive"
 	SetMatchTimerGameModeSkirmish  = "Skirmish"
 	SetMatchTimerGameModeWarfare   = "Warfare"

@@ -101,6 +101,9 @@
 					"smolensk_warfare_day",
 					"smolensk_warfare_dusk",
 					"smolensk_warfare_night",
+					"junobeach_warfare_day",
+					"junobeach_warfare_morning",
+					"junobeach_warfare_night",
 					"REM_L_1945_Warfare",
 					"REM_L_1945_WarfareNight",
 					"utahbeach_offensive_us",
@@ -155,6 +158,12 @@
 					"smolensk_offensiveRus_dusk",
 					"smolensk_offensiveGer_night",
 					"smolensk_offensiveRus_night",
+					"junobeach_offensiveger_day",
+					"junobeach_offensiveger_morning",
+					"junobeach_offensiveger_night",
+					"junobeach_offensivecan_day",
+					"junobeach_offensivecan_morning",
+					"junobeach_offensivecan_night",
 					"REM_L_1945_OffensiveUS",
 					"REM_L_1945_OffensiveGER",
 					"ELA_S_1942_P_Skirmish",
@@ -190,6 +199,9 @@
 					"smolensk_skirmish_day",
 					"smolensk_skirmish_dusk",
 					"smolensk_skirmish_night",
+					"junobeach_skirmish_day",
+					"junobeach_skirmish_morning",
+					"junobeach_skirmish_night",
 					"REM_S_1945_P_Skirmish_Day",
 					"REM_S_1945_P_Skirmish_Night"
 				],
@@ -233,6 +245,9 @@
 					"smolensk_warfare_day",
 					"smolensk_warfare_dusk",
 					"smolensk_warfare_night",
+					"junobeach_warfare_day",
+					"junobeach_warfare_morning",
+					"junobeach_warfare_night",
 					"REM_L_1945_Warfare",
 					"REM_L_1945_WarfareNight",
 					"utahbeach_offensive_us",
@@ -287,6 +302,12 @@
 					"smolensk_offensiveRus_dusk",
 					"smolensk_offensiveGer_night",
 					"smolensk_offensiveRus_night",
+					"junobeach_offensiveger_day",
+					"junobeach_offensiveger_morning",
+					"junobeach_offensiveger_night",
+					"junobeach_offensivecan_day",
+					"junobeach_offensivecan_morning",
+					"junobeach_offensivecan_night",
 					"REM_L_1945_OffensiveUS",
 					"REM_L_1945_OffensiveGER",
 					"ELA_S_1942_P_Skirmish",
@@ -322,6 +343,9 @@
 					"smolensk_skirmish_day",
 					"smolensk_skirmish_dusk",
 					"smolensk_skirmish_night",
+					"junobeach_skirmish_day",
+					"junobeach_skirmish_morning",
+					"junobeach_skirmish_night",
 					"REM_S_1945_P_Skirmish_Day",
 					"REM_S_1945_P_Skirmish_Night"
 				],
@@ -907,7 +931,8 @@
 					"Sniper",
 					"Crewman",
 					"TankCommander",
-					"ArmyCommander"
+					"ArmyCommander",
+					"ArtilleryObserver"
 				],
 				"valueMember": [
 					0,
@@ -923,7 +948,8 @@
 					10,
 					11,
 					12,
-					13
+					13,
+					14
 				]
 			},
 			{
@@ -1675,12 +1701,14 @@
 				"displayMember": [
 					"Warfare",
 					"Offensive",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"valueMember": [
 					"Warfare",
 					"Offensive",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"fixedValue": null
 			}
@@ -1760,11 +1788,13 @@
 				"id": "GameMode",
 				"displayMember": [
 					"Warfare",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"valueMember": [
 					"Warfare",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"fixedValue": null
 			}
@@ -1929,12 +1959,14 @@
 				"displayMember": [
 					"Warfare",
 					"Offensive",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"valueMember": [
 					"Warfare",
 					"Offensive",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"fixedValue": null
 			},
@@ -2074,11 +2106,13 @@
 				"id": "GameMode",
 				"displayMember": [
 					"Warfare",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"valueMember": [
 					"Warfare",
-					"Skirmish"
+					"Skirmish",
+					"Conquest"
 				],
 				"fixedValue": null
 			},

@@ -111,7 +111,8 @@
         "Sniper",
         "Crewman",
         "TankCommander",
-        "ArmyCommander"
+        "ArmyCommander",
+        "ArtilleryObserver"
       ],
       "valueMember": [
         0,
@@ -127,7 +128,8 @@
         10,
         11,
         12,
-        13
+        13,
+        14
       ]
     },
     {

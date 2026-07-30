@@ -15,6 +15,7 @@ const (
 	GetPlayerPlatformXboxSeriesX        = "xsx"
 	GetPlayerRoleAntiTank               = 7
 	GetPlayerRoleArmyCommander          = 13
+	GetPlayerRoleArtilleryObserver      = 14
 	GetPlayerRoleAssault                = 1
 	GetPlayerRoleAutomaticRifleman      = 2
 	GetPlayerRoleCrewman                = 11
