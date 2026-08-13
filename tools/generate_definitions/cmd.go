@@ -15,6 +15,8 @@ import (
 	"github.com/floriansw/go-hll-rcon/rconv2"
 )
 
+var supportedGameModes = []string{"hll", "hllv"}
+
 func main() {
 	port, err := strconv.Atoi(os.Getenv("HLL_PORT"))
 	if err != nil {
@@ -27,6 +29,10 @@ func main() {
 	})
 	if err != nil {
 		panic(err)
+	}
+	gameMode := os.Getenv("GAME_MODE")
+	if !slices.Contains(supportedGameModes, gameMode) {
+		panic("GAME_MODE must be one of: " + strings.Join(supportedGameModes, ", "))
 	}
 	ctx := context.Background()
 	var commands *rconv2.GetDisplayableCommandsResponse
@@ -94,7 +100,7 @@ func main() {
 		return strings.Compare(a.Id, b.Id)
 	})
 
-	f, err := os.OpenFile("./definitions/hll_rcon.json", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	f, err := os.OpenFile(fmt.Sprintf("./definitions/%s_rcon.json", gameMode), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		panic(err)
 	}

@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"golang.org/x/text/cases"
@@ -39,6 +40,60 @@ func (c Command) Name() string {
 	return c.Id
 }
 
+func stringValue(n *string) string {
+	if n == nil {
+		return ""
+	}
+	return *n
+}
+
+func (c Command) Equals(o Command) bool {
+	if c.Id != o.Id {
+		return false
+	}
+	if stringValue(c.CommandName) != stringValue(o.CommandName) {
+		return false
+	}
+	if c.FriendlyName != o.FriendlyName {
+		return false
+	}
+	if len(c.Parameters) != len(o.Parameters) {
+		return false
+	}
+	for i, param := range c.Parameters {
+		otherParam := o.Parameters[i]
+		if param.Name != otherParam.Name {
+			return false
+		}
+		if param.Type != otherParam.Type {
+			return false
+		}
+		if param.IsMapNameType() {
+			return false
+		} else if param.isMapName() {
+			continue
+		}
+
+		if len(param.ValueMember) != len(otherParam.ValueMember) {
+			return false
+		}
+		for _, v := range param.ValueMember {
+			if !slices.Contains(otherParam.ValueMember, v) {
+				return false
+			}
+		}
+		if len(param.DisplayMember) != len(otherParam.DisplayMember) {
+			return false
+		}
+		for _, v := range param.DisplayMember {
+			if !slices.Contains(otherParam.DisplayMember, v) {
+				return false
+			}
+		}
+	}
+	return true
+}
+
 func (c Command) Imports() Imports {
 	res := Imports{}
 	res.Add("context", "context")
@@ -70,7 +125,7 @@ func (c Command) ParameterGoType(p CommandParameter) string {
 		if p.IsMapNameType() {
 			return p.Id
 		}
-		if !p.IsMapNameType() && p.Id == "MapName" {
+		if !p.IsMapNameType() && p.isMapName() {
 			return "MapName"
 		}
 		return fmt.Sprintf("%s%s", c.Id, caser.String(p.Id))
@@ -83,12 +138,16 @@ func (p CommandParameter) IsMapNameType() bool {
 	// AddMapToRotation has a full list of available maps as valueMember, ChangeMap for example has only one map.
 	// To not wrongfully advertise ChangeMap to take a single map as an argument, define the MapName as a global type.
 	// it will then be used in other commands that take the same MapName parameter as well.
-	return p.Type == CommandParameterTypeEnum && p.Id == "MapName" && len(p.ValueMember) > 2
+	return p.Type == CommandParameterTypeEnum && p.isMapName() && len(p.ValueMember) > 2
+}
+
+func (p CommandParameter) isMapName() bool {
+	return p.Id == "MapName" || p.Id == "MapId"
 }
 
 func (c Command) Types() (res Types) {
 	for _, p := range c.Parameters {
-		if !p.IsMapNameType() && p.Id == "MapName" {
+		if !p.IsMapNameType() && p.isMapName() {
 			continue
 		}
 		if len(p.ValueMember) == 0 {
