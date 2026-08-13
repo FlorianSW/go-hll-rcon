@@ -60,7 +60,7 @@ func (t Type) AsTypeReference() string {
 func (c Command) RequestType() Type {
 	if len(c.Parameters) == 1 && toBool(c.InlineParameters) {
 		return Type{
-			Name:        fmt.Sprintf("%s%s", c.Id, caser.String(c.Parameters[0].Id)),
+			Name:        fmt.Sprintf("%s%s%s", c.TypePrefix, c.Id, caser.String(c.Parameters[0].Id)),
 			AliasedType: aliasedType(c.Parameters[0].ValueMember, "string"),
 		}
 	}
@@ -74,7 +74,7 @@ func (c Command) RequestType() Type {
 	}
 
 	return Type{
-		Name:    c.Name(),
+		Name:    fmt.Sprintf("%s%s", c.TypePrefix, c.Name()),
 		Members: requestMembers,
 	}
 }

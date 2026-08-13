@@ -2,6 +2,10 @@ package rconv2
 
 import "context"
 
-func DumpPlain[T any](ctx context.Context, c *Connection, r T) (*string, error) {
-	return execCommand[T, string](ctx, c.socket, r)
+type socketConnection interface {
+	getSocket() *socket
+}
+
+func DumpPlain[T any](ctx context.Context, c socketConnection, r T) (*string, error) {
+	return execCommand[T, string](ctx, c.getSocket(), r)
 }

@@ -36,7 +36,7 @@ func main() {
 	}
 	ctx := context.Background()
 	var commands *rconv2.GetDisplayableCommandsResponse
-	err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
+	err = p.WithConnection(ctx, func(c *rconv2.HLLConnection) error {
 		commands, err = c.GetDisplayableCommands(ctx)
 		if err != nil {
 			return err
@@ -51,7 +51,7 @@ func main() {
 	var res []codegen.Command
 	for _, entry := range commands.Entries {
 		println("Requesting metadata for: " + entry.Id)
-		err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
+		err = p.WithConnection(ctx, func(c *rconv2.HLLConnection) error {
 			ref, err := c.GetClientReferenceData(ctx, rconv2.GetClientReferenceDataCommand(entry.Id))
 			if err != nil {
 				println("Failed to get client reference data: " + err.Error())

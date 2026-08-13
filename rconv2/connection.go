@@ -18,6 +18,16 @@ type Connection struct {
 	socket *socket
 }
 
+func (c *Connection) getId() string {
+	return c.id
+}
+
+func (c *Connection) getSocket() *socket {
+	return c.socket
+}
+
+type connectionFactory[T GameConnection] func(id string, socket *socket) T
+
 func execCommand[T, U any](ctx context.Context, so *socket, req T) (result *U, err error) {
 	err = so.SetContext(ctx)
 	if err != nil {

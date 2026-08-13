@@ -34,6 +34,7 @@ type Command struct {
 	Parameters       []CommandParameter `json:"parameters,omitempty"`
 	Response         *Response          `json:"response,omitempty"`
 	InlineParameters *bool              `json:"inline,omitempty"`
+	TypePrefix       string             `json:"-"`
 }
 
 func (c Command) Name() string {
@@ -115,6 +116,20 @@ func (c Command) Imports() Imports {
 	return res
 }
 
+func (c Command) WithTypePrefix(prefix string) Command {
+	return Command{
+		Id:               c.Id,
+		CommandName:      c.CommandName,
+		FriendlyName:     c.FriendlyName,
+		Text:             c.Text,
+		Description:      c.Description,
+		Parameters:       c.Parameters,
+		InlineParameters: c.InlineParameters,
+		Response:         c.Response,
+		TypePrefix:       prefix,
+	}
+}
+
 func (c Command) ParameterGoType(p CommandParameter) string {
 	switch p.Type {
 	case CommandParameterTypeString:
@@ -123,12 +138,12 @@ func (c Command) ParameterGoType(p CommandParameter) string {
 		return "int"
 	case CommandParameterTypeEnum:
 		if p.IsMapNameType() {
-			return p.Id
+			return fmt.Sprintf("%s%s", c.TypePrefix, p.Id)
 		}
 		if !p.IsMapNameType() && p.isMapName() {
-			return "MapName"
+			return fmt.Sprintf("%sMapName", c.TypePrefix)
 		}
-		return fmt.Sprintf("%s%s", c.Id, caser.String(p.Id))
+		return fmt.Sprintf("%s%s%s", c.TypePrefix, c.Id, caser.String(p.Id))
 	default:
 		return "any"
 	}
@@ -155,18 +170,18 @@ func (c Command) Types() (res Types) {
 		}
 		var members []TypeMember
 		for i, member := range p.ValueMember {
-			memberName := fmt.Sprintf("%s%s%s", c.Id, p.Id, caser.String(p.DisplayMember[i]))
+			memberName := fmt.Sprintf("%s%s%s%s", c.TypePrefix, c.Id, p.Id, caser.String(p.DisplayMember[i]))
 			if p.IsMapNameType() {
-				memberName = fmt.Sprintf("%s%s", p.Id, caser.String(p.DisplayMember[i]))
+				memberName = fmt.Sprintf("%s%s%s", c.TypePrefix, p.Id, caser.String(p.DisplayMember[i]))
 			}
 			members = append(members, TypeMember{
 				Name: memberName,
 				Type: member,
 			})
 		}
-		typeName := fmt.Sprintf("%s%s", c.Id, p.Id)
+		typeName := fmt.Sprintf("%s%s%s", c.TypePrefix, c.Id, p.Id)
 		if p.IsMapNameType() {
-			typeName = p.Id
+			typeName = fmt.Sprintf("%s%s", c.TypePrefix, p.Id)
 		}
 		res = append(res, Type{
 			Name:        typeName,

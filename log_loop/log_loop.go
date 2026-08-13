@@ -9,13 +9,13 @@ import (
 	rcon "github.com/floriansw/go-hll-rcon/rconv2"
 )
 
-type RConPool interface {
-	WithConnection(ctx context.Context, f func(c *rcon.Connection) error) error
+type RConPool[T adminLogConnection] interface {
+	WithConnection(ctx context.Context, f func(c T) error) error
 }
 
-type LogLoop struct {
+type LogLoop[T adminLogConnection] struct {
 	logger             *slog.Logger
-	p                  RConPool
+	p                  RConPool[T]
 	initialLogDuration time.Duration
 
 	pollTicker     *time.Ticker
@@ -23,9 +23,9 @@ type LogLoop struct {
 	reconnectTries int
 }
 
-type LogLoopOptions struct {
+type LogLoopOptions[T adminLogConnection] struct {
 	Logger            *slog.Logger
-	Pool              RConPool
+	Pool              RConPool[T]
 	InitialLogMinutes *int
 	PollInterval      *time.Duration
 }
@@ -34,7 +34,7 @@ type LogLoopOptions struct {
 // in batches to the caller.
 //
 // Not all events are currently parsed, however, each log line is added to the batches at least with the raw message.
-func NewLogLoop(opts LogLoopOptions) *LogLoop {
+func NewLogLoop[T adminLogConnection](opts LogLoopOptions[T]) *LogLoop[T] {
 	if opts.Logger == nil {
 		opts.Logger = slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError}))
 	}
@@ -46,12 +46,16 @@ func NewLogLoop(opts LogLoopOptions) *LogLoop {
 	if opts.PollInterval != nil {
 		pollInterval = *opts.PollInterval
 	}
-	return &LogLoop{
+	return &LogLoop[T]{
 		logger:             opts.Logger,
 		p:                  opts.Pool,
 		initialLogDuration: initialLogDuration,
 		pollTicker:         time.NewTicker(pollInterval),
 	}
+}
+
+type adminLogConnection interface {
+	GetAdminLog(context.Context, int32, string) (*rcon.GetAdminLogResponse, error)
 }
 
 // Run starts polling logs from the server. Each time at least one new log line is discovered, the passed function f
@@ -61,7 +65,7 @@ func NewLogLoop(opts LogLoopOptions) *LogLoop {
 // The return value of f is a boolean indicating if polling for new log lines should continue. Returning true will stop
 // this run with no error. Polling can be restarted by calling Run again.
 // Returning false will result in Run to continue polling for new log lines.
-func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) error {
+func (l *LogLoop[T]) Run(ctx context.Context, f func(l []StructuredLogLine) bool) error {
 	log := l.logger.With("action", "log-loop-run")
 	lines := make(chan []string)
 	errs := make(chan error)
@@ -92,7 +96,7 @@ func (l *LogLoop) Run(ctx context.Context, f func(l []StructuredLogLine) bool) e
 				return nil
 			}
 		case <-l.pollTicker.C:
-			err := l.p.WithConnection(ctx, func(c *rcon.Connection) error {
+			err := l.p.WithConnection(ctx, func(c T) error {
 				r, err := c.GetAdminLog(ctx, int32(d.Seconds()), "")
 				if err != nil {
 					log.Error("read", err)

@@ -86,7 +86,7 @@ func main() {
 
 type recorder struct {
 	l       *slog.Logger
-	p       *rconv2.ConnectionPool
+	p       *rconv2.ConnectionPool[*rconv2.HLLConnection]
 	t       *time.Ticker
 	closeCh chan bool
 
@@ -98,7 +98,7 @@ type positionData struct {
 	Positions []rconv2.GetPlayerPosition
 }
 
-func NewRecorder(l *slog.Logger, p *rconv2.ConnectionPool) *recorder {
+func NewRecorder(l *slog.Logger, p *rconv2.ConnectionPool[*rconv2.HLLConnection]) *recorder {
 	return &recorder{
 		l:         l,
 		p:         p,
@@ -144,7 +144,7 @@ func (r *recorder) Run(ctx context.Context) {
 		case <-r.closeCh:
 			return
 		case _ = <-r.t.C:
-			err := r.p.WithConnection(ctx, func(c *rconv2.Connection) error {
+			err := r.p.WithConnection(ctx, func(c *rconv2.HLLConnection) error {
 				players, err := c.GetPlayers(ctx)
 				if err != nil {
 					r.l.Error("read-players", "error", err)
