@@ -54,10 +54,6 @@ func NewLogLoop(opts LogLoopOptions) *LogLoop {
 	}
 }
 
-type adminLogConnection interface {
-	GetAdminLog(context.Context, int32, string) (*rcon.GetAdminLogResponse, error)
-}
-
 // Run starts polling logs from the server. Each time at least one new log line is discovered, the passed function f
 // is called with an undefined number of log lines as it's only argument. Whenever f is called, at least one log line
 // will be in the log line slice.
