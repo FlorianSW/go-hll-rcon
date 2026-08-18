@@ -45,7 +45,29 @@ type ConnectionPoolOptions struct {
 	MaxIdleConnections *int
 }
 
-func NewConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool, error) {
+// NewHLLConnectionPool returns a connection pool intended for the use against a HLL WW2 game server.
+func NewHLLConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool[*HLLConnection], error) {
+	return newPool(newHLLConnection, opts)
+}
+
+// NewHLLVConnectionPool returns a connection pool intended for the use against a HLL:V game server.
+func NewHLLVConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool[*HLLVConnection], error) {
+	return newPool(newHLLVConnection, opts)
+}
+
+// NewConnectionPool constructs a new connection pool for use of common commands only. No game-server specific commands will
+// be available on connections returned by this pool. Use this pool only if you intend to work with commands that are available
+// at both game servers (HLL and HLL:V). If you require game-specific commands, use either NewHLLConnectionPool or NewHLLVConnectionPool.
+//
+// There are two ways on how you can use a connection pool, either a game-specific or game-independent one. Both are
+// shown in the examples:
+//   - log_loop/log_loop.go: Uses the common Connection and avoids a typed connection pool at all.
+//   - examples/travel_distance/cmd.go: Uses a HLL WW2 specific connection pool. It works with a typed connection pool, which limits it to use HLL Connections.
+func NewConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool[*Connection], error) {
+	return newPool(newConnection, opts)
+}
+
+func newPool[T GameConnection](f connectionFactory[T], opts ConnectionPoolOptions) (*ConnectionPool[T], error) {
 	if opts.Logger == nil {
 		opts.Logger = slog.New(slog.NewTextHandler(io.Discard, &slog.HandlerOptions{Level: slog.LevelError}))
 	}
@@ -64,33 +86,35 @@ func NewConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool, error) {
 	if toInt(opts.MaxIdleConnections) > toInt(opts.MaxOpenConnections) {
 		return nil, errors.New("the MaxIdleConnections cannot exceed MaxOpenConnections")
 	}
-	return &ConnectionPool{
+	return &ConnectionPool[T]{
 		logger:       opts.Logger,
+		factory:      f,
 		host:         opts.Hostname,
 		port:         opts.Port,
 		pw:           opts.Password,
 		mu:           sync.Mutex{},
-		idles:        map[string]*Connection{},
+		idles:        make(map[string]T),
 		maxOpenCount: toInt(opts.MaxOpenConnections),
 		maxIdleCount: toInt(opts.MaxIdleConnections),
 	}, nil
 }
 
-type ConnectionPool struct {
+type ConnectionPool[T GameConnection] struct {
 	logger       *slog.Logger
 	host         string
 	port         int
 	pw           string
 	mu           sync.Mutex
-	idles        map[string]*Connection
+	factory      connectionFactory[T]
+	idles        map[string]T
 	numOpen      int
 	maxOpenCount int
 	maxIdleCount int
-	queued       []request
+	queued       []request[T]
 }
 
-type request struct {
-	connChan chan *Connection
+type request[T GameConnection] struct {
+	connChan chan T
 	errChan  chan error
 }
 
@@ -102,18 +126,18 @@ func IsBrokenHllConnection(err error) bool {
 			errors.Is(err, syscall.EPIPE))
 }
 
-// Return returns a previously gathered Connection from Get back to the pool for later use. The Connection
+// Return returns a previously gathered GameConnection from Get back to the pool for later use. The GameConnection
 // might either be closed, put into a pool of "hot", idle connections or directly returned to a queued Get
 // request.
-func (p *ConnectionPool) Return(c *Connection, err error) {
-	l := p.logger.With("action", "return", "id", c.id)
+func (p *ConnectionPool[T]) Return(c T, err error) {
+	l := p.logger.With("action", "return", "id", c.getId())
 	l.Debug("wait-for-lock")
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	if IsBrokenHllConnection(err) {
 		l.Debug("retire-broken", "error", err)
-		c.socket.Close()
+		c.getSocket().Close()
 		p.numOpen--
 	} else if len(p.queued) != 0 {
 		r := p.queued[0]
@@ -122,26 +146,26 @@ func (p *ConnectionPool) Return(c *Connection, err error) {
 		r.connChan <- c
 	} else if p.maxIdleCount > len(p.idles) {
 		l.Debug("returning-idle")
-		p.idles[c.id] = c
+		p.idles[c.getId()] = c
 	} else {
 		l.Debug("closing")
-		c.socket.Close()
+		c.getSocket().Close()
 		p.numOpen--
 	}
 }
 
-// Get returns a connection from the pool. This method does not guarantee you to get a new, fresh Connection.
-// A Connection might either be opened newly for this request, re-used from the pool of idle connections or one that was
+// Get returns a connection from the pool. This method does not guarantee you to get a new, fresh GameConnection.
+// A GameConnection might either be opened newly for this request, re-used from the pool of idle connections or one that was
 // returned to the pool just now.
 //
 // If there are no idle connections and if the limit of open connections is already reached, the request to retrieve a
-// Connection will be queued. The request might or might not be fulfilled later, once a Connection is returned to the
+// GameConnection will be queued. The request might or might not be fulfilled later, once a GameConnection is returned to the
 // pool.
 //
 // It is recommended to provide a context.Context with a deadline. The deadline will be the maximum time the caller is
 // ok with waiting for a connection before a Timeout error is returned. If no deadline is provided in the context.Context,
 // Get might wait indefinitely.
-func (p *ConnectionPool) Get(ctx context.Context) (*Connection, error) {
+func (p *ConnectionPool[T]) Get(ctx context.Context) (T, error) {
 	deadline, ok := ctx.Deadline()
 	l := p.logger.With("action", "get-with-context", "deadline", deadline, "hasDeadline", ok, "queued", len(p.queued), "open", p.numOpen, "idles", len(p.idles))
 	l.Debug("wait-for-lock")
@@ -151,15 +175,15 @@ func (p *ConnectionPool) Get(ctx context.Context) (*Connection, error) {
 		defer p.mu.Unlock()
 		l.Debug("from-idle-pool")
 		for _, c := range p.idles {
-			delete(p.idles, c.id)
+			delete(p.idles, c.getId())
 			return c, nil
 		}
 	}
 
 	if p.numOpen >= p.maxOpenCount {
 		l.Debug("queue-request", "queued", len(p.queued), "open", p.numOpen)
-		req := request{
-			connChan: make(chan *Connection, 1),
+		req := request[T]{
+			connChan: make(chan T, 1),
 			errChan:  make(chan error, 1),
 		}
 
@@ -200,7 +224,7 @@ func (p *ConnectionPool) Get(ctx context.Context) (*Connection, error) {
 //
 // This is a helper to reduce the possibility a connection is obtained from the pool, but then not returned to it. It
 // is basically the same as using Get and Return in your own code.
-func (p *ConnectionPool) WithConnection(ctx context.Context, f func(c *Connection) error) error {
+func (p *ConnectionPool[T]) WithConnection(ctx context.Context, f func(c T) error) error {
 	c, err := p.Get(ctx)
 	if err != nil {
 		return err
@@ -212,22 +236,19 @@ func (p *ConnectionPool) WithConnection(ctx context.Context, f func(c *Connectio
 	return cerr
 }
 
-func (p *ConnectionPool) new(ctx context.Context) (*Connection, error) {
+func (p *ConnectionPool[T]) new(ctx context.Context) (T, error) {
 	c, err := newSocket(ctx, p.host, p.port, p.pw)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Connection{
-		id:     fmt.Sprintf("%d", time.Now().UnixNano()),
-		socket: c,
-	}, nil
+	return p.factory(fmt.Sprintf("%d", time.Now().UnixNano()), c), nil
 }
 
-func (p *ConnectionPool) Shutdown() {
+func (p *ConnectionPool[T]) Shutdown() {
 	p.mu.Lock()
 	for _, c := range p.idles {
-		c.socket.Close()
+		c.getSocket().Close()
 		p.numOpen--
 	}
 	p.mu.Unlock()

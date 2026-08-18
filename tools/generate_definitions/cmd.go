@@ -15,6 +15,8 @@ import (
 	"github.com/floriansw/go-hll-rcon/rconv2"
 )
 
+var supportedGameModes = []string{"hll", "hllv"}
+
 func main() {
 	port, err := strconv.Atoi(os.Getenv("HLL_PORT"))
 	if err != nil {
@@ -28,9 +30,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	gameMode := os.Getenv("GAME_MODE")
+	if !slices.Contains(supportedGameModes, gameMode) {
+		panic("GAME_MODE must be one of: " + strings.Join(supportedGameModes, ", "))
+	}
 	ctx := context.Background()
 	var commands *rconv2.GetDisplayableCommandsResponse
-	err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
+	err = p.WithConnection(ctx, func(c *rconv2.HLLConnection) error {
 		commands, err = c.GetDisplayableCommands(ctx)
 		if err != nil {
 			return err
@@ -45,7 +51,7 @@ func main() {
 	var res []codegen.Command
 	for _, entry := range commands.Entries {
 		println("Requesting metadata for: " + entry.Id)
-		err = p.WithConnection(ctx, func(c *rconv2.Connection) error {
+		err = p.WithConnection(ctx, func(c *rconv2.HLLConnection) error {
 			ref, err := c.GetClientReferenceData(ctx, rconv2.GetClientReferenceDataCommand(entry.Id))
 			if err != nil {
 				println("Failed to get client reference data: " + err.Error())
@@ -94,7 +100,7 @@ func main() {
 		return strings.Compare(a.Id, b.Id)
 	})
 
-	f, err := os.OpenFile("./definitions/hll_rcon.json", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	f, err := os.OpenFile(fmt.Sprintf("./definitions/%s_rcon.json", gameMode), os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		panic(err)
 	}

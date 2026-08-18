@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
 	"golang.org/x/text/cases"
@@ -33,10 +34,65 @@ type Command struct {
 	Parameters       []CommandParameter `json:"parameters,omitempty"`
 	Response         *Response          `json:"response,omitempty"`
 	InlineParameters *bool              `json:"inline,omitempty"`
+	TypePrefix       string             `json:"-"`
 }
 
 func (c Command) Name() string {
 	return c.Id
+}
+
+func stringValue(n *string) string {
+	if n == nil {
+		return ""
+	}
+	return *n
+}
+
+func (c Command) Equals(o Command) bool {
+	if c.Id != o.Id {
+		return false
+	}
+	if stringValue(c.CommandName) != stringValue(o.CommandName) {
+		return false
+	}
+	if c.FriendlyName != o.FriendlyName {
+		return false
+	}
+	if len(c.Parameters) != len(o.Parameters) {
+		return false
+	}
+	for i, param := range c.Parameters {
+		otherParam := o.Parameters[i]
+		if param.Name != otherParam.Name {
+			return false
+		}
+		if param.Type != otherParam.Type {
+			return false
+		}
+		if param.IsMapNameType() {
+			return false
+		} else if param.isMapName() {
+			continue
+		}
+
+		if len(param.ValueMember) != len(otherParam.ValueMember) {
+			return false
+		}
+		for _, v := range param.ValueMember {
+			if !slices.Contains(otherParam.ValueMember, v) {
+				return false
+			}
+		}
+		if len(param.DisplayMember) != len(otherParam.DisplayMember) {
+			return false
+		}
+		for _, v := range param.DisplayMember {
+			if !slices.Contains(otherParam.DisplayMember, v) {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func (c Command) Imports() Imports {
@@ -60,6 +116,20 @@ func (c Command) Imports() Imports {
 	return res
 }
 
+func (c Command) WithTypePrefix(prefix string) Command {
+	return Command{
+		Id:               c.Id,
+		CommandName:      c.CommandName,
+		FriendlyName:     c.FriendlyName,
+		Text:             c.Text,
+		Description:      c.Description,
+		Parameters:       c.Parameters,
+		InlineParameters: c.InlineParameters,
+		Response:         c.Response,
+		TypePrefix:       prefix,
+	}
+}
+
 func (c Command) ParameterGoType(p CommandParameter) string {
 	switch p.Type {
 	case CommandParameterTypeString:
@@ -68,12 +138,12 @@ func (c Command) ParameterGoType(p CommandParameter) string {
 		return "int"
 	case CommandParameterTypeEnum:
 		if p.IsMapNameType() {
-			return p.Id
+			return fmt.Sprintf("%s%s", c.TypePrefix, p.Id)
 		}
-		if !p.IsMapNameType() && p.Id == "MapName" {
-			return "MapName"
+		if !p.IsMapNameType() && p.isMapName() {
+			return fmt.Sprintf("%sMapName", c.TypePrefix)
 		}
-		return fmt.Sprintf("%s%s", c.Id, caser.String(p.Id))
+		return fmt.Sprintf("%s%s%s", c.TypePrefix, c.Id, caser.String(p.Id))
 	default:
 		return "any"
 	}
@@ -83,12 +153,16 @@ func (p CommandParameter) IsMapNameType() bool {
 	// AddMapToRotation has a full list of available maps as valueMember, ChangeMap for example has only one map.
 	// To not wrongfully advertise ChangeMap to take a single map as an argument, define the MapName as a global type.
 	// it will then be used in other commands that take the same MapName parameter as well.
-	return p.Type == CommandParameterTypeEnum && p.Id == "MapName" && len(p.ValueMember) > 2
+	return p.Type == CommandParameterTypeEnum && p.isMapName() && len(p.ValueMember) > 2
+}
+
+func (p CommandParameter) isMapName() bool {
+	return p.Id == "MapName" || p.Id == "MapId"
 }
 
 func (c Command) Types() (res Types) {
 	for _, p := range c.Parameters {
-		if !p.IsMapNameType() && p.Id == "MapName" {
+		if !p.IsMapNameType() && p.isMapName() {
 			continue
 		}
 		if len(p.ValueMember) == 0 {
@@ -96,18 +170,18 @@ func (c Command) Types() (res Types) {
 		}
 		var members []TypeMember
 		for i, member := range p.ValueMember {
-			memberName := fmt.Sprintf("%s%s%s", c.Id, p.Id, caser.String(p.DisplayMember[i]))
+			memberName := fmt.Sprintf("%s%s%s%s", c.TypePrefix, c.Id, p.Id, caser.String(p.DisplayMember[i]))
 			if p.IsMapNameType() {
-				memberName = fmt.Sprintf("%s%s", p.Id, caser.String(p.DisplayMember[i]))
+				memberName = fmt.Sprintf("%s%s%s", c.TypePrefix, p.Id, caser.String(p.DisplayMember[i]))
 			}
 			members = append(members, TypeMember{
 				Name: memberName,
 				Type: member,
 			})
 		}
-		typeName := fmt.Sprintf("%s%s", c.Id, p.Id)
+		typeName := fmt.Sprintf("%s%s%s", c.TypePrefix, c.Id, p.Id)
 		if p.IsMapNameType() {
-			typeName = p.Id
+			typeName = fmt.Sprintf("%s%s", c.TypePrefix, p.Id)
 		}
 		res = append(res, Type{
 			Name:        typeName,

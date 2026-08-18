@@ -4,8 +4,10 @@ import (
 	"context"
 )
 
-// Connection represents a persistent connection to a HLL server using RCon. It can be used to issue commands against
-// the HLL server and query data.
+// Connection represents a persistent connection to a HLL(V) server using RCon. It can be used to issue commands against
+// the server and query data. Connection is a common type that supports commands that are available in both HLL:V and HLL WW2.
+// It is recommended to use a game-specific connection type for issuing commands that are game-server specific, such as HLLConnection
+// or HLLVConnection. Game-specific connection tyspes inherit from Connection, including the below notices.
 //
 // A Connection is not thread-safe by default. Do not attempt to run multiple commands in different threads or go-routines.
 // Doing so may either run into non-expected indefinitely blocking execution (until the context.Context
@@ -17,6 +19,23 @@ type Connection struct {
 	id     string
 	socket *socket
 }
+
+func (c *Connection) getId() string {
+	return c.id
+}
+
+func (c *Connection) getSocket() *socket {
+	return c.socket
+}
+
+func newConnection(id string, socket *socket) *Connection {
+	return &Connection{
+		id:     id,
+		socket: socket,
+	}
+}
+
+type connectionFactory[T GameConnection] func(id string, socket *socket) T
 
 func execCommand[T, U any](ctx context.Context, so *socket, req T) (result *U, err error) {
 	err = so.SetContext(ctx)

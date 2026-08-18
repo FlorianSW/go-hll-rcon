@@ -6,25 +6,18 @@ import (
 )
 
 const (
-	SetDynamicWeatherEnabledEnableOff                 = false
-	SetDynamicWeatherEnabledEnableOn                  = true
-	SetDynamicWeatherEnabledMapIdStmariedumontWarfare = "stmariedumont_warfare"
+	SetDynamicWeatherEnabledEnableOff = false
+	SetDynamicWeatherEnabledEnableOn  = true
 )
-
-type SetDynamicWeatherEnabledMapId string
-
-func (r SetDynamicWeatherEnabledMapId) String() string {
-	return string(r)
-}
 
 type SetDynamicWeatherEnabledEnable any
 type SetDynamicWeatherEnabled struct {
-	MapId  SetDynamicWeatherEnabledMapId  `json:"MapId"`
+	MapId  MapName                        `json:"MapId"`
 	Enable SetDynamicWeatherEnabledEnable `json:"Enable"`
 }
 
 // SetDynamicWeatherEnabled Enable or disable dynamic weather for a specific map.
-func (c *Connection) SetDynamicWeatherEnabled(ctx context.Context, MapId SetDynamicWeatherEnabledMapId, Enable SetDynamicWeatherEnabledEnable) error {
+func (c *Connection) SetDynamicWeatherEnabled(ctx context.Context, MapId MapName, Enable SetDynamicWeatherEnabledEnable) error {
 	_, err := execCommand[SetDynamicWeatherEnabled, any](ctx, c.socket, SetDynamicWeatherEnabled{MapId: MapId, Enable: Enable})
 	return err
 }
