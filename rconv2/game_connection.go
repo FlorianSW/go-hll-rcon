@@ -2,7 +2,7 @@
 package rconv2
 
 type GameConnection interface {
-	*HLLConnection | *HLLVConnection
+	*HLLConnection | *HLLVConnection | *Connection
 	getId() string
 	getSocket() *socket
 }

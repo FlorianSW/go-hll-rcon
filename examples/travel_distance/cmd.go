@@ -38,7 +38,7 @@ import (
 // other hand does not provide such a terminal and might not work.
 func main() {
 	l := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelError}))
-	p, err := rconv2.NewConnectionPool(rconv2.ConnectionPoolOptions{
+	p, err := rconv2.NewHLLConnectionPool(rconv2.ConnectionPoolOptions{
 		Logger:   l,
 		Hostname: os.Getenv("host"),
 		Port:     getEnvInt("port"),

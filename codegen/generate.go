@@ -185,7 +185,7 @@ func new{{.ClientName}}(id string, socket *socket) *{{.ClientName}} {
 package {{.PackageName}}
 
 type GameConnection interface {
-	{{join .ClientNames " | "}}
+	{{join .ClientNames " | "}} | *Connection
 	getId() string
 	getSocket() *socket
 }

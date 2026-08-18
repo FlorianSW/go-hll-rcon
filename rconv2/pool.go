@@ -45,18 +45,26 @@ type ConnectionPoolOptions struct {
 	MaxIdleConnections *int
 }
 
+// NewHLLConnectionPool returns a connection pool intended for the use against a HLL WW2 game server.
 func NewHLLConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool[*HLLConnection], error) {
 	return newPool(newHLLConnection, opts)
 }
 
+// NewHLLVConnectionPool returns a connection pool intended for the use against a HLL:V game server.
 func NewHLLVConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool[*HLLVConnection], error) {
 	return newPool(newHLLVConnection, opts)
 }
 
-// NewConnectionPool deprecated: Use either NewHLLConnectionPool for a HLL WW2 connection pool, or NewHLLVConnectionPool for
-// a HLL:Vietnam connection pool
-func NewConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool[*HLLConnection], error) {
-	return NewHLLConnectionPool(opts)
+// NewConnectionPool constructs a new connection pool for use of common commands only. No game-server specific commands will
+// be available on connections returned by this pool. Use this pool only if you intend to work with commands that are available
+// at both game servers (HLL and HLL:V). If you require game-specific commands, use either NewHLLConnectionPool or NewHLLVConnectionPool.
+//
+// There are two ways on how you can use a connection pool, either a game-specific or game-independent one. Both are
+// shown in the examples:
+//   - log_loop/log_loop.go: Uses the common Connection and avoids a typed connection pool at all.
+//   - examples/travel_distance/cmd.go: Uses a HLL WW2 specific connection pool. It works with a typed connection pool, which limits it to use HLL Connections.
+func NewConnectionPool(opts ConnectionPoolOptions) (*ConnectionPool[*Connection], error) {
+	return newPool(newConnection, opts)
 }
 
 func newPool[T GameConnection](f connectionFactory[T], opts ConnectionPoolOptions) (*ConnectionPool[T], error) {
