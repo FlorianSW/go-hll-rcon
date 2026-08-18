@@ -58,8 +58,9 @@ Executing this code will list the available maps of the Hell Let Loose server.
 
 ## Command Coverage
 
-`go-hll-rcon` covers all available RCon commands from Hell Let Loose.
-The available commands are documented in [rcon/connection.go](rcon/connection.go).
+`go-hll-rcon` covers all available RCon commands from Hell Let Loose and Hell Let Loose: Vietnam.
+The available commands can be found in `rconv2/` (prefixed with `op_`).
+Commands that are only available for either game server are suffixed with the game server identifier (`hll` for the WW2 version and `hllv` for HLL:V).
 
 ## Developing
 
