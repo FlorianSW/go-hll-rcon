@@ -69,10 +69,8 @@ func (c Command) Equals(o Command) bool {
 		if param.Type != otherParam.Type {
 			return false
 		}
-		if param.IsMapNameType() {
+		if param.isMapName() {
 			return false
-		} else if param.isMapName() {
-			continue
 		}
 
 		if len(param.ValueMember) != len(otherParam.ValueMember) {
