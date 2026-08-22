@@ -6,8 +6,8 @@ import "context"
 // and so on) instead of each of the sectors as a separate parameter. Mostly kept for compatibility reasons.
 //
 // Deprecated: Might be removed in a future release
-func (c *Connection) SetSectorLayoutBySlice(ctx context.Context, sectors []string) error {
-	r := SetSectorLayout{}
+func (c *HLLConnection) SetSectorLayoutBySlice(ctx context.Context, sectors []string) error {
+	r := HLLSetSectorLayout{}
 	for i, sector := range sectors {
 		if i == 0 {
 			r.Sector_1 = sector
@@ -25,6 +25,6 @@ func (c *Connection) SetSectorLayoutBySlice(ctx context.Context, sectors []strin
 			r.Sector_5 = sector
 		}
 	}
-	_, err := execCommand[SetSectorLayout, any](ctx, c.socket, r)
+	_, err := execCommand[HLLSetSectorLayout, any](ctx, c.socket, r)
 	return err
 }
